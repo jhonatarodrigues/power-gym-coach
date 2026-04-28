@@ -1,0 +1,26 @@
+.DS_Store
+
+# Root memory and local notes
+# Keep `.ia` versioned on purpose
+
+# Frontend dependencies and generated files
+frontend/node_modules/
+frontend/.expo/
+frontend/dist/
+frontend/web-build/
+frontend/expo-env.d.ts
+frontend/storybook-static/
+frontend/*.tsbuildinfo
+
+# Native generated folders
+frontend/android/
+frontend/ios/
+
+# Logs
+frontend/npm-debug.*
+frontend/pnpm-debug.*
+frontend/yarn-debug.*
+frontend/yarn-error.*
+
+# Local env files
+frontend/.env*.local
