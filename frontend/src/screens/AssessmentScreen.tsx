@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { Button, Card, Header, Screen, SectionTitle } from "@/components";
-import { mockAssessmentRepository } from "@/repository/mock";
+import { useAssessmentTimeline } from "@/hooks/useAssessmentTimeline";
 import { useMockAuth } from "@/hooks/useMockAuth";
 import type { RootStackParamList } from "@/navigation/types";
 import { useAppTheme } from "@/theme";
@@ -14,26 +14,18 @@ export function AssessmentScreen() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const isTeacher = session.accessLevel === "teacher";
+  const { review, submission, timeline } = useAssessmentTimeline();
 
-  const submissions = mockAssessmentRepository.listSubmissions();
-  const reviews = mockAssessmentRepository.listReviews();
-  const submission = submissions[0];
-  const review = reviews[0];
-
-  const timeline = [
-    {
-      id: submission.id,
-      date: submission.submittedAt.slice(0, 10),
-      title: isTeacher ? "Aluno enviou avaliacao" : "Voce enviou avaliacao",
-      description: submission.description,
-    },
-    {
-      id: review.id,
-      date: review.reviewedAt.slice(0, 10),
-      title: isTeacher ? "Devolutiva registrada" : "Professor revisou sua avaliacao",
-      description: review.summary,
-    },
-  ];
+  if (!submission || !review) {
+    return (
+      <Screen>
+        <Header
+          title="Assessment"
+          subtitle="Nenhuma avaliacao mockada disponivel no momento."
+        />
+      </Screen>
+    );
+  }
 
   return (
     <Screen>
@@ -109,7 +101,7 @@ export function AssessmentScreen() {
                 {item.date}
               </Text>
               <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
-                {item.title}
+                {isTeacher ? item.titleTeacher : item.titleStudent}
               </Text>
               <Text style={{ color: theme.colors.textMuted }}>
                 {item.description}

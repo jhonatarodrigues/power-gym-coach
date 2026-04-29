@@ -10,7 +10,10 @@ import {
   mockExamRepository,
   mockPlanRepository,
   mockProgressRepository,
+  mockStudentOverviewRepository,
   progressEntriesMock,
+  studentProfilesMock,
+  usersMock,
 } from "@/repository/mock";
 
 describe("mock repositories", () => {
@@ -34,5 +37,14 @@ describe("mock repositories", () => {
   it("returns the mocked progress data", () => {
     expect(mockProgressRepository.listEntries()).toEqual(progressEntriesMock);
     expect(mockProgressRepository.listHistory()).toEqual(historyRecordsMock);
+  });
+
+  it("returns the primary student overview", () => {
+    const overview = mockStudentOverviewRepository.getPrimaryStudentOverview();
+
+    expect(overview.studentProfile).toEqual(studentProfilesMock[0]);
+    expect(overview.studentUser).toEqual(usersMock[1]);
+    expect(overview.currentPlanTitle).toBe(currentPlanMock.title);
+    expect(overview.pendingExamCount).toBeGreaterThanOrEqual(0);
   });
 });

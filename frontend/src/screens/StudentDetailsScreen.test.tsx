@@ -9,9 +9,12 @@ describe("StudentDetailsScreen", () => {
     renderWithProviders(<StudentDetailsScreen />);
 
     expect(screen.getByText("Student details")).toBeTruthy();
+    expect(screen.getByText("Sinais para decisao")).toBeTruthy();
     expect(screen.getByText("Acoes rapidas")).toBeTruthy();
-    expect(screen.getByText("Abrir plano atual")).toBeTruthy();
+    expect(screen.getByText("Ajustar plano atual")).toBeTruthy();
+    expect(screen.getByText("Revisar progresso")).toBeTruthy();
     expect(screen.getByText("Abrir avaliacao")).toBeTruthy();
     expect(screen.getByText("Abrir exams")).toBeTruthy();
+    expect(screen.getByText("Abrir historico")).toBeTruthy();
   });
 });

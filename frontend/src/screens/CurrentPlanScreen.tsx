@@ -16,6 +16,7 @@ import {
 } from "@/components";
 import { useCurrentPlan } from "@/hooks/useCurrentPlan";
 import { useMockAuth } from "@/hooks/useMockAuth";
+import { usePlanReview } from "@/hooks/usePlanReview";
 import type { RootStackParamList } from "@/navigation/types";
 import { useAppTheme } from "@/theme";
 
@@ -29,6 +30,13 @@ export function CurrentPlanScreen() {
     lastSavedAt,
     saveCurrentPlan,
   } = useCurrentPlan();
+  const {
+    changedSectionCount,
+    changedSections,
+    mealChanges,
+    supplementChanges,
+    trainingChanges,
+  } = usePlanReview();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const isTeacher = session.accessLevel === "teacher";
@@ -89,6 +97,46 @@ export function CurrentPlanScreen() {
             </View>
           </View>
         </Card>
+      ) : null}
+
+      {isTeacher ? (
+        <>
+          <SectionTitle
+            title="Review before save"
+            description="Leitura rapida do que mudou no rascunho atual."
+          />
+          <View style={{ gap: theme.spacing.md }}>
+            <Card>
+              <View style={{ gap: theme.spacing.sm }}>
+                <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
+                  Secoes alteradas
+                </Text>
+                <Text style={{ color: theme.colors.textMuted }}>
+                  {hasUnsavedChanges
+                    ? `${changedSectionCount} secoes com mudancas: ${changedSections.join(", ")}.`
+                    : "Nenhuma secao alterada desde o ultimo salvamento."}
+                </Text>
+              </View>
+            </Card>
+
+            <Card>
+              <View style={{ gap: theme.spacing.sm }}>
+                <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
+                  Impacto do rascunho
+                </Text>
+                <Text style={{ color: theme.colors.textMuted }}>
+                  Treino: {trainingChanges} sinais de alteracao
+                </Text>
+                <Text style={{ color: theme.colors.textMuted }}>
+                  Dieta: {mealChanges} sinais de alteracao
+                </Text>
+                <Text style={{ color: theme.colors.textMuted }}>
+                  Suplementacao: {supplementChanges} sinais de alteracao
+                </Text>
+              </View>
+            </Card>
+          </View>
+        </>
       ) : null}
 
       <SectionTitle
@@ -158,6 +206,18 @@ export function CurrentPlanScreen() {
           <Button
             label="Editar suplementacao"
             onPress={() => navigation.navigate("SupplementEditor")}
+            variant="ghost"
+          />
+          <Button
+            label="Revisar avaliacao atual"
+            onPress={() => navigation.navigate("Assessment")}
+            variant="ghost"
+          />
+          <Button
+            label="Abrir historico do aluno"
+            onPress={() =>
+              navigation.navigate("TeacherTabs", { screen: "TeacherHistoryTab" })
+            }
             variant="ghost"
           />
         </View>

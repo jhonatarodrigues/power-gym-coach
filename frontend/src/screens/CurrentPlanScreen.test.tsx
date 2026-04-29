@@ -28,6 +28,7 @@ describe("CurrentPlanScreen", () => {
     expect(screen.getByText("Editar treino atual")).toBeTruthy();
     expect(screen.getByText("Editar dieta atual")).toBeTruthy();
     expect(screen.getByText("Editar suplementacao")).toBeTruthy();
+    expect(screen.getByText("Review before save")).toBeTruthy();
   });
 
   it("shows unsaved changes state and allows discarding them", () => {
@@ -43,6 +44,7 @@ describe("CurrentPlanScreen", () => {
     expect(
       screen.getByText("Voce possui alteracoes nao salvas no plano atual.")
     ).toBeTruthy();
+    expect(screen.getByText("Secoes alteradas")).toBeTruthy();
 
     fireEvent.press(screen.getByText("Descartar alteracoes"));
 
@@ -59,5 +61,6 @@ describe("CurrentPlanScreen", () => {
     renderWithProviders(<CurrentPlanScreen />);
 
     expect(screen.queryByText("Editar treino atual")).toBeNull();
+    expect(screen.queryByText("Review before save")).toBeNull();
   });
 });

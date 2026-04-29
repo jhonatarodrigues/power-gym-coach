@@ -6,6 +6,8 @@ import type {
   HistoryRecord,
   Plan,
   ProgressEntry,
+  StudentProfile,
+  User,
 } from "@/types";
 
 export interface PlanRepository {
@@ -26,4 +28,20 @@ export interface ExamRepository {
 export interface ProgressRepository {
   listEntries: () => ProgressEntry[];
   listHistory: () => HistoryRecord[];
+}
+
+export interface StudentOverview {
+  studentProfile: StudentProfile;
+  studentUser: User;
+  currentPlanTitle: string;
+  latestAssessmentSummary?: string;
+  latestAssessmentSuggestedChanges?: string;
+  latestProgress?: ProgressEntry;
+  pendingExamCount: number;
+  latestHistory?: HistoryRecord;
+  nextRecommendedAction: string;
+}
+
+export interface StudentOverviewRepository {
+  getPrimaryStudentOverview: () => StudentOverview;
 }

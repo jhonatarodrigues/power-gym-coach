@@ -3,9 +3,9 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { Button, Card, Header, Screen, SectionTitle } from "@/components";
+import { useExamTimeline } from "@/hooks/useExamTimeline";
 import { useMockAuth } from "@/hooks/useMockAuth";
 import type { RootStackParamList } from "@/navigation/types";
-import { mockExamRepository } from "@/repository/mock";
 import { useAppTheme } from "@/theme";
 
 function getStatusLabel(status: "pending" | "sent" | "reviewed") {
@@ -26,35 +26,7 @@ export function ExamsScreen() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const isTeacher = session.accessLevel === "teacher";
-  const currentUserId = session.currentUser?.id;
-  const examRequestsMock = mockExamRepository.listRequests();
-  const examUploadsMock = mockExamRepository.listUploads();
-
-  const examRequests = examRequestsMock.filter((request) =>
-    currentUserId ? request.studentId === currentUserId || isTeacher : true
-  );
-  const examTimeline = examRequests
-    .flatMap((request) => {
-      const uploads = examUploadsMock.filter(
-        (upload) => upload.examRequestId === request.id
-      );
-
-      return [
-        {
-          id: `request-${request.id}`,
-          date: request.requestedAt.slice(0, 10),
-          title: `Solicitacao: ${request.title}`,
-          description: request.note ?? "Sem observacao adicional.",
-        },
-        ...uploads.map((upload) => ({
-          id: `upload-${upload.id}`,
-          date: upload.uploadedAt.slice(0, 10),
-          title: `Upload: ${upload.fileName}`,
-          description: "Arquivo vinculado a solicitacao correspondente.",
-        })),
-      ];
-    })
-    .sort((left, right) => right.date.localeCompare(left.date));
+  const { requests, timeline, uploads } = useExamTimeline();
 
   return (
     <Screen>
@@ -73,8 +45,8 @@ export function ExamsScreen() {
       />
 
       <View style={{ gap: theme.spacing.md }}>
-        {examRequests.map((request) => {
-          const uploads = examUploadsMock.filter(
+        {requests.map((request) => {
+          const requestUploads = uploads.filter(
             (upload) => upload.examRequestId === request.id
           );
 
@@ -124,12 +96,12 @@ export function ExamsScreen() {
                 </Text>
 
                 <Text style={{ color: theme.colors.textMuted }}>
-                  Uploads vinculados: {uploads.length}
+                  Uploads vinculados: {requestUploads.length}
                 </Text>
 
-                {uploads.length > 0 ? (
+                {requestUploads.length > 0 ? (
                   <View style={{ gap: theme.spacing.xs }}>
-                    {uploads.map((upload) => (
+                    {requestUploads.map((upload) => (
                       <Text key={upload.id} style={{ color: theme.colors.primary }}>
                         {upload.fileName}
                       </Text>
@@ -147,7 +119,7 @@ export function ExamsScreen() {
         description="Solicitacoes e uploads recentes em ordem cronologica."
       />
       <View style={{ gap: theme.spacing.md }}>
-        {examTimeline.map((item) => (
+        {timeline.map((item) => (
           <Card key={item.id}>
             <View style={{ gap: theme.spacing.sm }}>
               <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>

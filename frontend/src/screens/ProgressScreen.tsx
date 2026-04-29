@@ -1,22 +1,12 @@
 import { Text, View } from "react-native";
 
 import { Card, Header, HistoryCard, MetricCard, Screen, SectionTitle } from "@/components";
-import { mockProgressRepository } from "@/repository/mock";
+import { useProgressSummary } from "@/hooks/useProgressSummary";
 import { useAppTheme } from "@/theme";
 
 export function ProgressScreen() {
   const { theme } = useAppTheme();
-  const progressEntriesMock = mockProgressRepository.listEntries();
-  const latestEntry = progressEntriesMock.at(-1);
-  const firstEntry = progressEntriesMock[0];
-  const weightDelta =
-    latestEntry?.weightKg && firstEntry?.weightKg
-      ? (latestEntry.weightKg - firstEntry.weightKg).toFixed(1)
-      : "0.0";
-  const bodyFatDelta =
-    latestEntry?.bodyFatPercentage && firstEntry?.bodyFatPercentage
-      ? (latestEntry.bodyFatPercentage - firstEntry.bodyFatPercentage).toFixed(1)
-      : "0.0";
+  const { bodyFatDelta, entries, latestEntry, weightDelta } = useProgressSummary();
 
   return (
     <Screen>
@@ -97,7 +87,7 @@ export function ProgressScreen() {
         description="Entradas mockadas de progresso registradas ate agora."
       />
       <View style={{ gap: theme.spacing.md }}>
-        {progressEntriesMock.map((entry) => (
+        {entries.map((entry) => (
           <HistoryCard
             key={entry.id}
             record={{

@@ -65,22 +65,36 @@ Already implemented in the mocked frontend:
 - explicit save/reset UX for current plan changes
 - better transitions between plan view and plan editors
 - student details actions wired to the correct flows
+Status:
+- completed in mocked frontend
+- current plan now has draft/save/discard flow
+- current plan now includes a review-before-save summary
+- teacher student details is wired as an operational hub
 
 ### P2. Exams workflow
 - dedicated exams screen for teacher and student
 - request status visualization
 - uploaded exam list
 - quick actions to request or send new exams
+Status:
+- completed in mocked frontend
+- timeline and quick actions are available for teacher and student
 
 ### P3. Assessment and progress refinement
 - richer progress cards and comparisons
 - better assessment timeline
 - clearer relationship between assessment feedback and plan updates
+Status:
+- completed for the current mock phase
+- assessment, exams and progress are now connected more clearly
 
 ### P4. Repository preparation for real API
 - repository contracts per domain
 - mock/state separation
 - easier replacement of mock data by remote data sources
+Status:
+- in progress with strong foundation
+- domain hooks and student overview repository were added to reduce direct mock coupling
 
 ## Information architecture
 
