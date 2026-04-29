@@ -40,6 +40,7 @@ interface CurrentPlanState {
   updateMealObservation: (mealId: string, observation: string) => void;
   addMealItemToMeal: (input: AddMealItemInput) => void;
   addSupplement: (input: Omit<Supplement, "id">) => void;
+  applyAssessmentSuggestedChanges: (summary: string, suggestedChanges?: string) => void;
 }
 
 function clonePlan(plan: Plan): Plan {
@@ -260,6 +261,28 @@ export const useCurrentPlanStore = create<CurrentPlanState>((set) => ({
           ...state.currentPlan.dietPlan,
           supplements,
           ...calculateDietTotals(state.currentPlan.dietPlan.meals, supplements),
+        },
+      });
+
+      return createStateFromPlan(nextPlan, state.savedPlan);
+    }),
+  applyAssessmentSuggestedChanges: (summary, suggestedChanges) =>
+    set((state) => {
+      const nextPlan = withUpdatedTimestamp({
+        ...state.currentPlan,
+        status: "draft",
+        title: `${state.currentPlan.title} - Ajuste em revisao`,
+        trainingPlan: {
+          ...state.currentPlan.trainingPlan,
+          notes: [state.currentPlan.trainingPlan.notes, summary, suggestedChanges]
+            .filter(Boolean)
+            .join(" "),
+        },
+        dietPlan: {
+          ...state.currentPlan.dietPlan,
+          notes: [state.currentPlan.dietPlan.notes, suggestedChanges]
+            .filter(Boolean)
+            .join(" "),
         },
       });
 

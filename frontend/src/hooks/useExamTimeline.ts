@@ -1,16 +1,16 @@
 import { useMockAuth } from "@/hooks/useMockAuth";
-import { mockExamRepository } from "@/repository/mock";
+import { examRepository } from "@/repository/examRepository";
 
 export function useExamTimeline() {
   const { session } = useMockAuth();
   const isTeacher = session.accessLevel === "teacher";
   const currentUserId = session.currentUser?.id;
-  const requests = mockExamRepository
+  const requests = examRepository
     .listRequests()
     .filter((request) =>
       currentUserId ? request.studentId === currentUserId || isTeacher : true
     );
-  const uploads = mockExamRepository.listUploads();
+  const uploads = examRepository.listUploads();
 
   const timeline = requests
     .flatMap((request) => {

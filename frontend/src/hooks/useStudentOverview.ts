@@ -1,9 +1,9 @@
 import { useCurrentPlan } from "@/hooks/useCurrentPlan";
-import { mockStudentOverviewRepository } from "@/repository/mock";
+import { studentOverviewRepository } from "@/repository/studentRepository";
 
 export function useStudentOverview() {
   const { currentPlan, hasUnsavedChanges } = useCurrentPlan();
-  const overview = mockStudentOverviewRepository.getPrimaryStudentOverview();
+  const overview = studentOverviewRepository.getPrimaryStudentOverview();
 
   return {
     ...overview,

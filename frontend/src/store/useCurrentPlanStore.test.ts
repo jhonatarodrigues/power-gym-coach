@@ -146,4 +146,18 @@ describe("useCurrentPlanStore", () => {
     });
     expect(updatedPlan.dietPlan.calories).toBeCloseTo(initialCalories + 120, 1);
   });
+
+  it("applies assessment suggested changes to the current plan", () => {
+    useCurrentPlanStore.getState().applyAssessmentSuggestedChanges(
+      "Boa evolucao recente.",
+      "Aumentar carboidratos no almoco e revisar volume de quadriceps."
+    );
+
+    const updatedPlan = useCurrentPlanStore.getState().currentPlan;
+
+    expect(updatedPlan.status).toBe("draft");
+    expect(updatedPlan.title).toContain("Ajuste em revisao");
+    expect(updatedPlan.trainingPlan.notes).toContain("Boa evolucao recente.");
+    expect(updatedPlan.dietPlan.notes).toContain("Aumentar carboidratos");
+  });
 });

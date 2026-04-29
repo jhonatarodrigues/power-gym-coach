@@ -4,8 +4,10 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { Button, Card, Header, Screen, SectionTitle } from "@/components";
 import { useAssessmentTimeline } from "@/hooks/useAssessmentTimeline";
+import { useCurrentPlan } from "@/hooks/useCurrentPlan";
 import { useMockAuth } from "@/hooks/useMockAuth";
 import type { RootStackParamList } from "@/navigation/types";
+import { assessmentRepository } from "@/repository/assessmentRepository";
 import { useAppTheme } from "@/theme";
 
 export function AssessmentScreen() {
@@ -14,9 +16,10 @@ export function AssessmentScreen() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const isTeacher = session.accessLevel === "teacher";
-  const { review, submission, timeline } = useAssessmentTimeline();
+  const { applyAssessmentSuggestedChanges } = useCurrentPlan();
+  const { review, submission, submissions, timeline } = useAssessmentTimeline();
 
-  if (!submission || !review) {
+  if (!submission) {
     return (
       <Screen>
         <Header
@@ -26,6 +29,9 @@ export function AssessmentScreen() {
       </Screen>
     );
   }
+
+  const pendingSubmissions = submissions.filter((item) => item.status === "pending").length;
+  const hasReview = Boolean(review);
 
   return (
     <Screen>
@@ -71,21 +77,48 @@ export function AssessmentScreen() {
       />
       <Card>
         <View style={{ gap: theme.spacing.sm }}>
-          <Text
-            style={{
-              color: theme.colors.text,
-              fontSize: theme.typography.body,
-              fontWeight: "700",
-            }}
-          >
-            {review.summary}
+          {hasReview ? (
+            <>
+              <Text
+                style={{
+                  color: theme.colors.text,
+                  fontSize: theme.typography.body,
+                  fontWeight: "700",
+                }}
+              >
+                {review.summary}
+              </Text>
+              <Text style={{ color: theme.colors.textMuted }}>{review.observations}</Text>
+              {review.suggestedChanges ? (
+                <Text style={{ color: theme.colors.primary }}>
+                  {review.suggestedChanges}
+                </Text>
+              ) : null}
+            </>
+          ) : (
+            <>
+              <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
+                Aguardando devolutiva do professor
+              </Text>
+              <Text style={{ color: theme.colors.textMuted }}>
+                O aluno ja enviou novo material e o proximo ajuste de plano ainda nao foi consolidado.
+              </Text>
+            </>
+          )}
+        </View>
+      </Card>
+
+      <Card>
+        <View style={{ gap: theme.spacing.sm }}>
+          <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
+            Estado da jornada
           </Text>
-          <Text style={{ color: theme.colors.textMuted }}>{review.observations}</Text>
-          {review.suggestedChanges ? (
-            <Text style={{ color: theme.colors.primary }}>
-              {review.suggestedChanges}
-            </Text>
-          ) : null}
+          <Text style={{ color: theme.colors.textMuted }}>
+            Avaliacoes pendentes de revisao: {pendingSubmissions}
+          </Text>
+          <Text style={{ color: theme.colors.textMuted }}>
+            Planejamento pode ser atualizado diretamente a partir desta devolutiva.
+          </Text>
         </View>
       </Card>
 
@@ -115,10 +148,18 @@ export function AssessmentScreen() {
         {isTeacher ? (
           <>
             <Button
-              label="Criar novo planejamento"
-              onPress={() =>
-                navigation.navigate("TeacherTabs", { screen: "TeacherPlanTab" })
-              }
+              label="Aplicar sugestoes ao plano atual"
+              onPress={() => {
+                if (!review) {
+                  return;
+                }
+
+                applyAssessmentSuggestedChanges(
+                  review.summary,
+                  review.suggestedChanges
+                );
+                navigation.navigate("TeacherTabs", { screen: "TeacherPlanTab" });
+              }}
             />
             <Button
               label="Solicitar novas fotos"
@@ -133,7 +174,21 @@ export function AssessmentScreen() {
           </>
         ) : (
           <>
-            <Button label="Enviar nova avaliacao mockada" />
+            <Button
+              label="Enviar nova avaliacao mockada"
+              onPress={() => {
+                if (!session.currentUser) {
+                  return;
+                }
+
+                assessmentRepository.submitAssessment({
+                  studentId: session.currentUser.id,
+                  teacherId: submission.teacherId,
+                  description:
+                    "Nova avaliacao mockada enviada pelo aluno para revisar resposta ao plano atual.",
+                });
+              }}
+            />
             <Button
               label="Ver plano atualizado"
               onPress={() =>

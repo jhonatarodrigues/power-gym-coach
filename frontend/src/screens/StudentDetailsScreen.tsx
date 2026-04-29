@@ -10,6 +10,7 @@ import {
   Screen,
   SectionTitle,
 } from "@/components";
+import { useStudentJourneyTimeline } from "@/hooks/useStudentJourneyTimeline";
 import { useStudentOverview } from "@/hooks/useStudentOverview";
 import type { RootStackParamList } from "@/navigation/types";
 import { useAppTheme } from "@/theme";
@@ -31,6 +32,7 @@ export function StudentDetailsScreen() {
     supplementsCount,
     trainingDaysCount,
   } = useStudentOverview();
+  const { latestEvents } = useStudentJourneyTimeline();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -123,6 +125,33 @@ export function StudentDetailsScreen() {
             </Text>
           </View>
         </Card>
+      </View>
+
+      <SectionTitle
+        title="Timeline unificada"
+        description="Historico recente consolidando plano, avaliacao, exames e progresso."
+      />
+      <View style={{ gap: theme.spacing.md }}>
+        {latestEvents.map((event) => (
+          <Card key={event.id}>
+            <View style={{ gap: theme.spacing.sm }}>
+              <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
+                {event.date}
+              </Text>
+              <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
+                {event.title}
+              </Text>
+              <Text style={{ color: theme.colors.textMuted }}>
+                {event.description}
+              </Text>
+              {event.highlight ? (
+                <Text style={{ color: theme.colors.textMuted }}>
+                  {event.highlight}
+                </Text>
+              ) : null}
+            </View>
+          </Card>
+        ))}
       </View>
 
       <SectionTitle

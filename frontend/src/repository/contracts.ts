@@ -1,6 +1,7 @@
 import type {
   AssessmentReview,
   AssessmentSubmission,
+  ExamRequestStatus,
   ExamRequest,
   ExamUpload,
   HistoryRecord,
@@ -18,11 +19,31 @@ export interface PlanRepository {
 export interface AssessmentRepository {
   listSubmissions: () => AssessmentSubmission[];
   listReviews: () => AssessmentReview[];
+  submitAssessment: (input: {
+    studentId: string;
+    teacherId: string;
+    description: string;
+  }) => AssessmentSubmission;
 }
 
 export interface ExamRepository {
   listRequests: () => ExamRequest[];
   listUploads: () => ExamUpload[];
+  requestExam: (input: {
+    teacherId: string;
+    studentId: string;
+    title: string;
+    note?: string;
+  }) => ExamRequest;
+  uploadExam: (input: {
+    examRequestId: string;
+    studentId: string;
+    fileName: string;
+  }) => ExamUpload | null;
+  updateRequestStatus: (
+    examRequestId: string,
+    status: ExamRequestStatus
+  ) => ExamRequest | null;
 }
 
 export interface ProgressRepository {
@@ -44,4 +65,17 @@ export interface StudentOverview {
 
 export interface StudentOverviewRepository {
   getPrimaryStudentOverview: () => StudentOverview;
+}
+
+export interface StudentJourneyEvent {
+  id: string;
+  date: string;
+  domain: "assessment" | "exam" | "progress" | "history" | "plan";
+  title: string;
+  description: string;
+  highlight?: string;
+}
+
+export interface StudentJourneyRepository {
+  listPrimaryStudentJourney: () => StudentJourneyEvent[];
 }

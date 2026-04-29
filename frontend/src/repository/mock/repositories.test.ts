@@ -15,8 +15,15 @@ import {
   studentProfilesMock,
   usersMock,
 } from "@/repository/mock";
+import { useAssessmentWorkflowStore } from "@/store/useAssessmentWorkflowStore";
+import { useExamWorkflowStore } from "@/store/useExamWorkflowStore";
 
 describe("mock repositories", () => {
+  beforeEach(() => {
+    useAssessmentWorkflowStore.getState().reset();
+    useExamWorkflowStore.getState().reset();
+  });
+
   it("returns the mocked plan data", () => {
     expect(mockPlanRepository.getCurrentPlan()).toEqual(currentPlanMock);
     expect(mockPlanRepository.getArchivedPlans()).toEqual(archivedPlansMock);
@@ -32,6 +39,28 @@ describe("mock repositories", () => {
   it("returns the mocked exam data", () => {
     expect(mockExamRepository.listRequests()).toEqual(examRequestsMock);
     expect(mockExamRepository.listUploads()).toEqual(examUploadsMock);
+  });
+
+  it("mutates the exam workflow through the repository contract", () => {
+    mockExamRepository.requestExam({
+      teacherId: "user-teacher-1",
+      studentId: "user-student-1",
+      title: "Triglicerideos",
+    });
+
+    expect(mockExamRepository.listRequests()[0]?.title).toBe("Triglicerideos");
+  });
+
+  it("mutates the assessment workflow through the repository contract", () => {
+    mockAssessmentRepository.submitAssessment({
+      teacherId: "user-teacher-1",
+      studentId: "user-student-1",
+      description: "Nova submissao de avaliacao",
+    });
+
+    expect(mockAssessmentRepository.listSubmissions()[0]?.description).toBe(
+      "Nova submissao de avaliacao"
+    );
   });
 
   it("returns the mocked progress data", () => {

@@ -95,6 +95,16 @@ Status:
 Status:
 - in progress with strong foundation
 - domain hooks and student overview repository were added to reduce direct mock coupling
+- domain repository adapters were added for assessment, exams, plan, progress and student journey
+
+## New delivery status
+
+Recently completed:
+- more realistic mocked exam workflow
+- assessment-to-plan update flow
+- unified student journey timeline for the teacher
+- domain-level repository adapters
+- stronger unit coverage on new workflow state and critical screens
 
 ## Information architecture
 

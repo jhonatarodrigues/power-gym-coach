@@ -15,3 +15,14 @@ Diretrizes:
 - `contracts.ts` define interfaces de acesso por dominio
 - as telas devem preferir contratos/repositorios em vez de depender diretamente da estrutura do mock
 - isso facilita trocar a implementacao mock por API real depois
+
+## Adaptadores por dominio
+- `assessmentRepository.ts`
+- `examRepository.ts`
+- `planRepository.ts`
+- `progressRepository.ts`
+- `studentRepository.ts`
+
+Esses arquivos funcionam como ponto de entrada estavel por dominio.
+Na fase mockada eles apontam para implementacoes locais.
+Quando a API real entrar, a ideia e trocar a implementacao por dominio sem reescrever telas e hooks.

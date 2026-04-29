@@ -30,4 +30,19 @@ describe("useAssessmentTimeline", () => {
 
     submissionsSpy.mockRestore();
   });
+
+  it("returns an empty timeline when the review is missing", () => {
+    const reviewsSpy = jest
+      .spyOn(mockAssessmentRepository, "listReviews")
+      .mockReturnValue([]);
+
+    const { result } = renderHook(() => useAssessmentTimeline(), {
+      wrapper: Providers,
+    });
+
+    expect(result.current.review).toBeUndefined();
+    expect(result.current.timeline).toEqual([]);
+
+    reviewsSpy.mockRestore();
+  });
 });

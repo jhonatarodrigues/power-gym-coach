@@ -7,6 +7,7 @@ module.exports = {
     "!src/types/**/*.ts",
     "!src/repository/mock/**/*.ts",
     "!src/repository/contracts.ts",
+    "!src/repository/*Repository.ts",
     "!src/stories/**",
     "!src/navigation/types.ts",
   ],

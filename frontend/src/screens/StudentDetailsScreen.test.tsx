@@ -10,6 +10,7 @@ describe("StudentDetailsScreen", () => {
 
     expect(screen.getByText("Student details")).toBeTruthy();
     expect(screen.getByText("Sinais para decisao")).toBeTruthy();
+    expect(screen.getByText("Timeline unificada")).toBeTruthy();
     expect(screen.getByText("Acoes rapidas")).toBeTruthy();
     expect(screen.getByText("Ajustar plano atual")).toBeTruthy();
     expect(screen.getByText("Revisar progresso")).toBeTruthy();

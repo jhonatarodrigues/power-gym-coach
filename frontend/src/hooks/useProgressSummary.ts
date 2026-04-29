@@ -1,4 +1,4 @@
-import { mockProgressRepository } from "@/repository/mock";
+import { progressRepository } from "@/repository/progressRepository";
 
 function calculateDelta(current?: number, initial?: number) {
   if (current == null || initial == null) {
@@ -9,7 +9,7 @@ function calculateDelta(current?: number, initial?: number) {
 }
 
 export function useProgressSummary() {
-  const entries = mockProgressRepository.listEntries();
+  const entries = progressRepository.listEntries();
   const latestEntry = entries.at(-1);
   const firstEntry = entries[0];
 

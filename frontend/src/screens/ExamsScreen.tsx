@@ -6,6 +6,7 @@ import { Button, Card, Header, Screen, SectionTitle } from "@/components";
 import { useExamTimeline } from "@/hooks/useExamTimeline";
 import { useMockAuth } from "@/hooks/useMockAuth";
 import type { RootStackParamList } from "@/navigation/types";
+import { examRepository } from "@/repository/examRepository";
 import { useAppTheme } from "@/theme";
 
 function getStatusLabel(status: "pending" | "sent" | "reviewed") {
@@ -27,6 +28,8 @@ export function ExamsScreen() {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const isTeacher = session.accessLevel === "teacher";
   const { requests, timeline, uploads } = useExamTimeline();
+  const nextUploadTarget = requests.find((request) => request.status !== "reviewed");
+  const latestSentRequest = requests.find((request) => request.status === "sent");
 
   return (
     <Screen>
@@ -43,6 +46,22 @@ export function ExamsScreen() {
             : "Veja o que precisa ser enviado e o que ja foi anexado."
         }
       />
+      <Card>
+        <View style={{ gap: theme.spacing.sm }}>
+          <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
+            Estado atual
+          </Text>
+          <Text style={{ color: theme.colors.textMuted }}>
+            Pendentes: {requests.filter((request) => request.status === "pending").length}
+          </Text>
+          <Text style={{ color: theme.colors.textMuted }}>
+            Enviados: {requests.filter((request) => request.status === "sent").length}
+          </Text>
+          <Text style={{ color: theme.colors.textMuted }}>
+            Revisados: {requests.filter((request) => request.status === "reviewed").length}
+          </Text>
+        </View>
+      </Card>
 
       <View style={{ gap: theme.spacing.md }}>
         {requests.map((request) => {
@@ -140,8 +159,30 @@ export function ExamsScreen() {
         {isTeacher ? (
           <>
             <Button
-              label="Solicitar novo exame"
-              onPress={() => navigation.navigate("Assessment")}
+              label="Solicitar novo exame mockado"
+              onPress={() => {
+                if (!session.currentUser) {
+                  return;
+                }
+
+                examRepository.requestExam({
+                  teacherId: session.currentUser.id,
+                  studentId: requests[0]?.studentId ?? "user-student-1",
+                  title: "Ferritina + vitamina B12",
+                  note: "Solicitacao mockada para revisar fadiga, energia e recuperacao.",
+                });
+              }}
+            />
+            <Button
+              label="Marcar ultimo exame enviado como revisado"
+              onPress={() => {
+                if (!latestSentRequest) {
+                  return;
+                }
+
+                examRepository.updateRequestStatus(latestSentRequest.id, "reviewed");
+              }}
+              variant="ghost"
             />
             <Button
               label="Voltar ao plano atual"
@@ -153,7 +194,20 @@ export function ExamsScreen() {
           </>
         ) : (
           <>
-            <Button label="Enviar exame mockado" />
+            <Button
+              label="Enviar exame mockado"
+              onPress={() => {
+                if (!session.currentUser || !nextUploadTarget) {
+                  return;
+                }
+
+                examRepository.uploadExam({
+                  examRequestId: nextUploadTarget.id,
+                  studentId: session.currentUser.id,
+                  fileName: `upload-mock-${Date.now()}.pdf`,
+                });
+              }}
+            />
             <Button
               label="Ver plano atual"
               onPress={() =>

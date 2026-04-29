@@ -1,8 +1,8 @@
-import { mockAssessmentRepository } from "@/repository/mock";
+import { assessmentRepository } from "@/repository/assessmentRepository";
 
 export function useAssessmentTimeline() {
-  const submissions = mockAssessmentRepository.listSubmissions();
-  const reviews = mockAssessmentRepository.listReviews();
+  const submissions = assessmentRepository.listSubmissions();
+  const reviews = assessmentRepository.listReviews();
   const submission = submissions[0];
   const review = reviews[0];
 
@@ -26,6 +26,8 @@ export function useAssessmentTimeline() {
     : [];
 
   return {
+    submissions,
+    reviews,
     submission,
     review,
     timeline,
