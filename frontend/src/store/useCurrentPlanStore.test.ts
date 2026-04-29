@@ -83,6 +83,41 @@ describe("useCurrentPlanStore", () => {
     expect(useCurrentPlanStore.getState().currentPlan).toEqual(currentPlanMock);
   });
 
+  it("tracks unsaved changes and saves the current draft", () => {
+    useCurrentPlanStore.getState().updateTrainingDayNotes(
+      currentPlanMock.trainingPlan.days[0].id,
+      "Alteracao em rascunho"
+    );
+
+    expect(useCurrentPlanStore.getState().hasUnsavedChanges).toBe(true);
+
+    useCurrentPlanStore.getState().saveCurrentPlan();
+
+    expect(useCurrentPlanStore.getState().hasUnsavedChanges).toBe(false);
+    expect(useCurrentPlanStore.getState().savedPlan.trainingPlan.days[0]?.notes).toBe(
+      "Alteracao em rascunho"
+    );
+  });
+
+  it("discards draft changes and restores the last saved plan", () => {
+    useCurrentPlanStore.getState().updateTrainingDayNotes(
+      currentPlanMock.trainingPlan.days[0].id,
+      "Primeira versao"
+    );
+    useCurrentPlanStore.getState().saveCurrentPlan();
+    useCurrentPlanStore.getState().updateTrainingDayNotes(
+      currentPlanMock.trainingPlan.days[0].id,
+      "Versao nao salva"
+    );
+
+    useCurrentPlanStore.getState().discardCurrentPlanChanges();
+
+    expect(useCurrentPlanStore.getState().currentPlan.trainingPlan.days[0]?.notes).toBe(
+      "Primeira versao"
+    );
+    expect(useCurrentPlanStore.getState().hasUnsavedChanges).toBe(false);
+  });
+
   it("adds a supplement and recalculates diet totals", () => {
     const initialSupplementCount = currentPlanMock.dietPlan.supplements.length;
     const initialCalories = currentPlanMock.dietPlan.calories;

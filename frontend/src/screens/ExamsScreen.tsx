@@ -2,7 +2,7 @@ import { Text, View } from "react-native";
 
 import { Button, Card, Header, Screen, SectionTitle } from "@/components";
 import { useMockAuth } from "@/hooks/useMockAuth";
-import { examRequestsMock, examUploadsMock } from "@/repository/mock";
+import { mockExamRepository } from "@/repository/mock";
 import { useAppTheme } from "@/theme";
 
 function getStatusLabel(status: "pending" | "sent" | "reviewed") {
@@ -22,10 +22,34 @@ export function ExamsScreen() {
   const { session } = useMockAuth();
   const isTeacher = session.accessLevel === "teacher";
   const currentUserId = session.currentUser?.id;
+  const examRequestsMock = mockExamRepository.listRequests();
+  const examUploadsMock = mockExamRepository.listUploads();
 
   const examRequests = examRequestsMock.filter((request) =>
     currentUserId ? request.studentId === currentUserId || isTeacher : true
   );
+  const examTimeline = examRequests
+    .flatMap((request) => {
+      const uploads = examUploadsMock.filter(
+        (upload) => upload.examRequestId === request.id
+      );
+
+      return [
+        {
+          id: `request-${request.id}`,
+          date: request.requestedAt.slice(0, 10),
+          title: `Solicitacao: ${request.title}`,
+          description: request.note ?? "Sem observacao adicional.",
+        },
+        ...uploads.map((upload) => ({
+          id: `upload-${upload.id}`,
+          date: upload.uploadedAt.slice(0, 10),
+          title: `Upload: ${upload.fileName}`,
+          description: "Arquivo vinculado a solicitacao correspondente.",
+        })),
+      ];
+    })
+    .sort((left, right) => right.date.localeCompare(left.date));
 
   return (
     <Screen>
@@ -111,6 +135,28 @@ export function ExamsScreen() {
             </Card>
           );
         })}
+      </View>
+
+      <SectionTitle
+        title="Timeline de exames"
+        description="Solicitacoes e uploads recentes em ordem cronologica."
+      />
+      <View style={{ gap: theme.spacing.md }}>
+        {examTimeline.map((item) => (
+          <Card key={item.id}>
+            <View style={{ gap: theme.spacing.sm }}>
+              <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
+                {item.date}
+              </Text>
+              <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
+                {item.title}
+              </Text>
+              <Text style={{ color: theme.colors.textMuted }}>
+                {item.description}
+              </Text>
+            </View>
+          </Card>
+        ))}
       </View>
 
       <View style={{ gap: theme.spacing.md }}>

@@ -22,7 +22,13 @@ import { useAppTheme } from "@/theme";
 export function CurrentPlanScreen() {
   const { theme } = useAppTheme();
   const { session } = useMockAuth();
-  const { currentPlan } = useCurrentPlan();
+  const {
+    currentPlan,
+    discardCurrentPlanChanges,
+    hasUnsavedChanges,
+    lastSavedAt,
+    saveCurrentPlan,
+  } = useCurrentPlan();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const isTeacher = session.accessLevel === "teacher";
@@ -48,8 +54,42 @@ export function CurrentPlanScreen() {
           <Text style={{ color: theme.colors.textMuted }}>
             Vigencia: {currentPlan.startDate} ate {currentPlan.endDate}
           </Text>
+          <Text style={{ color: theme.colors.textMuted }}>
+            Ultimo salvamento: {lastSavedAt.slice(0, 16).replace("T", " ")}
+          </Text>
         </View>
       </Card>
+
+      {isTeacher ? (
+        <Card>
+          <View style={{ gap: theme.spacing.sm }}>
+            <Text
+              style={{
+                color: hasUnsavedChanges
+                  ? theme.colors.primary
+                  : theme.colors.textMuted,
+                fontWeight: "700",
+              }}
+            >
+              {hasUnsavedChanges
+                ? "Voce possui alteracoes nao salvas no plano atual."
+                : "Plano atual sincronizado com a ultima versao salva."}
+            </Text>
+            <View style={{ gap: theme.spacing.sm }}>
+              <Button
+                label="Salvar alteracoes do plano"
+                onPress={saveCurrentPlan}
+              />
+              <Button
+                disabled={!hasUnsavedChanges}
+                label="Descartar alteracoes"
+                onPress={discardCurrentPlanChanges}
+                variant="ghost"
+              />
+            </View>
+          </View>
+        </Card>
+      ) : null}
 
       <SectionTitle
         title="Training"

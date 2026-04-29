@@ -29,7 +29,12 @@ interface AddMealItemInput {
 
 interface CurrentPlanState {
   currentPlan: Plan;
+  savedPlan: Plan;
+  hasUnsavedChanges: boolean;
+  lastSavedAt: string;
   resetCurrentPlan: () => void;
+  saveCurrentPlan: () => void;
+  discardCurrentPlanChanges: () => void;
   updateTrainingDayNotes: (dayId: string, notes: string) => void;
   addExerciseToDay: (input: AddExerciseInput) => void;
   updateMealObservation: (mealId: string, observation: string) => void;
@@ -102,12 +107,41 @@ function withUpdatedTimestamp(plan: Plan): Plan {
   };
 }
 
+function hasPlanChanged(currentPlan: Plan, savedPlan: Plan) {
+  return JSON.stringify(currentPlan) !== JSON.stringify(savedPlan);
+}
+
+function createStateFromPlan(currentPlan: Plan, savedPlan: Plan) {
+  return {
+    currentPlan,
+    savedPlan,
+    hasUnsavedChanges: hasPlanChanged(currentPlan, savedPlan),
+    lastSavedAt: savedPlan.updatedAt,
+  };
+}
+
 export const useCurrentPlanStore = create<CurrentPlanState>((set) => ({
-  currentPlan: clonePlan(currentPlanMock),
-  resetCurrentPlan: () => set({ currentPlan: clonePlan(currentPlanMock) }),
+  ...createStateFromPlan(clonePlan(currentPlanMock), clonePlan(currentPlanMock)),
+  resetCurrentPlan: () => {
+    const initialPlan = clonePlan(currentPlanMock);
+
+    set(createStateFromPlan(initialPlan, clonePlan(currentPlanMock)));
+  },
+  saveCurrentPlan: () =>
+    set((state) => {
+      const savedPlan = clonePlan(state.currentPlan);
+
+      return createStateFromPlan(savedPlan, savedPlan);
+    }),
+  discardCurrentPlanChanges: () =>
+    set((state) => {
+      const restoredPlan = clonePlan(state.savedPlan);
+
+      return createStateFromPlan(restoredPlan, clonePlan(state.savedPlan));
+    }),
   updateTrainingDayNotes: (dayId, notes) =>
-    set((state) => ({
-      currentPlan: withUpdatedTimestamp({
+    set((state) => {
+      const nextPlan = withUpdatedTimestamp({
         ...state.currentPlan,
         trainingPlan: {
           ...state.currentPlan.trainingPlan,
@@ -115,11 +149,13 @@ export const useCurrentPlanStore = create<CurrentPlanState>((set) => ({
             day.id === dayId ? { ...day, notes } : day
           ),
         },
-      }),
-    })),
+      });
+
+      return createStateFromPlan(nextPlan, state.savedPlan);
+    }),
   addExerciseToDay: (input) =>
-    set((state) => ({
-      currentPlan: withUpdatedTimestamp({
+    set((state) => {
+      const nextPlan = withUpdatedTimestamp({
         ...state.currentPlan,
         trainingPlan: {
           ...state.currentPlan.trainingPlan,
@@ -146,11 +182,13 @@ export const useCurrentPlanStore = create<CurrentPlanState>((set) => ({
             };
           }),
         },
-      }),
-    })),
+      });
+
+      return createStateFromPlan(nextPlan, state.savedPlan);
+    }),
   updateMealObservation: (mealId, observation) =>
-    set((state) => ({
-      currentPlan: withUpdatedTimestamp({
+    set((state) => {
+      const nextPlan = withUpdatedTimestamp({
         ...state.currentPlan,
         dietPlan: {
           ...state.currentPlan.dietPlan,
@@ -158,8 +196,10 @@ export const useCurrentPlanStore = create<CurrentPlanState>((set) => ({
             meal.id === mealId ? { ...meal, observation } : meal
           ),
         },
-      }),
-    })),
+      });
+
+      return createStateFromPlan(nextPlan, state.savedPlan);
+    }),
   addMealItemToMeal: ({ mealId, foodId, amount, observation }) =>
     set((state) => {
       const food = foodLibraryMock.find((item) => item.id === foodId);
@@ -193,16 +233,16 @@ export const useCurrentPlanStore = create<CurrentPlanState>((set) => ({
         };
       });
 
-      return {
-        currentPlan: withUpdatedTimestamp({
-          ...state.currentPlan,
-          dietPlan: {
-            ...state.currentPlan.dietPlan,
-            meals,
-            ...calculateDietTotals(meals, state.currentPlan.dietPlan.supplements),
-          },
-        }),
-      };
+      const nextPlan = withUpdatedTimestamp({
+        ...state.currentPlan,
+        dietPlan: {
+          ...state.currentPlan.dietPlan,
+          meals,
+          ...calculateDietTotals(meals, state.currentPlan.dietPlan.supplements),
+        },
+      });
+
+      return createStateFromPlan(nextPlan, state.savedPlan);
     }),
   addSupplement: (input) =>
     set((state) => {
@@ -214,15 +254,15 @@ export const useCurrentPlanStore = create<CurrentPlanState>((set) => ({
         },
       ];
 
-      return {
-        currentPlan: withUpdatedTimestamp({
-          ...state.currentPlan,
-          dietPlan: {
-            ...state.currentPlan.dietPlan,
-            supplements,
-            ...calculateDietTotals(state.currentPlan.dietPlan.meals, supplements),
-          },
-        }),
-      };
+      const nextPlan = withUpdatedTimestamp({
+        ...state.currentPlan,
+        dietPlan: {
+          ...state.currentPlan.dietPlan,
+          supplements,
+          ...calculateDietTotals(state.currentPlan.dietPlan.meals, supplements),
+        },
+      });
+
+      return createStateFromPlan(nextPlan, state.savedPlan);
     }),
 }));

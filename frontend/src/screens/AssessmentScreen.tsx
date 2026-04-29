@@ -3,10 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { Button, Card, Header, Screen, SectionTitle } from "@/components";
-import {
-  assessmentReviewsMock,
-  assessmentSubmissionsMock,
-} from "@/repository/mock";
+import { mockAssessmentRepository } from "@/repository/mock";
 import { useMockAuth } from "@/hooks/useMockAuth";
 import type { RootStackParamList } from "@/navigation/types";
 import { useAppTheme } from "@/theme";
@@ -18,8 +15,25 @@ export function AssessmentScreen() {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const isTeacher = session.accessLevel === "teacher";
 
-  const submission = assessmentSubmissionsMock[0];
-  const review = assessmentReviewsMock[0];
+  const submissions = mockAssessmentRepository.listSubmissions();
+  const reviews = mockAssessmentRepository.listReviews();
+  const submission = submissions[0];
+  const review = reviews[0];
+
+  const timeline = [
+    {
+      id: submission.id,
+      date: submission.submittedAt.slice(0, 10),
+      title: isTeacher ? "Aluno enviou avaliacao" : "Voce enviou avaliacao",
+      description: submission.description,
+    },
+    {
+      id: review.id,
+      date: review.reviewedAt.slice(0, 10),
+      title: isTeacher ? "Devolutiva registrada" : "Professor revisou sua avaliacao",
+      description: review.summary,
+    },
+  ];
 
   return (
     <Screen>
@@ -82,6 +96,28 @@ export function AssessmentScreen() {
           ) : null}
         </View>
       </Card>
+
+      <SectionTitle
+        title="Timeline da avaliacao"
+        description="Linha do tempo da avaliacao atual e da devolutiva."
+      />
+      <View style={{ gap: theme.spacing.md }}>
+        {timeline.map((item) => (
+          <Card key={item.id}>
+            <View style={{ gap: theme.spacing.sm }}>
+              <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
+                {item.date}
+              </Text>
+              <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
+                {item.title}
+              </Text>
+              <Text style={{ color: theme.colors.textMuted }}>
+                {item.description}
+              </Text>
+            </View>
+          </Card>
+        ))}
+      </View>
 
       <View style={{ gap: theme.spacing.md }}>
         {isTeacher ? (

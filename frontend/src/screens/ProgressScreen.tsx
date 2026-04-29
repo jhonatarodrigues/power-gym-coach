@@ -1,11 +1,12 @@
 import { Text, View } from "react-native";
 
 import { Card, Header, HistoryCard, MetricCard, Screen, SectionTitle } from "@/components";
-import { progressEntriesMock } from "@/repository/mock";
+import { mockProgressRepository } from "@/repository/mock";
 import { useAppTheme } from "@/theme";
 
 export function ProgressScreen() {
   const { theme } = useAppTheme();
+  const progressEntriesMock = mockProgressRepository.listEntries();
   const latestEntry = progressEntriesMock.at(-1);
   const firstEntry = progressEntriesMock[0];
   const weightDelta =
@@ -42,6 +43,19 @@ export function ProgressScreen() {
         />
       </View>
 
+      <View style={{ gap: theme.spacing.md }}>
+        <MetricCard
+          label="variacao de peso"
+          value={`${weightDelta} kg`}
+          trend="comparado com a primeira leitura"
+        />
+        <MetricCard
+          label="variacao de BF"
+          value={`${bodyFatDelta}%`}
+          trend="comparado com a primeira leitura"
+        />
+      </View>
+
       {latestEntry ? (
         <>
           <SectionTitle
@@ -59,6 +73,20 @@ export function ProgressScreen() {
               <Text style={{ color: theme.colors.textMuted }}>
                 Fotos registradas: {latestEntry.photos.length}
               </Text>
+              <View style={{ gap: theme.spacing.sm }}>
+                {latestEntry.photos.map((photo) => (
+                  <Card key={photo.id}>
+                    <View style={{ gap: theme.spacing.xs }}>
+                      <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
+                        {photo.label ?? "Foto"}
+                      </Text>
+                      <Text style={{ color: theme.colors.textMuted }}>
+                        {photo.imageUrl}
+                      </Text>
+                    </View>
+                  </Card>
+                ))}
+              </View>
             </View>
           </Card>
         </>

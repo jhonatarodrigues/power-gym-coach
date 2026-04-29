@@ -1,8 +1,17 @@
 import { screen } from "@testing-library/react-native";
 
-jest.mock("@/repository/mock", () => ({
-  progressEntriesMock: [],
-}));
+jest.mock("@/repository/mock", () => {
+  const actual = jest.requireActual("@/repository/mock");
+
+  return {
+    ...actual,
+    progressEntriesMock: [],
+    mockProgressRepository: {
+      ...actual.mockProgressRepository,
+      listEntries: () => [],
+    },
+  };
+});
 
 import { renderWithProviders } from "@/test-utils/renderWithProviders";
 
