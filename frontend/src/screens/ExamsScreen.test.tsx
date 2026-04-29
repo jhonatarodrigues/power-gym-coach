@@ -33,6 +33,6 @@ describe("ExamsScreen", () => {
     renderWithProviders(<ExamsScreen />);
 
     expect(screen.getByText("Enviar exame mockado")).toBeTruthy();
-    expect(screen.getByText("Ver historico de envios")).toBeTruthy();
+    expect(screen.getByText("Ver plano atual")).toBeTruthy();
   });
 });

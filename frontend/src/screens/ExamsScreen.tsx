@@ -1,7 +1,10 @@
 import { Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { Button, Card, Header, Screen, SectionTitle } from "@/components";
 import { useMockAuth } from "@/hooks/useMockAuth";
+import type { RootStackParamList } from "@/navigation/types";
 import { mockExamRepository } from "@/repository/mock";
 import { useAppTheme } from "@/theme";
 
@@ -20,6 +23,8 @@ function getStatusLabel(status: "pending" | "sent" | "reviewed") {
 export function ExamsScreen() {
   const { theme } = useAppTheme();
   const { session } = useMockAuth();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const isTeacher = session.accessLevel === "teacher";
   const currentUserId = session.currentUser?.id;
   const examRequestsMock = mockExamRepository.listRequests();
@@ -162,13 +167,28 @@ export function ExamsScreen() {
       <View style={{ gap: theme.spacing.md }}>
         {isTeacher ? (
           <>
-            <Button label="Solicitar novo exame" />
-            <Button label="Marcar como revisado" variant="ghost" />
+            <Button
+              label="Solicitar novo exame"
+              onPress={() => navigation.navigate("Assessment")}
+            />
+            <Button
+              label="Voltar ao plano atual"
+              onPress={() =>
+                navigation.navigate("TeacherTabs", { screen: "TeacherPlanTab" })
+              }
+              variant="ghost"
+            />
           </>
         ) : (
           <>
             <Button label="Enviar exame mockado" />
-            <Button label="Ver historico de envios" variant="ghost" />
+            <Button
+              label="Ver plano atual"
+              onPress={() =>
+                navigation.navigate("StudentTabs", { screen: "StudentPlanTab" })
+              }
+              variant="ghost"
+            />
           </>
         )}
       </View>

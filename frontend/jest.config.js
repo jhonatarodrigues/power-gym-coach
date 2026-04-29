@@ -6,6 +6,7 @@ module.exports = {
     "!src/**/index.ts",
     "!src/types/**/*.ts",
     "!src/repository/mock/**/*.ts",
+    "!src/repository/contracts.ts",
     "!src/stories/**",
     "!src/navigation/types.ts",
   ],

@@ -11,5 +11,7 @@ describe("StudentDetailsScreen", () => {
     expect(screen.getByText("Student details")).toBeTruthy();
     expect(screen.getByText("Acoes rapidas")).toBeTruthy();
     expect(screen.getByText("Abrir plano atual")).toBeTruthy();
+    expect(screen.getByText("Abrir avaliacao")).toBeTruthy();
+    expect(screen.getByText("Abrir exams")).toBeTruthy();
   });
 });

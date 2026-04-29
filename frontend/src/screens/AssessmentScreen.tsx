@@ -122,15 +122,38 @@ export function AssessmentScreen() {
       <View style={{ gap: theme.spacing.md }}>
         {isTeacher ? (
           <>
-            <Button label="Criar novo planejamento" />
-            <Button label="Solicitar novas fotos" variant="ghost" />
-            <Button label="Abrir exams" onPress={() => navigation.navigate("Exams")} variant="ghost" />
+            <Button
+              label="Criar novo planejamento"
+              onPress={() =>
+                navigation.navigate("TeacherTabs", { screen: "TeacherPlanTab" })
+              }
+            />
+            <Button
+              label="Solicitar novas fotos"
+              onPress={() => navigation.navigate("Exams")}
+              variant="ghost"
+            />
+            <Button
+              label="Abrir exams"
+              onPress={() => navigation.navigate("Exams")}
+              variant="ghost"
+            />
           </>
         ) : (
           <>
             <Button label="Enviar nova avaliacao mockada" />
-            <Button label="Ver plano atualizado" variant="ghost" />
-            <Button label="Abrir exams" onPress={() => navigation.navigate("Exams")} variant="ghost" />
+            <Button
+              label="Ver plano atualizado"
+              onPress={() =>
+                navigation.navigate("StudentTabs", { screen: "StudentPlanTab" })
+              }
+              variant="ghost"
+            />
+            <Button
+              label="Abrir exams"
+              onPress={() => navigation.navigate("Exams")}
+              variant="ghost"
+            />
           </>
         )}
       </View>

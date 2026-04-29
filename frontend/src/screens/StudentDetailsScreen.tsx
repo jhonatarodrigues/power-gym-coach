@@ -1,4 +1,6 @@
 import { Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import {
   AthleteListItem,
@@ -8,6 +10,7 @@ import {
   Screen,
   SectionTitle,
 } from "@/components";
+import type { RootStackParamList } from "@/navigation/types";
 import {
   examRequestsMock,
   progressEntriesMock,
@@ -20,6 +23,8 @@ import { useAppTheme } from "@/theme";
 export function StudentDetailsScreen() {
   const { theme } = useAppTheme();
   const { currentPlan } = useCurrentPlan();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const studentProfile = studentProfilesMock[0];
   const studentUser = usersMock.find((user) => user.id === studentProfile.userId);
@@ -73,8 +78,27 @@ export function StudentDetailsScreen() {
         description="Atalhos iniciais para o fluxo do professor."
       />
       <View style={{ gap: theme.spacing.md }}>
-        <Button label="Abrir plano atual" />
-        <Button label="Editar dieta" variant="ghost" />
+        <Button
+          label="Abrir plano atual"
+          onPress={() =>
+            navigation.navigate("TeacherTabs", { screen: "TeacherPlanTab" })
+          }
+        />
+        <Button
+          label="Editar dieta"
+          onPress={() => navigation.navigate("MealEditor")}
+          variant="ghost"
+        />
+        <Button
+          label="Abrir avaliacao"
+          onPress={() => navigation.navigate("Assessment")}
+          variant="ghost"
+        />
+        <Button
+          label="Abrir exams"
+          onPress={() => navigation.navigate("Exams")}
+          variant="ghost"
+        />
       </View>
     </Screen>
   );
