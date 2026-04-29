@@ -25,6 +25,7 @@ export function TextField({ label, hint, ...props }: TextFieldProps) {
       ) : null}
 
       <TextInput
+        accessibilityLabel={label}
         placeholderTextColor={theme.colors.textMuted}
         style={{
           backgroundColor: theme.colors.inputBackground,

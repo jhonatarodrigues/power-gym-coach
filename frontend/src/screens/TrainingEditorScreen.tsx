@@ -1,53 +1,80 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Text, View } from "react-native";
+import { Controller, useForm } from "react-hook-form";
 
-import { Button, Header, Screen, SectionTitle, TrainingDayCard } from "@/components";
-import { currentPlanMock } from "@/repository/mock";
+import { Button, Header, Screen, SectionTitle, TextField, TrainingDayCard } from "@/components";
+import { useCurrentPlan } from "@/hooks/useCurrentPlan";
+import { exerciseLibraryMock } from "@/repository/mock";
 import { useAppTheme } from "@/theme";
+
+interface TrainingEditorFormValues {
+  selectedDayId: string;
+  selectedExerciseId: string;
+  sets: string;
+  reps: string;
+  restSeconds: string;
+  executionNotes: string;
+  dayNotes: string;
+}
 
 export function TrainingEditorScreen() {
   const { theme } = useAppTheme();
-  const [selectedDayId, setSelectedDayId] = useState(
-    currentPlanMock.trainingPlan.days[0]?.id
-  );
-  const [days, setDays] = useState(currentPlanMock.trainingPlan.days);
+  const { currentPlan, addExerciseToDay, updateTrainingDayNotes } = useCurrentPlan();
+  const [selectedDayId, setSelectedDayId] = useState(currentPlan.trainingPlan.days[0]?.id);
+  const initialDayId = currentPlan.trainingPlan.days[0]?.id ?? "";
+  const initialExerciseId = exerciseLibraryMock[0]?.id ?? "";
+  const { control, handleSubmit, setValue, watch } =
+    useForm<TrainingEditorFormValues>({
+      defaultValues: {
+        selectedDayId: initialDayId,
+        selectedExerciseId: initialExerciseId,
+        sets: "3",
+        reps: "10-12",
+        restSeconds: "60",
+        executionNotes: "",
+        dayNotes: currentPlan.trainingPlan.days[0]?.notes ?? "",
+      },
+    });
+  const days = currentPlan.trainingPlan.days;
 
   const selectedDay = useMemo(
     () => days.find((day) => day.id === selectedDayId) ?? days[0],
     [days, selectedDayId]
   );
 
-  function addMockExercise() {
-    if (!selectedDay) {
+  const selectedExerciseId = watch("selectedExerciseId");
+  const selectedExercise = useMemo(
+    () =>
+      exerciseLibraryMock.find((exercise) => exercise.id === selectedExerciseId) ??
+      exerciseLibraryMock[0],
+    [selectedExerciseId]
+  );
+
+  useEffect(() => {
+    if (selectedDay) {
+      setValue("selectedDayId", selectedDay.id);
+      setValue("dayNotes", selectedDay.notes ?? "");
+    }
+  }, [selectedDay, setValue]);
+
+  function onSubmit(values: TrainingEditorFormValues) {
+    if (!selectedDay || !selectedExercise) {
       return;
     }
 
-    setDays((currentDays) =>
-      currentDays.map((day) => {
-        if (day.id !== selectedDay.id) {
-          return day;
-        }
+    updateTrainingDayNotes(selectedDay.id, values.dayNotes.trim());
+    addExerciseToDay({
+      dayId: selectedDay.id,
+      exerciseId: selectedExercise.id,
+      exerciseName: selectedExercise.name,
+      sets: values.sets.trim(),
+      reps: values.reps.trim(),
+      restSeconds: Number(values.restSeconds) || 0,
+      executionNotes: values.executionNotes.trim(),
+    });
 
-        const nextOrder = day.exercises.length + 1;
-
-        return {
-          ...day,
-          exercises: [
-            ...day.exercises,
-            {
-              id: `mock-training-exercise-${day.id}-${nextOrder}`,
-              exerciseId: "exercise-1",
-              exerciseName: `Exercicio extra ${nextOrder}`,
-              sets: "3",
-              reps: "10-12",
-              restSeconds: 60,
-              executionNotes: "Exercicio adicionado localmente no editor mockado.",
-              order: nextOrder,
-            },
-          ],
-        };
-      })
-    );
+    setValue("executionNotes", "");
+    setValue("dayNotes", values.dayNotes.trim());
   }
 
   return (
@@ -67,7 +94,10 @@ export function TrainingEditorScreen() {
             fullWidth={false}
             key={day.id}
             label={day.title}
-            onPress={() => setSelectedDayId(day.id)}
+            onPress={() => {
+              setSelectedDayId(day.id);
+              setValue("selectedDayId", day.id);
+            }}
             variant={day.id === selectedDayId ? "primary" : "ghost"}
           />
         ))}
@@ -82,23 +112,98 @@ export function TrainingEditorScreen() {
           <TrainingDayCard day={selectedDay} />
 
           <View style={{ gap: theme.spacing.md }}>
-            <Button label="Adicionar exercicio mockado" onPress={addMockExercise} />
-            <Button
-              label="Atualizar observacao do dia"
-              onPress={() =>
-                setDays((currentDays) =>
-                  currentDays.map((day) =>
-                    day.id === selectedDay.id
-                      ? {
-                          ...day,
-                          notes: "Observacao alterada localmente no editor mockado.",
-                        }
-                      : day
-                  )
-                )
-              }
-              variant="ghost"
+            <SectionTitle
+              title="Selecionar exercicio"
+              description="Use a biblioteca mockada para adicionar um novo item ao dia."
             />
+            <View style={{ gap: theme.spacing.sm }}>
+              {exerciseLibraryMock.slice(0, 5).map((exercise) => (
+                <Button
+                  fullWidth={false}
+                  key={exercise.id}
+                  label={exercise.name}
+                  onPress={() => setValue("selectedExerciseId", exercise.id)}
+                  variant={
+                    exercise.id === selectedExerciseId ? "primary" : "ghost"
+                  }
+                />
+              ))}
+            </View>
+
+            <Controller
+              control={control}
+              name="sets"
+              render={({ field: { onBlur, onChange, value } }) => (
+                <TextField
+                  hint="Quantidade de series para o exercicio escolhido."
+                  label="Series"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="reps"
+              render={({ field: { onBlur, onChange, value } }) => (
+                <TextField
+                  hint="Faixa de repeticoes ou tempo."
+                  label="Repeticoes"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="restSeconds"
+              render={({ field: { onBlur, onChange, value } }) => (
+                <TextField
+                  hint="Tempo de descanso em segundos."
+                  keyboardType="numeric"
+                  label="Descanso"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="executionNotes"
+              render={({ field: { onBlur, onChange, value } }) => (
+                <TextField
+                  hint="Orientacao rapida para a execucao do exercicio."
+                  label="Observacao do exercicio"
+                  multiline
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="dayNotes"
+              render={({ field: { onBlur, onChange, value } }) => (
+                <TextField
+                  hint="Observacao geral do dia de treino."
+                  label="Observacao do dia"
+                  multiline
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+            />
+
+            <Button label="Salvar e adicionar exercicio" onPress={handleSubmit(onSubmit)} />
           </View>
         </>
       ) : (

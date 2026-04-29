@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
-import { Text, View } from "react-native";
+import { useMemo } from "react";
+import { View } from "react-native";
+import { Controller, useForm } from "react-hook-form";
 
 import {
   Button,
@@ -9,15 +10,33 @@ import {
   MealCard,
   Screen,
   SectionTitle,
+  TextField,
 } from "@/components";
-import { currentPlanMock, foodLibraryMock } from "@/repository/mock";
+import { useCurrentPlan } from "@/hooks/useCurrentPlan";
+import { foodLibraryMock } from "@/repository/mock";
 import { useAppTheme } from "@/theme";
+
+interface MealEditorFormValues {
+  selectedMealId: string;
+  selectedFoodId: string;
+  amount: string;
+  observation: string;
+}
 
 export function MealEditorScreen() {
   const { theme } = useAppTheme();
-  const [selectedMealId, setSelectedMealId] = useState(currentPlanMock.dietPlan.meals[0].id);
-  const [selectedFoodId, setSelectedFoodId] = useState(foodLibraryMock[0].id);
-  const [meals, setMeals] = useState(currentPlanMock.dietPlan.meals);
+  const { addMealItemToMeal, currentPlan, updateMealObservation } = useCurrentPlan();
+  const { control, handleSubmit, setValue, watch } = useForm<MealEditorFormValues>({
+    defaultValues: {
+      selectedMealId: currentPlan.dietPlan.meals[0]?.id ?? "",
+      selectedFoodId: foodLibraryMock[0]?.id ?? "",
+      amount: String(foodLibraryMock[0]?.baseAmount ?? 0),
+      observation: currentPlan.dietPlan.meals[0]?.observation ?? "",
+    },
+  });
+  const selectedMealId = watch("selectedMealId");
+  const selectedFoodId = watch("selectedFoodId");
+  const meals = currentPlan.dietPlan.meals;
 
   const selectedMeal = useMemo(
     () => meals.find((meal) => meal.id === selectedMealId) ?? meals[0],
@@ -29,48 +48,20 @@ export function MealEditorScreen() {
     [selectedFoodId]
   );
 
-  function addFoodToMeal() {
+  function addFoodToMeal(values: MealEditorFormValues) {
     if (!selectedMeal || !selectedFood) {
       return;
     }
 
-    const amount = selectedFood.baseUnit === "unit" ? 1 : selectedFood.baseAmount;
-    const factor = amount / selectedFood.baseAmount;
-    const calories = selectedFood.calories * factor;
-    const carbs = selectedFood.carbs * factor;
-    const protein = selectedFood.protein * factor;
-    const fat = selectedFood.fat * factor;
-    const fiber = (selectedFood.fiber ?? 0) * factor;
+    updateMealObservation(selectedMeal.id, values.observation.trim());
+    addMealItemToMeal({
+      mealId: selectedMeal.id,
+      foodId: selectedFood.id,
+      amount: Number(values.amount) || selectedFood.baseAmount,
+      observation: values.observation.trim(),
+    });
 
-    setMeals((currentMeals) =>
-      currentMeals.map((meal) =>
-        meal.id === selectedMeal.id
-          ? {
-              ...meal,
-              items: [
-                ...meal.items,
-                {
-                  id: `mock-meal-item-${meal.id}-${meal.items.length + 1}`,
-                  foodId: selectedFood.id,
-                  foodName: selectedFood.name,
-                  amount,
-                  unit: selectedFood.baseUnit,
-                  calories,
-                  carbs,
-                  protein,
-                  fat,
-                  fiber,
-                },
-              ],
-              calories: meal.calories + calories,
-              carbs: meal.carbs + carbs,
-              protein: meal.protein + protein,
-              fat: meal.fat + fat,
-              fiber: (meal.fiber ?? 0) + fiber,
-            }
-          : meal
-      )
-    );
+    setValue("amount", String(selectedFood.baseAmount));
   }
 
   const totalSummary = meals.reduce(
@@ -97,7 +88,10 @@ export function MealEditorScreen() {
             fullWidth={false}
             key={meal.id}
             label={meal.title}
-            onPress={() => setSelectedMealId(meal.id)}
+            onPress={() => {
+              setValue("selectedMealId", meal.id);
+              setValue("observation", meal.observation ?? "");
+            }}
             variant={meal.id === selectedMealId ? "primary" : "ghost"}
           />
         ))}
@@ -123,14 +117,47 @@ export function MealEditorScreen() {
             carbs={food.carbs}
             fat={food.fat}
             name={food.name}
-            onPress={() => setSelectedFoodId(food.id)}
+            onPress={() => {
+              setValue("selectedFoodId", food.id);
+              setValue("amount", String(food.baseAmount));
+            }}
             protein={food.protein}
             selected={food.id === selectedFoodId}
           />
         ))}
       </View>
 
-      <Button label="Adicionar alimento mockado" onPress={addFoodToMeal} />
+      <Controller
+        control={control}
+        name="amount"
+        render={({ field: { onBlur, onChange, value } }) => (
+          <TextField
+            hint={`Informe ${selectedFood?.baseUnit === "unit" ? "quantidade" : "gramas"} para o alimento selecionado.`}
+            keyboardType="numeric"
+            label="Porcao"
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+          />
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="observation"
+        render={({ field: { onBlur, onChange, value } }) => (
+          <TextField
+            hint="Observacao opcional da refeicao."
+            label="Observacao da refeicao"
+            multiline
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+          />
+        )}
+      />
+
+      <Button label="Adicionar alimento ao plano" onPress={handleSubmit(addFoodToMeal)} />
 
       <MacroSummaryCard
         calories={totalSummary.calories}

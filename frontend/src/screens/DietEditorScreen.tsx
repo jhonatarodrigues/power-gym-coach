@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Text, View } from "react-native";
+import { Controller, useForm } from "react-hook-form";
 
 import {
   Button,
@@ -9,6 +10,7 @@ import {
   MacroSummaryCard,
   Screen,
   SectionTitle,
+  TextField,
 } from "@/components";
 import { foodLibraryMock } from "@/repository/mock";
 import { useAppTheme } from "@/theme";
@@ -25,10 +27,21 @@ function calculateFoodTotals(food: FoodLibraryItem, amount: number) {
   };
 }
 
+interface DietEditorFormValues {
+  selectedFoodId: string;
+  amount: string;
+}
+
 export function DietEditorScreen() {
   const { theme } = useAppTheme();
-  const [selectedFoodId, setSelectedFoodId] = useState(foodLibraryMock[0].id);
-  const [amount, setAmount] = useState(150);
+  const { control, setValue, watch } = useForm<DietEditorFormValues>({
+    defaultValues: {
+      selectedFoodId: foodLibraryMock[0]?.id ?? "",
+      amount: "150",
+    },
+  });
+  const selectedFoodId = watch("selectedFoodId");
+  const amountValue = watch("amount");
 
   const selectedFood = useMemo(
     () => foodLibraryMock.find((food) => food.id === selectedFoodId) ?? foodLibraryMock[0],
@@ -36,8 +49,8 @@ export function DietEditorScreen() {
   );
 
   const selectedTotals = useMemo(
-    () => calculateFoodTotals(selectedFood, amount),
-    [selectedFood, amount]
+    () => calculateFoodTotals(selectedFood, Number(amountValue) || selectedFood.baseAmount),
+    [amountValue, selectedFood]
   );
 
   return (
@@ -64,8 +77,8 @@ export function DietEditorScreen() {
               fat={food.fat}
               name={food.name}
               onPress={() => {
-                setSelectedFoodId(food.id);
-                setAmount(food.baseUnit === "unit" ? 2 : food.baseAmount);
+                setValue("selectedFoodId", food.id);
+                setValue("amount", String(food.baseUnit === "unit" ? 2 : food.baseAmount));
               }}
               protein={food.protein}
               selected={isSelected}
@@ -79,23 +92,52 @@ export function DietEditorScreen() {
         description="Simulacao de ajuste em gramas ou quantidade."
       />
       <View style={{ gap: theme.spacing.md }}>
-        <Button
-          fullWidth={false}
-          label={`Reduzir ${selectedFood.baseUnit === "unit" ? "quantidade" : "gramas"}`}
-          onPress={() =>
-            setAmount((current) =>
-              Math.max(selectedFood.baseUnit === "unit" ? 1 : 30, current - (selectedFood.baseUnit === "unit" ? 1 : 25))
-            )
-          }
-          variant="ghost"
+        <Controller
+          control={control}
+          name="amount"
+          render={({ field: { onBlur, onChange, value } }) => (
+            <TextField
+              hint={`Ajuste em ${selectedFood.baseUnit === "unit" ? "quantidade" : "gramas"} para visualizar o recalculo.`}
+              keyboardType="numeric"
+              label="Porcao"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+            />
+          )}
         />
-        <Button
-          fullWidth={false}
-          label={`Aumentar ${selectedFood.baseUnit === "unit" ? "quantidade" : "gramas"}`}
-          onPress={() =>
-            setAmount((current) => current + (selectedFood.baseUnit === "unit" ? 1 : 25))
-          }
-        />
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: theme.spacing.sm }}>
+          <Button
+            fullWidth={false}
+            label={`Reduzir ${selectedFood.baseUnit === "unit" ? "quantidade" : "gramas"}`}
+            onPress={() =>
+              setValue(
+                "amount",
+                String(
+                  Math.max(
+                    selectedFood.baseUnit === "unit" ? 1 : 30,
+                    (Number(amountValue) || selectedFood.baseAmount) -
+                      (selectedFood.baseUnit === "unit" ? 1 : 25)
+                  )
+                )
+              )
+            }
+            variant="ghost"
+          />
+          <Button
+            fullWidth={false}
+            label={`Aumentar ${selectedFood.baseUnit === "unit" ? "quantidade" : "gramas"}`}
+            onPress={() =>
+              setValue(
+                "amount",
+                String(
+                  (Number(amountValue) || selectedFood.baseAmount) +
+                    (selectedFood.baseUnit === "unit" ? 1 : 25)
+                )
+              )
+            }
+          />
+        </View>
       </View>
 
       <Card>
@@ -104,7 +146,7 @@ export function DietEditorScreen() {
             {selectedFood.name}
           </Text>
           <Text style={{ color: theme.colors.textMuted }}>
-            Porcao atual: {amount} {selectedFood.baseUnit}
+            Porcao atual: {amountValue} {selectedFood.baseUnit}
           </Text>
           <Text style={{ color: theme.colors.textMuted }}>
             {selectedTotals.calories.toFixed(0)} kcal /{" "}

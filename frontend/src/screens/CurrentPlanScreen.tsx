@@ -14,14 +14,15 @@ import {
   SupplementCard,
   TrainingDayCard,
 } from "@/components";
+import { useCurrentPlan } from "@/hooks/useCurrentPlan";
 import { useMockAuth } from "@/hooks/useMockAuth";
 import type { RootStackParamList } from "@/navigation/types";
-import { currentPlanMock } from "@/repository/mock";
 import { useAppTheme } from "@/theme";
 
 export function CurrentPlanScreen() {
   const { theme } = useAppTheme();
   const { session } = useMockAuth();
+  const { currentPlan } = useCurrentPlan();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const isTeacher = session.accessLevel === "teacher";
@@ -42,10 +43,10 @@ export function CurrentPlanScreen() {
               fontWeight: "700",
             }}
           >
-            {currentPlanMock.title}
+            {currentPlan.title}
           </Text>
           <Text style={{ color: theme.colors.textMuted }}>
-            Vigencia: {currentPlanMock.startDate} ate {currentPlanMock.endDate}
+            Vigencia: {currentPlan.startDate} ate {currentPlan.endDate}
           </Text>
         </View>
       </Card>
@@ -55,7 +56,7 @@ export function CurrentPlanScreen() {
         description="Dias configurados no plano atual."
       />
       <View style={{ gap: theme.spacing.md }}>
-        {currentPlanMock.trainingPlan.days.map((day) => (
+        {currentPlan.trainingPlan.days.map((day) => (
           <TrainingDayCard day={day} key={day.id} />
         ))}
       </View>
@@ -65,11 +66,11 @@ export function CurrentPlanScreen() {
         description="Totais nutricionais do plano ativo."
       />
       <MacroSummaryCard
-        calories={currentPlanMock.dietPlan.calories}
-        carbs={currentPlanMock.dietPlan.carbs}
-        fat={currentPlanMock.dietPlan.fat}
+        calories={currentPlan.dietPlan.calories}
+        carbs={currentPlan.dietPlan.carbs}
+        fat={currentPlan.dietPlan.fat}
         note="Totais do plano alimentar atual."
-        protein={currentPlanMock.dietPlan.protein}
+        protein={currentPlan.dietPlan.protein}
         title="Resumo nutricional"
       />
 
@@ -78,7 +79,7 @@ export function CurrentPlanScreen() {
         description="Refeicoes atuais do plano alimentar."
       />
       <View style={{ gap: theme.spacing.md }}>
-        {currentPlanMock.dietPlan.meals.map((meal) => (
+        {currentPlan.dietPlan.meals.map((meal) => (
           <MealCard key={meal.id} meal={meal} />
         ))}
       </View>
@@ -88,7 +89,7 @@ export function CurrentPlanScreen() {
         description="Rotina de suplementos do plano."
       />
       <View style={{ gap: theme.spacing.md }}>
-        {currentPlanMock.dietPlan.supplements.map((supplement) => (
+        {currentPlan.dietPlan.supplements.map((supplement) => (
           <SupplementCard key={supplement.id} supplement={supplement} />
         ))}
       </View>
@@ -100,7 +101,7 @@ export function CurrentPlanScreen() {
       <ExerciseVideoCard
         available
         description="Esse bloco pode abrir o player de video do professor no fluxo final."
-        title={currentPlanMock.trainingPlan.days[0]?.exercises[0]?.exerciseName ?? "Exercicio"}
+        title={currentPlan.trainingPlan.days[0]?.exercises[0]?.exerciseName ?? "Exercicio"}
       />
 
       {isTeacher ? (

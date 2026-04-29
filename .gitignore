@@ -1,7 +1,7 @@
 .DS_Store
 
 # Root memory and local notes
-# Keep `.ia` versioned on purpose
+.ia
 
 # Frontend dependencies and generated files
 frontend/node_modules/

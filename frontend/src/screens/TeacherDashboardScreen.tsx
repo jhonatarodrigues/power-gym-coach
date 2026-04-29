@@ -12,11 +12,11 @@ import {
 } from "@/components";
 import {
   assessmentReviewsMock,
-  currentPlanMock,
   examRequestsMock,
   studentProfilesMock,
   usersMock,
 } from "@/repository/mock";
+import { useCurrentPlan } from "@/hooks/useCurrentPlan";
 import { useMockAuth } from "@/hooks/useMockAuth";
 import { useAppTheme } from "@/theme";
 import type { RootStackParamList } from "@/navigation/types";
@@ -24,6 +24,7 @@ import type { RootStackParamList } from "@/navigation/types";
 export function TeacherDashboardScreen() {
   const { theme } = useAppTheme();
   const { signInAs, signOut } = useMockAuth();
+  const { currentPlan } = useCurrentPlan();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -34,7 +35,7 @@ export function TeacherDashboardScreen() {
   const reviewedAssessments = assessmentReviewsMock.length;
 
   const studentUser = usersMock.find(
-    (user) => user.id === currentPlanMock.studentId
+    (user) => user.id === currentPlan.studentId
   );
 
   return (
@@ -84,14 +85,14 @@ export function TeacherDashboardScreen() {
             fontWeight: "700",
           }}
         >
-          {currentPlanMock.title}
+          {currentPlan.title}
         </Text>
         <Text style={{ color: theme.colors.textMuted }}>
-          Dieta atual: {currentPlanMock.dietPlan.calories} kcal /{" "}
-          {currentPlanMock.dietPlan.protein.toFixed(1)} g proteina
+          Dieta atual: {currentPlan.dietPlan.calories} kcal /{" "}
+          {currentPlan.dietPlan.protein.toFixed(1)} g proteina
         </Text>
         <Text style={{ color: theme.colors.textMuted }}>
-          Treino: {currentPlanMock.trainingPlan.days.length} dias configurados
+          Treino: {currentPlan.trainingPlan.days.length} dias configurados
         </Text>
       </View>
 
@@ -108,33 +109,10 @@ export function TeacherDashboardScreen() {
       ) : null}
 
       <View style={{ gap: theme.spacing.md }}>
-        <Button
-          label="Abrir exercise library"
-          onPress={() => navigation.navigate("ExerciseLibrary")}
-        />
-        <Button
-          label="Abrir student details"
-          onPress={() => navigation.navigate("StudentDetails")}
-          variant="ghost"
-        />
-        <Button
-          label="Abrir current plan"
-          onPress={() => navigation.navigate("CurrentPlan")}
-          variant="ghost"
-        />
-        <Button
-          label="Abrir diet editor"
-          onPress={() => navigation.navigate("DietEditor")}
-          variant="ghost"
-        />
+        <Button label="Abrir diet editor" onPress={() => navigation.navigate("DietEditor")} />
         <Button
           label="Abrir training editor"
           onPress={() => navigation.navigate("TrainingEditor")}
-          variant="ghost"
-        />
-        <Button
-          label="Abrir history"
-          onPress={() => navigation.navigate("History")}
           variant="ghost"
         />
         <Button

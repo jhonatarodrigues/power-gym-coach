@@ -9,16 +9,17 @@ import {
   SectionTitle,
 } from "@/components";
 import {
-  currentPlanMock,
   examRequestsMock,
   progressEntriesMock,
   studentProfilesMock,
   usersMock,
 } from "@/repository/mock";
+import { useCurrentPlan } from "@/hooks/useCurrentPlan";
 import { useAppTheme } from "@/theme";
 
 export function StudentDetailsScreen() {
   const { theme } = useAppTheme();
+  const { currentPlan } = useCurrentPlan();
 
   const studentProfile = studentProfilesMock[0];
   const studentUser = usersMock.find((user) => user.id === studentProfile.userId);
@@ -55,7 +56,7 @@ export function StudentDetailsScreen() {
             Restricoes: {studentProfile.restrictions}
           </Text>
           <Text style={{ color: theme.colors.textMuted }}>
-            Plano atual: {currentPlanMock.title}
+            Plano atual: {currentPlan.title}
           </Text>
           <Text style={{ color: theme.colors.textMuted }}>
             Exames em andamento: {pendingExams}
