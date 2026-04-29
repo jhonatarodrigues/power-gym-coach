@@ -3,9 +3,12 @@ import { screen } from "@testing-library/react-native";
 import { currentPlanMock, historyRecordsMock } from "@/repository/mock";
 import { renderWithProviders } from "@/test-utils/renderWithProviders";
 
+import { Card } from "./Card";
 import { HistoryCard } from "./HistoryCard";
 import { MacroSummaryCard } from "./MacroSummaryCard";
 import { MealCard } from "./MealCard";
+import { SectionTitle } from "./SectionTitle";
+import { SupplementCard } from "./SupplementCard";
 import { TrainingDayCard } from "./TrainingDayCard";
 
 describe("domain cards", () => {
@@ -54,5 +57,41 @@ describe("domain cards", () => {
 
     expect(screen.getByText(historyRecordsMock[0].title)).toBeTruthy();
     expect(screen.getByText(historyRecordsMock[0].type)).toBeTruthy();
+  });
+
+  it("covers optional content branches for summary cards", () => {
+    const mealWithoutObservation = {
+      ...currentPlanMock.dietPlan.meals[0],
+      observation: undefined,
+    };
+    const dayWithoutNotes = {
+      ...currentPlanMock.trainingPlan.days[0],
+      notes: undefined,
+    };
+    const supplementWithoutObservation = {
+      ...currentPlanMock.dietPlan.supplements[0],
+      observation: undefined,
+    };
+    const recordWithoutDescription = {
+      ...historyRecordsMock[0],
+      description: undefined,
+    };
+
+    const { rerender } = renderWithProviders(
+      <SectionTitle title="Resumo" description="Descricao" actionLabel="Acao" />
+    );
+
+    expect(screen.getByText("Descricao")).toBeTruthy();
+    expect(screen.getByText("Acao")).toBeTruthy();
+
+    rerender(<SectionTitle title="Resumo" />);
+    rerender(<MacroSummaryCard title="Macros" calories={10} carbs={1} protein={2} fat={3} />);
+    rerender(<MealCard meal={mealWithoutObservation} />);
+    rerender(<TrainingDayCard day={dayWithoutNotes} />);
+    rerender(<SupplementCard supplement={supplementWithoutObservation} />);
+    rerender(<HistoryCard record={recordWithoutDescription} />);
+    rerender(<Card padded={false}><SectionTitle title="Sem padding" /></Card>);
+
+    expect(screen.getByText("Sem padding")).toBeTruthy();
   });
 });

@@ -10,6 +10,7 @@ import { useMockAuth } from "@/hooks/useMockAuth";
 import { AssessmentScreen } from "@/screens/AssessmentScreen";
 import { CurrentPlanScreen } from "@/screens/CurrentPlanScreen";
 import { DietEditorScreen } from "@/screens/DietEditorScreen";
+import { ExamsScreen } from "@/screens/ExamsScreen";
 import { ExerciseLibraryScreen } from "@/screens/ExerciseLibraryScreen";
 import { HistoryScreen } from "@/screens/HistoryScreen";
 import { MealEditorScreen } from "@/screens/MealEditorScreen";
@@ -17,6 +18,7 @@ import { ProgressScreen } from "@/screens/ProgressScreen";
 import { RoleSelectionScreen } from "@/screens/RoleSelectionScreen";
 import { StudentHomeScreen } from "@/screens/StudentHomeScreen";
 import { StudentDetailsScreen } from "@/screens/StudentDetailsScreen";
+import { SupplementEditorScreen } from "@/screens/SupplementEditorScreen";
 import { TeacherDashboardScreen } from "@/screens/TeacherDashboardScreen";
 import { TrainingEditorScreen } from "@/screens/TrainingEditorScreen";
 import { useAppTheme } from "@/theme";
@@ -179,11 +181,17 @@ export function AppNavigator() {
             <Stack.Screen name="DietEditor" component={DietEditorScreen} />
             <Stack.Screen name="TrainingEditor" component={TrainingEditorScreen} />
             <Stack.Screen name="MealEditor" component={MealEditorScreen} />
+            <Stack.Screen
+              name="SupplementEditor"
+              component={SupplementEditorScreen}
+            />
             <Stack.Screen name="Assessment" component={AssessmentScreen} />
+            <Stack.Screen name="Exams" component={ExamsScreen} />
           </>
         ) : (
           <>
             <Stack.Screen name="StudentTabs" component={StudentTabsNavigator} />
+            <Stack.Screen name="Exams" component={ExamsScreen} />
           </>
         )}
       </Stack.Navigator>

@@ -43,6 +43,45 @@ Main responsibility:
 10. Progress
 11. History
 
+## Current delivery status
+
+Already implemented in the mocked frontend:
+- role selection and role-based shell
+- teacher and student tab navigation
+- current plan visualization
+- training editor
+- meal editor
+- diet portion preview
+- exercise library
+- assessment area
+- progress area
+- history area
+- unit test foundation with Jest and React Native Testing Library
+
+## Priority roadmap
+
+### P1. Complete the plan editing loop
+- supplementation editor
+- explicit save/reset UX for current plan changes
+- better transitions between plan view and plan editors
+- student details actions wired to the correct flows
+
+### P2. Exams workflow
+- dedicated exams screen for teacher and student
+- request status visualization
+- uploaded exam list
+- quick actions to request or send new exams
+
+### P3. Assessment and progress refinement
+- richer progress cards and comparisons
+- better assessment timeline
+- clearer relationship between assessment feedback and plan updates
+
+### P4. Repository preparation for real API
+- repository contracts per domain
+- mock/state separation
+- easier replacement of mock data by remote data sources
+
 ## Information architecture
 
 ### Teacher app sections

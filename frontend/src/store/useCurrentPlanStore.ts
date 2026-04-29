@@ -1,7 +1,14 @@
 import { create } from "zustand";
 
 import { currentPlanMock, foodLibraryMock } from "@/repository/mock";
-import type { FoodLibraryItem, Meal, MealItem, Plan, TrainingExercise } from "@/types";
+import type {
+  FoodLibraryItem,
+  Meal,
+  MealItem,
+  Plan,
+  Supplement,
+  TrainingExercise,
+} from "@/types";
 
 interface AddExerciseInput {
   dayId: string;
@@ -27,6 +34,7 @@ interface CurrentPlanState {
   addExerciseToDay: (input: AddExerciseInput) => void;
   updateMealObservation: (mealId: string, observation: string) => void;
   addMealItemToMeal: (input: AddMealItemInput) => void;
+  addSupplement: (input: Omit<Supplement, "id">) => void;
 }
 
 function clonePlan(plan: Plan): Plan {
@@ -192,6 +200,27 @@ export const useCurrentPlanStore = create<CurrentPlanState>((set) => ({
             ...state.currentPlan.dietPlan,
             meals,
             ...calculateDietTotals(meals, state.currentPlan.dietPlan.supplements),
+          },
+        }),
+      };
+    }),
+  addSupplement: (input) =>
+    set((state) => {
+      const supplements = [
+        ...state.currentPlan.dietPlan.supplements,
+        {
+          ...input,
+          id: `supplement-${Date.now()}`,
+        },
+      ];
+
+      return {
+        currentPlan: withUpdatedTimestamp({
+          ...state.currentPlan,
+          dietPlan: {
+            ...state.currentPlan.dietPlan,
+            supplements,
+            ...calculateDietTotals(state.currentPlan.dietPlan.meals, supplements),
           },
         }),
       };

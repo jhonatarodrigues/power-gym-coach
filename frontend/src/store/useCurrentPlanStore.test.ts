@@ -82,4 +82,33 @@ describe("useCurrentPlanStore", () => {
 
     expect(useCurrentPlanStore.getState().currentPlan).toEqual(currentPlanMock);
   });
+
+  it("adds a supplement and recalculates diet totals", () => {
+    const initialSupplementCount = currentPlanMock.dietPlan.supplements.length;
+    const initialCalories = currentPlanMock.dietPlan.calories;
+
+    useCurrentPlanStore.getState().addSupplement({
+      name: "Maltodextrina",
+      dosage: "30 g",
+      timing: "Pos treino",
+      observation: "Usar nos dias mais intensos.",
+      calories: 120,
+      carbs: 30,
+      protein: 0,
+      fat: 0,
+      fiber: 0,
+    });
+
+    const updatedPlan = useCurrentPlanStore.getState().currentPlan;
+
+    expect(updatedPlan.dietPlan.supplements).toHaveLength(
+      initialSupplementCount + 1
+    );
+    expect(updatedPlan.dietPlan.supplements.at(-1)).toMatchObject({
+      name: "Maltodextrina",
+      dosage: "30 g",
+      timing: "Pos treino",
+    });
+    expect(updatedPlan.dietPlan.calories).toBeCloseTo(initialCalories + 120, 1);
+  });
 });

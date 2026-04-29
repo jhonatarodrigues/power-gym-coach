@@ -10,6 +10,7 @@ frontend/dist/
 frontend/web-build/
 frontend/expo-env.d.ts
 frontend/storybook-static/
+frontend/coverage/
 frontend/*.tsbuildinfo
 
 # Native generated folders

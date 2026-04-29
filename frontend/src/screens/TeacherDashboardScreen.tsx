@@ -116,8 +116,18 @@ export function TeacherDashboardScreen() {
           variant="ghost"
         />
         <Button
+          label="Abrir supplement editor"
+          onPress={() => navigation.navigate("SupplementEditor")}
+          variant="ghost"
+        />
+        <Button
           label="Abrir assessment"
           onPress={() => navigation.navigate("Assessment")}
+          variant="ghost"
+        />
+        <Button
+          label="Abrir exams"
+          onPress={() => navigation.navigate("Exams")}
           variant="ghost"
         />
         <Button label="Trocar para visao do aluno" onPress={() => signInAs("student")} />

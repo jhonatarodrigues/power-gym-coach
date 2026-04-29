@@ -14,4 +14,20 @@ describe("DietEditorScreen", () => {
 
     expect(screen.getByText("384 kcal")).toBeTruthy();
   });
+
+  it("handles unit-based foods through the quick portion buttons", () => {
+    renderWithProviders(<DietEditorScreen />);
+
+    fireEvent.press(screen.getByText("Banana prata"));
+
+    expect(screen.getByText("196 kcal")).toBeTruthy();
+
+    fireEvent.press(screen.getByText("Aumentar quantidade"));
+
+    expect(screen.getByText("294 kcal")).toBeTruthy();
+
+    fireEvent.press(screen.getByText("Reduzir quantidade"));
+
+    expect(screen.getByText("196 kcal")).toBeTruthy();
+  });
 });

@@ -115,6 +115,11 @@ export function CurrentPlanScreen() {
             onPress={() => navigation.navigate("MealEditor")}
             variant="ghost"
           />
+          <Button
+            label="Editar suplementacao"
+            onPress={() => navigation.navigate("SupplementEditor")}
+            variant="ghost"
+          />
         </View>
       ) : null}
     </Screen>

@@ -101,6 +101,11 @@ export function StudentHomeScreen() {
           }
         />
         <Button
+          label="Abrir exams"
+          onPress={() => navigation.navigate("Exams")}
+          variant="ghost"
+        />
+        <Button
           label="Abrir plano atual"
           onPress={() =>
             navigation.navigate("StudentTabs", { screen: "StudentPlanTab" })

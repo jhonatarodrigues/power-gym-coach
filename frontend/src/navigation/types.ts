@@ -23,5 +23,7 @@ export type RootStackParamList = {
   DietEditor: undefined;
   TrainingEditor: undefined;
   MealEditor: undefined;
+  SupplementEditor: undefined;
   Assessment: undefined;
+  Exams: undefined;
 };

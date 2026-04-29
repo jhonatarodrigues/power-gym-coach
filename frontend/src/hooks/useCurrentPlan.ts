@@ -11,6 +11,7 @@ export function useCurrentPlan() {
     (state) => state.updateMealObservation
   );
   const addMealItemToMeal = useCurrentPlanStore((state) => state.addMealItemToMeal);
+  const addSupplement = useCurrentPlanStore((state) => state.addSupplement);
 
   return {
     currentPlan,
@@ -19,5 +20,6 @@ export function useCurrentPlan() {
     addExerciseToDay,
     updateMealObservation,
     addMealItemToMeal,
+    addSupplement,
   };
 }

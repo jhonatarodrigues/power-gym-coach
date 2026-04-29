@@ -14,7 +14,7 @@
     "storybook": "EXPO_PUBLIC_STORYBOOK_ENABLED=true expo start -c",
     "storybook-generate": "sb-rn-get-stories",
     "typecheck": "tsc --noEmit",
-    "test": "jest --runInBand --watchman=false"
+    "test": "jest --runInBand --watchman=false --coverage"
   },
   "dependencies": {
     "@babel/core": "^7.29.0",

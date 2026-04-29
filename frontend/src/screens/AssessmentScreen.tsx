@@ -1,4 +1,6 @@
 import { Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { Button, Card, Header, Screen, SectionTitle } from "@/components";
 import {
@@ -6,11 +8,14 @@ import {
   assessmentSubmissionsMock,
 } from "@/repository/mock";
 import { useMockAuth } from "@/hooks/useMockAuth";
+import type { RootStackParamList } from "@/navigation/types";
 import { useAppTheme } from "@/theme";
 
 export function AssessmentScreen() {
   const { theme } = useAppTheme();
   const { session } = useMockAuth();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const isTeacher = session.accessLevel === "teacher";
 
   const submission = assessmentSubmissionsMock[0];
@@ -83,11 +88,13 @@ export function AssessmentScreen() {
           <>
             <Button label="Criar novo planejamento" />
             <Button label="Solicitar novas fotos" variant="ghost" />
+            <Button label="Abrir exams" onPress={() => navigation.navigate("Exams")} variant="ghost" />
           </>
         ) : (
           <>
             <Button label="Enviar nova avaliacao mockada" />
             <Button label="Ver plano atualizado" variant="ghost" />
+            <Button label="Abrir exams" onPress={() => navigation.navigate("Exams")} variant="ghost" />
           </>
         )}
       </View>
