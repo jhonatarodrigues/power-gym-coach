@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  react-native-worklets: 0.5.1
+
 importers:
 
   .:
@@ -3744,7 +3747,7 @@ packages:
     peerDependencies:
       react: '*'
       react-native: 0.78 - 0.82
-      react-native-worklets: 0.5 - 0.8
+      react-native-worklets: 0.5.1
 
   react-native-safe-area-context@5.6.2:
     resolution: {integrity: sha512-4XGqMNj5qjUTYywJqpdWZ9IG8jgkS3h06sfVjfw5yZQZfWnRFXczi0GnYyFyCc2EBps/qFmoCH8fez//WumdVg==}
