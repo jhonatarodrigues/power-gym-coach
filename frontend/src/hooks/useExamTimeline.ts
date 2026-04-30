@@ -1,5 +1,5 @@
 import { useMockAuth } from "@/hooks/useMockAuth";
-import { examRepository } from "@/repository/examRepository";
+import { examRepository } from "@/repository";
 
 export function useExamTimeline() {
   const { session } = useMockAuth();

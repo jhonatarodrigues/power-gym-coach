@@ -12,10 +12,10 @@ describe("StudentDetailsScreen", () => {
     expect(screen.getByText("Sinais para decisao")).toBeTruthy();
     expect(screen.getByText("Timeline unificada")).toBeTruthy();
     expect(screen.getByText("Acoes rapidas")).toBeTruthy();
-    expect(screen.getByText("Ajustar plano atual")).toBeTruthy();
+    expect(screen.getAllByText("Ajustar plano atual").length).toBeGreaterThan(0);
     expect(screen.getByText("Revisar progresso")).toBeTruthy();
-    expect(screen.getByText("Abrir avaliacao")).toBeTruthy();
-    expect(screen.getByText("Abrir exams")).toBeTruthy();
+    expect(screen.getAllByText("Abrir avaliacao").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Abrir exams").length).toBeGreaterThan(0);
     expect(screen.getByText("Abrir historico")).toBeTruthy();
   });
 });

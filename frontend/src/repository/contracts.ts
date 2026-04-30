@@ -24,6 +24,14 @@ export interface AssessmentRepository {
     teacherId: string;
     description: string;
   }) => AssessmentSubmission;
+  createReview: (input: {
+    submissionId: string;
+    teacherId: string;
+    summary: string;
+    observations: string;
+    suggestedChanges?: string;
+    createdNewPlan: boolean;
+  }) => AssessmentReview;
 }
 
 export interface ExamRepository {

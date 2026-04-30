@@ -1,14 +1,35 @@
+import { useState } from "react";
 import { Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Controller, useForm } from "react-hook-form";
 
-import { Button, Card, Header, Screen, SectionTitle } from "@/components";
+import {
+  Button,
+  DecisionCard,
+  Header,
+  JourneyTimelineCard,
+  PendingAlertCard,
+  Screen,
+  SectionTitle,
+  TextField,
+} from "@/components";
 import { useAssessmentTimeline } from "@/hooks/useAssessmentTimeline";
 import { useCurrentPlan } from "@/hooks/useCurrentPlan";
 import { useMockAuth } from "@/hooks/useMockAuth";
 import type { RootStackParamList } from "@/navigation/types";
-import { assessmentRepository } from "@/repository/assessmentRepository";
+import { assessmentRepository } from "@/repository";
 import { useAppTheme } from "@/theme";
+
+interface StudentAssessmentFormValues {
+  description: string;
+}
+
+interface TeacherReviewFormValues {
+  summary: string;
+  observations: string;
+  suggestedChanges: string;
+}
 
 export function AssessmentScreen() {
   const { theme } = useAppTheme();
@@ -18,6 +39,20 @@ export function AssessmentScreen() {
   const isTeacher = session.accessLevel === "teacher";
   const { applyAssessmentSuggestedChanges } = useCurrentPlan();
   const { review, submission, submissions, timeline } = useAssessmentTimeline();
+  const [studentFormVisible, setStudentFormVisible] = useState(false);
+  const [teacherFormVisible, setTeacherFormVisible] = useState(false);
+  const studentForm = useForm<StudentAssessmentFormValues>({
+    defaultValues: {
+      description: "",
+    },
+  });
+  const teacherForm = useForm<TeacherReviewFormValues>({
+    defaultValues: {
+      summary: review?.summary ?? "",
+      observations: review?.observations ?? "",
+      suggestedChanges: review?.suggestedChanges ?? "",
+    },
+  });
 
   if (!submission) {
     return (
@@ -44,83 +79,147 @@ export function AssessmentScreen() {
         title={isTeacher ? "Material enviado pelo aluno" : "Seu envio atual"}
         description="Base para avaliacao corporal, ajuste de treino e dieta."
       />
-      <Card>
-        <View style={{ gap: theme.spacing.md }}>
-          <Text style={{ color: theme.colors.text }}>{submission.description}</Text>
-          <Text style={{ color: theme.colors.textMuted }}>
-            Imagens enviadas: {submission.images.length}
-          </Text>
-          <View style={{ gap: theme.spacing.sm }}>
-            {submission.images.map((image) => (
-              <View
-                key={image.id}
-                style={{
-                  alignItems: "center",
-                  backgroundColor: theme.colors.surfaceAlt,
-                  borderRadius: theme.radius.md,
-                  height: 100,
-                  justifyContent: "center",
-                }}
-              >
-                <Text style={{ color: theme.colors.textMuted }}>
-                  {image.label ?? "Imagem"} mockada
-                </Text>
-              </View>
-            ))}
-          </View>
-        </View>
-      </Card>
+      <DecisionCard
+        badgeLabel={submission.status === "pending" ? "Pendente" : "Revisado"}
+        description={`Imagens enviadas: ${submission.images.length}`}
+        highlight={submission.description}
+        title={isTeacher ? "Ultimo envio do aluno" : "Seu envio atual"}
+      />
 
       <SectionTitle
         title={isTeacher ? "Devolutiva do professor" : "Feedback recebido"}
         description="Resumo e observacoes da ultima avaliacao."
       />
-      <Card>
-        <View style={{ gap: theme.spacing.sm }}>
-          {hasReview ? (
-            <>
-              <Text
-                style={{
-                  color: theme.colors.text,
-                  fontSize: theme.typography.body,
-                  fontWeight: "700",
-                }}
-              >
-                {review.summary}
-              </Text>
-              <Text style={{ color: theme.colors.textMuted }}>{review.observations}</Text>
-              {review.suggestedChanges ? (
-                <Text style={{ color: theme.colors.primary }}>
-                  {review.suggestedChanges}
-                </Text>
-              ) : null}
-            </>
-          ) : (
-            <>
-              <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
-                Aguardando devolutiva do professor
-              </Text>
-              <Text style={{ color: theme.colors.textMuted }}>
-                O aluno ja enviou novo material e o proximo ajuste de plano ainda nao foi consolidado.
-              </Text>
-            </>
-          )}
-        </View>
-      </Card>
+      <DecisionCard
+        badgeLabel={hasReview ? "Com devolutiva" : "Aguardando"}
+        description={
+          hasReview
+            ? review.observations
+            : "O aluno ja enviou novo material e o proximo ajuste de plano ainda nao foi consolidado."
+        }
+        highlight={
+          hasReview ? review.suggestedChanges : "Aguardando devolutiva do professor"
+        }
+        title={hasReview ? review.summary : "Feedback pendente"}
+      />
 
-      <Card>
-        <View style={{ gap: theme.spacing.sm }}>
-          <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
-            Estado da jornada
-          </Text>
-          <Text style={{ color: theme.colors.textMuted }}>
-            Avaliacoes pendentes de revisao: {pendingSubmissions}
-          </Text>
-          <Text style={{ color: theme.colors.textMuted }}>
-            Planejamento pode ser atualizado diretamente a partir desta devolutiva.
-          </Text>
+      <PendingAlertCard
+        actionLabel={isTeacher ? "Abrir formulario de revisao" : "Abrir formulario de envio"}
+        count={pendingSubmissions}
+        description="Itens que ainda exigem acao para fechar o ciclo de avaliacao."
+        onActionPress={() =>
+          isTeacher
+            ? setTeacherFormVisible((current) => !current)
+            : setStudentFormVisible((current) => !current)
+        }
+        title="Estado da jornada"
+      />
+
+      {teacherFormVisible && isTeacher ? (
+        <View style={{ gap: theme.spacing.md }}>
+          <SectionTitle
+            title="Revisao rapida"
+            description="Use este formulario para registrar a devolutiva do professor."
+          />
+          <Controller
+            control={teacherForm.control}
+            name="summary"
+            rules={{ required: true }}
+            render={({ field: { onBlur, onChange, value } }) => (
+              <TextField
+                label="Resumo"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                placeholder="Escreva o resumo da avaliacao"
+                value={value}
+              />
+            )}
+          />
+          <Controller
+            control={teacherForm.control}
+            name="observations"
+            rules={{ required: true }}
+            render={({ field: { onBlur, onChange, value } }) => (
+              <TextField
+                label="Observacoes"
+                multiline
+                onBlur={onBlur}
+                onChangeText={onChange}
+                placeholder="Descreva observacoes tecnicas"
+                value={value}
+              />
+            )}
+          />
+          <Controller
+            control={teacherForm.control}
+            name="suggestedChanges"
+            render={({ field: { onBlur, onChange, value } }) => (
+              <TextField
+                label="Sugestoes para o plano"
+                multiline
+                onBlur={onBlur}
+                onChangeText={onChange}
+                placeholder="Quais ajustes devem entrar no proximo planejamento?"
+                value={value}
+              />
+            )}
+          />
+          <Button
+            label="Salvar revisao mockada"
+            onPress={teacherForm.handleSubmit((values) => {
+              assessmentRepository.createReview({
+                submissionId: submission.id,
+                teacherId: submission.teacherId,
+                summary: values.summary,
+                observations: values.observations,
+                suggestedChanges: values.suggestedChanges,
+                createdNewPlan: Boolean(values.suggestedChanges),
+              });
+              setTeacherFormVisible(false);
+            })}
+          />
         </View>
-      </Card>
+      ) : null}
+
+      {studentFormVisible && !isTeacher ? (
+        <View style={{ gap: theme.spacing.md }}>
+          <SectionTitle
+            title="Novo envio"
+            description="Descreva como foi a resposta ao plano atual antes de enviar."
+          />
+          <Controller
+            control={studentForm.control}
+            name="description"
+            rules={{ required: true }}
+            render={({ field: { onBlur, onChange, value } }) => (
+              <TextField
+                label="Descricao da avaliacao"
+                multiline
+                onBlur={onBlur}
+                onChangeText={onChange}
+                placeholder="Ex.: melhor resposta no treino, energia, digestao e aderencia."
+                value={value}
+              />
+            )}
+          />
+          <Button
+            label="Enviar avaliacao mockada"
+            onPress={studentForm.handleSubmit((values) => {
+              if (!session.currentUser) {
+                return;
+              }
+
+              assessmentRepository.submitAssessment({
+                studentId: session.currentUser.id,
+                teacherId: submission.teacherId,
+                description: values.description,
+              });
+              studentForm.reset();
+              setStudentFormVisible(false);
+            })}
+          />
+        </View>
+      ) : null}
 
       <SectionTitle
         title="Timeline da avaliacao"
@@ -128,19 +227,16 @@ export function AssessmentScreen() {
       />
       <View style={{ gap: theme.spacing.md }}>
         {timeline.map((item) => (
-          <Card key={item.id}>
-            <View style={{ gap: theme.spacing.sm }}>
-              <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
-                {item.date}
-              </Text>
-              <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
-                {isTeacher ? item.titleTeacher : item.titleStudent}
-              </Text>
-              <Text style={{ color: theme.colors.textMuted }}>
-                {item.description}
-              </Text>
-            </View>
-          </Card>
+          <JourneyTimelineCard
+            event={{
+              id: item.id,
+              date: item.date,
+              domain: "assessment",
+              title: isTeacher ? item.titleTeacher : item.titleStudent,
+              description: item.description,
+            }}
+            key={item.id}
+          />
         ))}
       </View>
 
@@ -175,19 +271,8 @@ export function AssessmentScreen() {
         ) : (
           <>
             <Button
-              label="Enviar nova avaliacao mockada"
-              onPress={() => {
-                if (!session.currentUser) {
-                  return;
-                }
-
-                assessmentRepository.submitAssessment({
-                  studentId: session.currentUser.id,
-                  teacherId: submission.teacherId,
-                  description:
-                    "Nova avaliacao mockada enviada pelo aluno para revisar resposta ao plano atual.",
-                });
-              }}
+              label="Abrir formulario de avaliacao"
+              onPress={() => setStudentFormVisible((current) => !current)}
             />
             <Button
               label="Ver plano atualizado"

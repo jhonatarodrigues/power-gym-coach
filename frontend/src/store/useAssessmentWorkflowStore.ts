@@ -12,6 +12,14 @@ interface AssessmentWorkflowState {
     teacherId: string;
     description: string;
   }) => AssessmentSubmission;
+  createReview: (input: {
+    submissionId: string;
+    teacherId: string;
+    summary: string;
+    observations: string;
+    suggestedChanges?: string;
+    createdNewPlan: boolean;
+  }) => AssessmentReview;
 }
 
 function clone<T>(value: T): T {
@@ -50,5 +58,35 @@ export const useAssessmentWorkflowStore = create<AssessmentWorkflowState>((set) 
     }));
 
     return nextSubmission;
+  },
+  createReview: ({
+    createdNewPlan,
+    observations,
+    submissionId,
+    suggestedChanges,
+    summary,
+    teacherId,
+  }) => {
+    const nextReview: AssessmentReview = {
+      id: `assessment-review-${Date.now()}`,
+      submissionId,
+      teacherId,
+      summary,
+      observations,
+      suggestedChanges,
+      createdNewPlan,
+      reviewedAt: new Date().toISOString(),
+    };
+
+    set((state) => ({
+      reviews: [nextReview, ...state.reviews],
+      submissions: state.submissions.map((submission) =>
+        submission.id === submissionId
+          ? { ...submission, status: "reviewed" }
+          : submission
+      ),
+    }));
+
+    return nextReview;
   },
 }));

@@ -1,4 +1,4 @@
-import { studentJourneyRepository } from "@/repository/studentRepository";
+import { studentJourneyRepository } from "@/repository";
 
 export function useStudentJourneyTimeline() {
   const events = studentJourneyRepository.listPrimaryStudentJourney();

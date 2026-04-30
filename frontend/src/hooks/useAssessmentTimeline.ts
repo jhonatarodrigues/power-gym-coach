@@ -1,4 +1,4 @@
-import { assessmentRepository } from "@/repository/assessmentRepository";
+import { assessmentRepository } from "@/repository";
 
 export function useAssessmentTimeline() {
   const submissions = assessmentRepository.listSubmissions();

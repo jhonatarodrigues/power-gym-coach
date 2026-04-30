@@ -105,6 +105,8 @@ Recently completed:
 - unified student journey timeline for the teacher
 - domain-level repository adapters
 - stronger unit coverage on new workflow state and critical screens
+- form-based mocked flows for assessment and exams
+- reusable journey components for status, decisions and timeline
 
 ## Information architecture
 

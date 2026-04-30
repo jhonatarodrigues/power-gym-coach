@@ -34,6 +34,22 @@ export const mockAssessmentRepository: AssessmentRepository = {
     useAssessmentWorkflowStore
       .getState()
       .submitAssessment({ description, studentId, teacherId }),
+  createReview: ({
+    createdNewPlan,
+    observations,
+    submissionId,
+    suggestedChanges,
+    summary,
+    teacherId,
+  }) =>
+    useAssessmentWorkflowStore.getState().createReview({
+      createdNewPlan,
+      observations,
+      submissionId,
+      suggestedChanges,
+      summary,
+      teacherId,
+    }),
 };
 
 export const mockExamRepository: ExamRepository = {

@@ -5,8 +5,10 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   AthleteListItem,
   Button,
-  Card,
+  DecisionCard,
   Header,
+  JourneyTimelineCard,
+  PendingAlertCard,
   Screen,
   SectionTitle,
 } from "@/components";
@@ -46,85 +48,50 @@ export function StudentDetailsScreen() {
       <AthleteListItem
         name={studentUser.name}
         focus={studentProfile.goal}
-        status="Plano ativo"
+        status={currentPlanStatus}
       />
 
       <SectionTitle title="Resumo" description="Contexto rapido do acompanhamento." />
-      <Card>
-        <View style={{ gap: theme.spacing.sm }}>
-          <Text style={{ color: theme.colors.textMuted }}>
-            Restricoes: {studentProfile.restrictions}
-          </Text>
-          <Text style={{ color: theme.colors.textMuted }}>
-            Plano atual: {currentPlanTitle}
-          </Text>
-          <Text style={{ color: theme.colors.textMuted }}>
-            Status do plano: {currentPlanStatus}
-          </Text>
-          <Text style={{ color: theme.colors.textMuted }}>
-            Ultimo progresso: {latestProgress?.weightKg} kg /{" "}
-            {latestProgress?.bodyFatPercentage}% BF
-          </Text>
-        </View>
-      </Card>
+      <DecisionCard
+        description={`Restricoes: ${studentProfile.restrictions}`}
+        highlight={`Ultimo progresso: ${latestProgress?.weightKg} kg / ${latestProgress?.bodyFatPercentage}% BF`}
+        title={currentPlanTitle}
+      />
 
       <SectionTitle
         title="Sinais para decisao"
         description="Pontos que ajudam o professor a decidir o proximo ajuste."
       />
       <View style={{ gap: theme.spacing.md }}>
-        <Card>
-          <View style={{ gap: theme.spacing.sm }}>
-            <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
-              Plano atual
-            </Text>
-            <Text style={{ color: theme.colors.textMuted }}>
-              {trainingDaysCount} dias de treino, {mealsCount} refeicoes e{" "}
-              {supplementsCount} suplementos cadastrados.
-            </Text>
-          </View>
-        </Card>
-
-        <Card>
-          <View style={{ gap: theme.spacing.sm }}>
-            <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
-              Avaliacao mais recente
-            </Text>
-            <Text style={{ color: theme.colors.text }}>
-              {latestAssessmentSummary}
-            </Text>
-            {latestAssessmentSuggestedChanges ? (
-              <Text style={{ color: theme.colors.textMuted }}>
-                Proxima direcao: {latestAssessmentSuggestedChanges}
-              </Text>
-            ) : null}
-          </View>
-        </Card>
-
-        <Card>
-          <View style={{ gap: theme.spacing.sm }}>
-            <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
-              Exames e historico
-            </Text>
-            <Text style={{ color: theme.colors.textMuted }}>
-              Exames em andamento: {pendingExamCount}
-            </Text>
-            <Text style={{ color: theme.colors.textMuted }}>
-              Ultimo registro: {latestHistory?.title ?? "Nenhum registro recente"}
-            </Text>
-          </View>
-        </Card>
-
-        <Card>
-          <View style={{ gap: theme.spacing.sm }}>
-            <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
-              Proximo passo sugerido
-            </Text>
-            <Text style={{ color: theme.colors.textMuted }}>
-              {nextRecommendedAction}
-            </Text>
-          </View>
-        </Card>
+        <DecisionCard
+          badgeLabel="Plano"
+          description={`${trainingDaysCount} dias de treino, ${mealsCount} refeicoes e ${supplementsCount} suplementos cadastrados.`}
+          title="Estrutura ativa do acompanhamento"
+        />
+        <DecisionCard
+          actionLabel="Abrir avaliacao"
+          badgeLabel="Avaliacao"
+          description={latestAssessmentSummary ?? "Nenhuma devolutiva registrada."}
+          highlight={latestAssessmentSuggestedChanges}
+          onActionPress={() => navigation.navigate("Assessment")}
+          title="Leitura tecnica mais recente"
+        />
+        <PendingAlertCard
+          actionLabel="Abrir exams"
+          count={pendingExamCount}
+          description={latestHistory?.title ?? "Nenhum registro recente no historico."}
+          onActionPress={() => navigation.navigate("Exams")}
+          title="Exames em andamento"
+        />
+        <DecisionCard
+          actionLabel="Ajustar plano atual"
+          badgeLabel="Proximo passo"
+          description={nextRecommendedAction}
+          onActionPress={() =>
+            navigation.navigate("TeacherTabs", { screen: "TeacherPlanTab" })
+          }
+          title="Decisao recomendada"
+        />
       </View>
 
       <SectionTitle
@@ -133,24 +100,7 @@ export function StudentDetailsScreen() {
       />
       <View style={{ gap: theme.spacing.md }}>
         {latestEvents.map((event) => (
-          <Card key={event.id}>
-            <View style={{ gap: theme.spacing.sm }}>
-              <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
-                {event.date}
-              </Text>
-              <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
-                {event.title}
-              </Text>
-              <Text style={{ color: theme.colors.textMuted }}>
-                {event.description}
-              </Text>
-              {event.highlight ? (
-                <Text style={{ color: theme.colors.textMuted }}>
-                  {event.highlight}
-                </Text>
-              ) : null}
-            </View>
-          </Card>
+          <JourneyTimelineCard event={event} key={event.id} />
         ))}
       </View>
 

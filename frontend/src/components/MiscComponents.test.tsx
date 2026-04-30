@@ -1,15 +1,20 @@
+import type { StudentJourneyEvent } from "@/repository/contracts";
 import { fireEvent, screen } from "@testing-library/react-native";
 
 import { renderWithProviders } from "@/test-utils/renderWithProviders";
 
+import { DecisionCard } from "./DecisionCard";
 import { EmptyState } from "./EmptyState";
 import { ExerciseItem } from "./ExerciseItem";
 import { FoodPickerItem } from "./FoodPickerItem";
 import { Header } from "./Header";
 import { ExerciseVideoCard } from "./ExerciseVideoCard";
+import { JourneyTimelineCard } from "./JourneyTimelineCard";
 import { MetricCard } from "./MetricCard";
 import { PasswordField } from "./PasswordField";
+import { PendingAlertCard } from "./PendingAlertCard";
 import { Showcase } from "./Showcase";
+import { StatusBadge } from "./StatusBadge";
 import { TextField } from "./TextField";
 
 describe("misc components", () => {
@@ -117,5 +122,40 @@ describe("misc components", () => {
     renderWithProviders(<TextField placeholder="Livre" />);
 
     expect(screen.getByPlaceholderText("Livre")).toBeTruthy();
+  });
+
+  it("renders the new journey components", () => {
+    const event: StudentJourneyEvent = {
+      id: "journey-1",
+      date: "2026-04-30",
+      domain: "exam",
+      title: "Upload realizado",
+      description: "Arquivo enviado pelo aluno.",
+      highlight: "Status: sent",
+    };
+
+    renderWithProviders(
+      <>
+        <StatusBadge label="Pending" tone="warning" />
+        <DecisionCard
+          title="Decisao"
+          description="Descricao curta."
+          highlight="Destaque"
+          badgeLabel="Plan"
+        />
+        <PendingAlertCard
+          title="Pendencias"
+          count={2}
+          description="Itens em aberto."
+          actionLabel="Abrir"
+        />
+        <JourneyTimelineCard event={event} />
+      </>
+    );
+
+    expect(screen.getByText("Pending")).toBeTruthy();
+    expect(screen.getByText("Decisao")).toBeTruthy();
+    expect(screen.getByText("Pendencias")).toBeTruthy();
+    expect(screen.getByText("Upload realizado")).toBeTruthy();
   });
 });

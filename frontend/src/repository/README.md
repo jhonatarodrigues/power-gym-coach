@@ -22,7 +22,14 @@ Diretrizes:
 - `planRepository.ts`
 - `progressRepository.ts`
 - `studentRepository.ts`
+- `index.ts`
 
 Esses arquivos funcionam como ponto de entrada estavel por dominio.
 Na fase mockada eles apontam para implementacoes locais.
 Quando a API real entrar, a ideia e trocar a implementacao por dominio sem reescrever telas e hooks.
+
+## Convencao de uso
+- hooks e screens devem preferir `@/repository`
+- implementacoes mockadas ficam em `mock/repositories.ts`
+- stores cuidam de estado local e transicoes de workflow
+- repository deve expor contratos e operacoes de dominio, nao detalhes de UI

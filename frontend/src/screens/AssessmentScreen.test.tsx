@@ -1,4 +1,4 @@
-import { act, fireEvent, screen } from "@testing-library/react-native";
+import { act, fireEvent, screen, waitFor } from "@testing-library/react-native";
 
 import { useCurrentPlanStore } from "@/store/useCurrentPlanStore";
 import { useAssessmentWorkflowStore } from "@/store/useAssessmentWorkflowStore";
@@ -34,21 +34,45 @@ describe("AssessmentScreen", () => {
     expect(useCurrentPlanStore.getState().currentPlan.status).toBe("draft");
   });
 
-  it("shows student actions for the student role", () => {
+  it("shows student actions for the student role", async () => {
     act(() => {
       useMockSessionStore.getState().signInAs("student");
     });
 
     renderWithProviders(<AssessmentScreen />);
 
-    expect(screen.getByText("Enviar nova avaliacao mockada")).toBeTruthy();
+    expect(screen.getByText("Abrir formulario de avaliacao")).toBeTruthy();
     expect(screen.getByText("Ver plano atualizado")).toBeTruthy();
 
-    fireEvent.press(screen.getByText("Enviar nova avaliacao mockada"));
+    act(() => {
+      fireEvent.press(screen.getByText("Abrir formulario de envio"));
+    });
 
-    expect(useAssessmentWorkflowStore.getState().submissions[0]?.status).toBe(
-      "pending"
+    await screen.findByPlaceholderText(
+      "Ex.: melhor resposta no treino, energia, digestao e aderencia."
     );
+
+    await act(async () => {
+      fireEvent.changeText(
+        screen.getByPlaceholderText(
+          "Ex.: melhor resposta no treino, energia, digestao e aderencia."
+        ),
+        "Nova avaliacao enviada pelo teste"
+      );
+      fireEvent.press(screen.getByText("Enviar avaliacao mockada"));
+    });
+
+    await waitFor(() => {
+      expect(
+        useAssessmentWorkflowStore
+          .getState()
+          .submissions.some(
+            (submission) =>
+              submission.description === "Nova avaliacao enviada pelo teste" &&
+              submission.status === "pending"
+          )
+      ).toBe(true);
+    });
   });
 
   it("shows waiting state when there is no review yet", () => {

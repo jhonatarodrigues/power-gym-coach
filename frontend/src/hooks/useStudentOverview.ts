@@ -1,5 +1,5 @@
 import { useCurrentPlan } from "@/hooks/useCurrentPlan";
-import { studentOverviewRepository } from "@/repository/studentRepository";
+import { studentOverviewRepository } from "@/repository";
 
 export function useStudentOverview() {
   const { currentPlan, hasUnsavedChanges } = useCurrentPlan();

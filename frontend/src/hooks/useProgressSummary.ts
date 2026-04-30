@@ -1,4 +1,4 @@
-import { progressRepository } from "@/repository/progressRepository";
+import { progressRepository } from "@/repository";
 
 function calculateDelta(current?: number, initial?: number) {
   if (current == null || initial == null) {

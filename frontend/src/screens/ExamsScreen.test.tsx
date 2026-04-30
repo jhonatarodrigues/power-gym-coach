@@ -1,4 +1,4 @@
-import { act, fireEvent, screen } from "@testing-library/react-native";
+import { act, fireEvent, screen, waitFor } from "@testing-library/react-native";
 
 import { examRequestsMock, examUploadsMock } from "@/repository/mock";
 import { useExamWorkflowStore } from "@/store/useExamWorkflowStore";
@@ -18,42 +18,74 @@ describe("ExamsScreen", () => {
     });
   });
 
-  it("shows teacher actions and exam uploads", () => {
+  it("shows teacher actions and exam uploads", async () => {
     act(() => {
       useMockSessionStore.getState().signInAs("teacher");
     });
 
     renderWithProviders(<ExamsScreen />);
 
-    expect(screen.getByText("Solicitar novo exame mockado")).toBeTruthy();
-    expect(screen.getByText(examRequestsMock[0].title)).toBeTruthy();
+    expect(screen.getByText("Abrir formulario de solicitacao")).toBeTruthy();
+    expect(screen.getAllByText(examRequestsMock[0].title).length).toBeGreaterThan(0);
     expect(screen.getByText(examUploadsMock[0].fileName)).toBeTruthy();
 
-    fireEvent.press(screen.getByText("Solicitar novo exame mockado"));
+    act(() => {
+      fireEvent.press(screen.getByText("Abrir solicitacao"));
+    });
+
+    await screen.findByPlaceholderText("Ex.: Ferritina + vitamina B12");
+
+    await act(async () => {
+      fireEvent.changeText(
+        screen.getByPlaceholderText("Ex.: Ferritina + vitamina B12"),
+        "Ferritina + vitamina B12"
+      );
+      fireEvent.changeText(
+        screen.getByPlaceholderText("Descreva o motivo e quando enviar."),
+        "Solicitacao mockada para revisar fadiga, energia e recuperacao."
+      );
+      fireEvent.press(screen.getByText("Criar solicitacao mockada"));
+    });
 
     expect(useExamWorkflowStore.getState().requests[0]?.title).toBe(
       "Ferritina + vitamina B12"
     );
   });
 
-  it("shows student actions for the student role", () => {
+  it("shows student actions for the student role", async () => {
     act(() => {
       useMockSessionStore.getState().signInAs("student");
     });
 
     renderWithProviders(<ExamsScreen />);
 
-    expect(screen.getByText("Enviar exame mockado")).toBeTruthy();
+    expect(screen.getByText("Abrir formulario de upload")).toBeTruthy();
     expect(screen.getByText("Ver plano atual")).toBeTruthy();
 
-    fireEvent.press(screen.getByText("Enviar exame mockado"));
+    act(() => {
+      fireEvent.press(screen.getByText("Abrir upload"));
+    });
 
-    expect(useExamWorkflowStore.getState().uploads[0]?.fileName).toContain(
-      "upload-mock-"
-    );
+    await screen.findByPlaceholderText("exame-abril-2026.pdf");
+
+    await act(async () => {
+      fireEvent.changeText(
+        screen.getByPlaceholderText("exame-abril-2026.pdf"),
+        "upload-mock-teste.pdf"
+      );
+      fireEvent.press(screen.getByText("Enviar upload mockado"));
+    });
+
+    await waitFor(() => {
+      expect(
+        useExamWorkflowStore
+          .getState()
+          .uploads.some((upload) => upload.fileName === "upload-mock-teste.pdf")
+      ).toBe(true);
+    });
   });
 
-  it("does not upload when all requests are already reviewed", () => {
+  it("does not upload when all requests are already reviewed", async () => {
     act(() => {
       useMockSessionStore.getState().signInAs("student");
       useExamWorkflowStore.setState({
@@ -67,7 +99,19 @@ describe("ExamsScreen", () => {
 
     renderWithProviders(<ExamsScreen />);
 
-    fireEvent.press(screen.getByText("Enviar exame mockado"));
+    act(() => {
+      fireEvent.press(screen.getByText("Abrir upload"));
+    });
+
+    await screen.findByPlaceholderText("exame-abril-2026.pdf");
+
+    await act(async () => {
+      fireEvent.changeText(
+        screen.getByPlaceholderText("exame-abril-2026.pdf"),
+        "nao-deve-subir.pdf"
+      );
+      fireEvent.press(screen.getByText("Enviar upload mockado"));
+    });
 
     expect(useExamWorkflowStore.getState().uploads).toHaveLength(initialUploadCount);
   });
