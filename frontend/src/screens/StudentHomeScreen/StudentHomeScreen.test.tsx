@@ -22,6 +22,8 @@ describe("StudentHomeScreen", () => {
     renderWithProviders(<StudentHomeScreen />);
 
     expect(screen.getByText("Dashboard do aluno")).toBeTruthy();
+    expect(screen.getByText("calorias consumidas hoje")).toBeTruthy();
+    expect(screen.getByText("0")).toBeTruthy();
     expect(screen.getByText("Treinos da semana")).toBeTruthy();
     expect(screen.getByText("Abrir treino do dia")).toBeTruthy();
     expect(screen.getByText("Abrir avaliacao")).toBeTruthy();

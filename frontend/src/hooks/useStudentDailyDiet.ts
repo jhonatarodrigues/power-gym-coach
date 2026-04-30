@@ -11,6 +11,18 @@ export function useStudentDailyDiet() {
   const todayKey = "2026-04-30";
   const waterTarget = currentPlan.dietPlan.waterLitersTarget;
   const waterIntake = getWaterIntake(todayKey);
+  const consumedCalories = currentPlan.dietPlan.meals.reduce((total, meal) => {
+    const consumedIds = consumedMealItems[meal.id] ?? [];
+
+    return (
+      total +
+      meal.items.reduce(
+        (mealTotal, item) => mealTotal + (consumedIds.includes(item.id) ? item.calories : 0),
+        0
+      )
+    );
+  }, 0);
+  const remainingCalories = Math.max(0, currentPlan.dietPlan.calories - consumedCalories);
 
   return {
     meals: currentPlan.dietPlan.meals,
@@ -21,5 +33,7 @@ export function useStudentDailyDiet() {
     todayKey,
     waterTarget,
     waterIntake,
+    consumedCalories,
+    remainingCalories,
   };
 }

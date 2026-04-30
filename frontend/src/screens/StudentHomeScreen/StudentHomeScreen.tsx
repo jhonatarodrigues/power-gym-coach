@@ -21,6 +21,7 @@ import {
 import { useCurrentPlan } from "@/hooks/useCurrentPlan";
 import { useMockAuth } from "@/hooks/useMockAuth";
 import { usePayments } from "@/hooks/usePayments";
+import { useStudentDailyDiet } from "@/hooks/useStudentDailyDiet";
 import { useStudentTodayWorkout } from "@/hooks/useStudentTodayWorkout";
 import { useAppTheme } from "@/theme";
 import type { RootStackParamList } from "@/navigation/types";
@@ -32,6 +33,7 @@ export function StudentHomeScreen() {
   const { session, signInAs, signOut } = useMockAuth();
   const { currentPlan } = useCurrentPlan();
   const { getOpenRecordsByUser, getPaymentStatusByStudent } = usePayments();
+  const { consumedCalories, remainingCalories } = useStudentDailyDiet();
   const { allDays, completedCount, todayLabel, todayTraining, totalExercises } =
     useStudentTodayWorkout();
   const navigation =
@@ -78,11 +80,18 @@ export function StudentHomeScreen() {
         </View>
       ) : null}
 
-      <MetricCard
-        label="calorias do plano"
-        value={String(currentPlan.dietPlan.calories)}
-        trend={`${currentPlan.dietPlan.carbs.toFixed(1)}g carb / ${currentPlan.dietPlan.protein.toFixed(1)}g prot`}
-      />
+      <View style={{ gap: theme.spacing.md }}>
+        <MetricCard
+          label="calorias do plano"
+          value={String(currentPlan.dietPlan.calories)}
+          trend={`${currentPlan.dietPlan.carbs.toFixed(1)}g carb / ${currentPlan.dietPlan.protein.toFixed(1)}g prot`}
+        />
+        <MetricCard
+          label="calorias consumidas hoje"
+          value={String(consumedCalories)}
+          trend={`${remainingCalories} kcal restantes no dia`}
+        />
+      </View>
 
       <SectionTitle
         title="Treino de hoje"
