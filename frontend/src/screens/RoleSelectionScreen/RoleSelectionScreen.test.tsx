@@ -14,8 +14,7 @@ describe("RoleSelectionScreen", () => {
     renderWithProviders(<RoleSelectionScreen />);
 
     expect(screen.getByText("Power Gym Coach")).toBeTruthy();
-    fireEvent.changeText(screen.getByLabelText("Email"), "rafael@powergymcoach.app");
-    fireEvent.changeText(screen.getByLabelText("Senha"), "Rafael123");
+    expect(screen.queryByText("Primeiro acesso do aluno")).toBeNull();
 
     fireEvent.press(screen.getByText("Entrar"));
 
@@ -28,8 +27,7 @@ describe("RoleSelectionScreen", () => {
     renderWithProviders(<RoleSelectionScreen />);
 
     fireEvent.press(screen.getByText("Aluno"));
-    fireEvent.changeText(screen.getByLabelText("Email"), "marina@powergymcoach.app");
-    fireEvent.changeText(screen.getByLabelText("Senha"), "Marina123");
+    expect(screen.getByText("Primeiro acesso do aluno")).toBeTruthy();
     fireEvent.press(screen.getByText("Entrar"));
 
     await waitFor(() =>

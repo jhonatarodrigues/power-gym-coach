@@ -45,6 +45,7 @@ export function TeacherDashboardScreen() {
   return (
     <Screen>
       <Header
+        showBackButton={false}
         title="Dashboard do professor"
         subtitle="Visao geral da carteira de alunos, pagamentos e operacao do dia."
       />

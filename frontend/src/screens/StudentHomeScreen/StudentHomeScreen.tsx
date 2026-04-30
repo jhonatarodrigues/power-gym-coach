@@ -51,6 +51,7 @@ export function StudentHomeScreen() {
   return (
     <Screen>
       <Header
+        showBackButton={false}
         title="Dashboard do aluno"
         subtitle="Seu treino do dia, dieta, pagamentos e progresso em um unico lugar."
       />

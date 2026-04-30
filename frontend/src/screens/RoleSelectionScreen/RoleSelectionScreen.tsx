@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
@@ -14,6 +14,17 @@ interface LoginFormValues {
   password: string;
 }
 
+const roleDefaults = {
+  teacher: {
+    email: "rafael@powergymcoach.app",
+    password: "Rafael123",
+  },
+  student: {
+    email: "marina@powergymcoach.app",
+    password: "Marina123",
+  },
+} as const;
+
 export function RoleSelectionScreen() {
   const { theme } = useAppTheme();
   const navigation =
@@ -23,12 +34,13 @@ export function RoleSelectionScreen() {
     "teacher"
   );
   const [loginError, setLoginError] = useState("");
-  const { control, handleSubmit } = useForm<LoginFormValues>({
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+  const { control, handleSubmit, reset } = useForm<LoginFormValues>({
+    defaultValues: roleDefaults.teacher,
   });
+
+  useEffect(() => {
+    reset(roleDefaults[selectedRole]);
+  }, [reset, selectedRole]);
 
   const onSubmit = (values: LoginFormValues) => {
     const success = signIn({
@@ -44,6 +56,7 @@ export function RoleSelectionScreen() {
     <Screen>
       <View style={{ flex: 1, justifyContent: "center", gap: theme.spacing.xl }}>
         <Header
+          showBackButton={false}
           title="Power Gym Coach"
           subtitle="Entre com email e senha. Escolha acima se o acesso e de professor ou aluno."
         />
@@ -116,11 +129,13 @@ export function RoleSelectionScreen() {
             ) : null}
 
             <Button label="Entrar" onPress={handleSubmit(onSubmit)} />
-            <Button
-              label="Primeiro acesso do aluno"
-              onPress={() => navigation.navigate("FirstAccess")}
-              variant="ghost"
-            />
+            {selectedRole === "student" ? (
+              <Button
+                label="Primeiro acesso do aluno"
+                onPress={() => navigation.navigate("FirstAccess")}
+                variant="ghost"
+              />
+            ) : null}
           </View>
         </Card>
       </View>
