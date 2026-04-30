@@ -34,6 +34,8 @@ export function CurrentPlanScreen() {
     changedSectionCount,
     changedSections,
     mealChanges,
+    nutritionDelta,
+    sectionDiffs,
     supplementChanges,
     trainingChanges,
   } = usePlanReview();
@@ -82,6 +84,11 @@ export function CurrentPlanScreen() {
               {hasUnsavedChanges
                 ? "Voce possui alteracoes nao salvas no plano atual."
                 : "Plano atual sincronizado com a ultima versao salva."}
+            </Text>
+            <Text style={{ color: theme.colors.textMuted }}>
+              {hasUnsavedChanges
+                ? "Revise as secoes alteradas e o impacto nutricional antes de salvar."
+                : "Nenhuma diferenca entre a versao ativa e a ultima salva."}
             </Text>
             <View style={{ gap: theme.spacing.sm }}>
               <Button
@@ -133,6 +140,40 @@ export function CurrentPlanScreen() {
                 <Text style={{ color: theme.colors.textMuted }}>
                   Suplementacao: {supplementChanges} sinais de alteracao
                 </Text>
+                <Text style={{ color: theme.colors.textMuted }}>
+                  Calorias: {nutritionDelta.calories >= 0 ? "+" : ""}
+                  {nutritionDelta.calories.toFixed(1)} kcal
+                </Text>
+                <Text style={{ color: theme.colors.textMuted }}>
+                  Carboidratos: {nutritionDelta.carbs >= 0 ? "+" : ""}
+                  {nutritionDelta.carbs.toFixed(1)} g
+                </Text>
+                <Text style={{ color: theme.colors.textMuted }}>
+                  Proteinas: {nutritionDelta.protein >= 0 ? "+" : ""}
+                  {nutritionDelta.protein.toFixed(1)} g
+                </Text>
+                <Text style={{ color: theme.colors.textMuted }}>
+                  Gorduras: {nutritionDelta.fat >= 0 ? "+" : ""}
+                  {nutritionDelta.fat.toFixed(1)} g
+                </Text>
+              </View>
+            </Card>
+
+            <Card>
+              <View style={{ gap: theme.spacing.sm }}>
+                <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
+                  Diffs por secao
+                </Text>
+                {sectionDiffs.map((section) => (
+                  <View key={section.id} style={{ gap: theme.spacing.xs }}>
+                    <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
+                      {section.title}
+                    </Text>
+                    <Text style={{ color: theme.colors.textMuted }}>
+                      {section.summary}
+                    </Text>
+                  </View>
+                ))}
               </View>
             </Card>
           </View>

@@ -72,4 +72,24 @@ describe("useExamWorkflowStore", () => {
       useExamWorkflowStore.getState().updateRequestStatus("missing-request", "reviewed")
     ).toBeNull();
   });
+
+  it("stores a review note when the teacher reviews an exam", () => {
+    const targetRequestId = useExamWorkflowStore.getState().requests[0]?.id;
+
+    act(() => {
+      useExamWorkflowStore.getState().reviewExam({
+        examRequestId: targetRequestId,
+        reviewNote: "Marcadores dentro do esperado.",
+      });
+    });
+
+    expect(
+      useExamWorkflowStore.getState().requests.find((item) => item.id === targetRequestId)
+        ?.reviewNote
+    ).toBe("Marcadores dentro do esperado.");
+    expect(
+      useExamWorkflowStore.getState().requests.find((item) => item.id === targetRequestId)
+        ?.status
+    ).toBe("reviewed");
+  });
 });

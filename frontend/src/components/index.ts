@@ -1,6 +1,7 @@
 export * from "./AthleteListItem";
 export * from "./Button";
 export * from "./Card";
+export * from "./ComparisonCard";
 export * from "./DecisionCard";
 export * from "./EmptyState";
 export * from "./ExerciseItem";

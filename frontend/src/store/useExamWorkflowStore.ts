@@ -22,6 +22,10 @@ interface ExamWorkflowState {
     examRequestId: string,
     status: ExamRequestStatus
   ) => ExamRequest | null;
+  reviewExam: (input: {
+    examRequestId: string;
+    reviewNote: string;
+  }) => ExamRequest | null;
 }
 
 function clone<T>(value: T): T {
@@ -95,5 +99,27 @@ export const useExamWorkflowStore = create<ExamWorkflowState>((set, get) => ({
     }));
 
     return updatedRequest;
+  },
+  reviewExam: ({ examRequestId, reviewNote }) => {
+    let reviewedRequest: ExamRequest | null = null;
+
+    set((state) => ({
+      requests: state.requests.map((item) => {
+        if (item.id !== examRequestId) {
+          return item;
+        }
+
+        reviewedRequest = {
+          ...item,
+          status: "reviewed",
+          reviewNote,
+          reviewedAt: new Date().toISOString(),
+        };
+
+        return reviewedRequest;
+      }),
+    }));
+
+    return reviewedRequest;
   },
 }));

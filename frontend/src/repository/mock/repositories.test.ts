@@ -49,6 +49,21 @@ describe("mock repositories", () => {
     });
 
     expect(mockExamRepository.listRequests()[0]?.title).toBe("Triglicerideos");
+
+    const sentRequest = mockExamRepository.listRequests().find((request) => request.status === "sent");
+
+    if (!sentRequest) {
+      throw new Error("Expected a sent exam request in mock repository.");
+    }
+
+    mockExamRepository.reviewExam({
+      examRequestId: sentRequest.id,
+      reviewNote: "Exame revisado com boa resposta.",
+    });
+
+    expect(mockExamRepository.listRequests().find((request) => request.id === sentRequest.id)?.reviewNote).toBe(
+      "Exame revisado com boa resposta."
+    );
   });
 
   it("mutates the assessment workflow through the repository contract", () => {
@@ -75,5 +90,6 @@ describe("mock repositories", () => {
     expect(overview.studentUser).toEqual(usersMock[1]);
     expect(overview.currentPlanTitle).toBe(currentPlanMock.title);
     expect(overview.pendingExamCount).toBeGreaterThanOrEqual(0);
+    expect(overview.nextRecommendedAction.length).toBeGreaterThan(0);
   });
 });

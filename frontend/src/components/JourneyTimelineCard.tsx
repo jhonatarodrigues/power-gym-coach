@@ -29,13 +29,37 @@ function getDomainLabel(domain: StudentJourneyEvent["domain"]) {
   return "History";
 }
 
+function getPriorityTone(priority?: StudentJourneyEvent["priority"]) {
+  if (priority === "high") {
+    return "warning";
+  }
+
+  if (priority === "medium") {
+    return "info";
+  }
+
+  return "default";
+}
+
 export function JourneyTimelineCard({ event }: JourneyTimelineCardProps) {
   const { theme } = useAppTheme();
 
   return (
     <Card>
       <View style={{ gap: theme.spacing.sm }}>
-        <StatusBadge label={getDomainLabel(event.domain)} tone="info" />
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: theme.spacing.sm,
+          }}
+        >
+          <StatusBadge label={getDomainLabel(event.domain)} tone="info" />
+          {event.statusLabel ? (
+            <StatusBadge label={event.statusLabel} tone={getPriorityTone(event.priority)} />
+          ) : null}
+          {event.pending ? <StatusBadge label="Pendente" tone="warning" /> : null}
+        </View>
         <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
           {event.date}
         </Text>

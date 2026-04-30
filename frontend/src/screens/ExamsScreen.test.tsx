@@ -52,6 +52,38 @@ describe("ExamsScreen", () => {
     );
   });
 
+  it("lets the teacher review the latest sent exam", async () => {
+    act(() => {
+      useMockSessionStore.getState().signInAs("teacher");
+    });
+
+    renderWithProviders(<ExamsScreen />);
+
+    fireEvent.press(screen.getByText("Abrir revisao do ultimo exame enviado"));
+
+    await screen.findByPlaceholderText(
+      "Descreva a leitura do exame e os proximos passos."
+    );
+
+    await act(async () => {
+      fireEvent.changeText(
+        screen.getByPlaceholderText(
+          "Descreva a leitura do exame e os proximos passos."
+        ),
+        "Revisado e liberado para seguir o plano."
+      );
+      fireEvent.press(screen.getByText("Salvar revisao do exame"));
+    });
+
+    await waitFor(() => {
+      expect(
+        useExamWorkflowStore
+          .getState()
+          .requests.find((request) => request.reviewNote === "Revisado e liberado para seguir o plano.")
+      ).toBeTruthy();
+    });
+  });
+
   it("shows student actions for the student role", async () => {
     act(() => {
       useMockSessionStore.getState().signInAs("student");

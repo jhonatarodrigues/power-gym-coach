@@ -84,4 +84,24 @@ describe("usePlanReview", () => {
     expect(result.current.trainingChanges).toBeGreaterThan(0);
     expect(result.current.mealChanges).toBeGreaterThan(0);
   });
+
+  it("computes nutrition delta and section summaries", () => {
+    act(() => {
+      useCurrentPlanStore.getState().addSupplement({
+        name: "Whey",
+        timing: "Ceia",
+        dosage: "30 g",
+        observation: "Uso eventual",
+        calories: 120,
+        carbs: 3,
+        protein: 24,
+        fat: 2,
+      });
+    });
+
+    const { result } = renderHook(() => usePlanReview(), { wrapper: Providers });
+
+    expect(result.current.nutritionDelta.calories).toBeGreaterThan(0);
+    expect(result.current.sectionDiffs).toHaveLength(3);
+  });
 });

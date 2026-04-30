@@ -21,7 +21,7 @@ describe("ProgressScreen empty states", () => {
   it("renders fallback values when there is no progress entry", () => {
     renderWithProviders(<ProgressScreen />);
 
-    expect(screen.getAllByText("--")).toHaveLength(2);
+    expect(screen.getAllByText("--")).toHaveLength(4);
     expect(screen.queryByText("Ultima leitura")).toBeNull();
   });
 });

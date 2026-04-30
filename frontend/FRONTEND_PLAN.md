@@ -107,6 +107,10 @@ Recently completed:
 - stronger unit coverage on new workflow state and critical screens
 - form-based mocked flows for assessment and exams
 - reusable journey components for status, decisions and timeline
+- richer progress comparisons and momentum summary
+- current plan diff review with nutrition impact
+- student journey filters and pending-priority summaries
+- teacher review note flow for exams and assessment-triggered follow-up requests
 
 ## Information architecture
 

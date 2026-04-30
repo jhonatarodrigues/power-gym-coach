@@ -23,6 +23,7 @@ describe("useExamTimeline", () => {
 
     expect(result.current.requests.length).toBeGreaterThan(0);
     expect(result.current.timeline.length).toBeGreaterThan(0);
+    expect(result.current.pendingRequests.length).toBeGreaterThanOrEqual(0);
   });
 
   it("keeps data available even without an authenticated user", () => {
@@ -32,5 +33,6 @@ describe("useExamTimeline", () => {
 
     expect(result.current.requests.length).toBeGreaterThan(0);
     expect(result.current.uploads.length).toBeGreaterThan(0);
+    expect(result.current.reviewedRequests.length).toBeGreaterThanOrEqual(0);
   });
 });

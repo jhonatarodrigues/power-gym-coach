@@ -18,7 +18,7 @@ import { useAssessmentTimeline } from "@/hooks/useAssessmentTimeline";
 import { useCurrentPlan } from "@/hooks/useCurrentPlan";
 import { useMockAuth } from "@/hooks/useMockAuth";
 import type { RootStackParamList } from "@/navigation/types";
-import { assessmentRepository } from "@/repository";
+import { assessmentRepository, examRepository } from "@/repository";
 import { useAppTheme } from "@/theme";
 
 interface StudentAssessmentFormValues {
@@ -67,6 +67,7 @@ export function AssessmentScreen() {
 
   const pendingSubmissions = submissions.filter((item) => item.status === "pending").length;
   const hasReview = Boolean(review);
+  const canRequestFollowUpExam = isTeacher && Boolean(submission);
 
   return (
     <Screen>
@@ -106,7 +107,11 @@ export function AssessmentScreen() {
       <PendingAlertCard
         actionLabel={isTeacher ? "Abrir formulario de revisao" : "Abrir formulario de envio"}
         count={pendingSubmissions}
-        description="Itens que ainda exigem acao para fechar o ciclo de avaliacao."
+        description={
+          isTeacher
+            ? "Itens que ainda exigem acao para fechar o ciclo de avaliacao e decidir o novo plano."
+            : "Itens que ainda exigem acao para fechar o ciclo de avaliacao."
+        }
         onActionPress={() =>
           isTeacher
             ? setTeacherFormVisible((current) => !current)
@@ -256,6 +261,23 @@ export function AssessmentScreen() {
                 );
                 navigation.navigate("TeacherTabs", { screen: "TeacherPlanTab" });
               }}
+            />
+            <Button
+              label="Solicitar follow-up laboratorial"
+              onPress={() => {
+                if (!canRequestFollowUpExam || !submission) {
+                  return;
+                }
+
+                examRepository.requestExam({
+                  teacherId: submission.teacherId,
+                  studentId: submission.studentId,
+                  title: "Follow-up laboratorial pos-avaliacao",
+                  note: review?.suggestedChanges ?? "Relacionar com a devolutiva atual.",
+                });
+                navigation.navigate("Exams");
+              }}
+              variant="ghost"
             />
             <Button
               label="Solicitar novas fotos"

@@ -22,6 +22,10 @@ import {
 import { useAssessmentWorkflowStore } from "@/store/useAssessmentWorkflowStore";
 import { useExamWorkflowStore } from "@/store/useExamWorkflowStore";
 
+function getJourneyPriority(level: "high" | "medium" | "low") {
+  return level;
+}
+
 export const mockPlanRepository: PlanRepository = {
   getCurrentPlan: () => currentPlanMock,
   getArchivedPlans: () => archivedPlansMock,
@@ -65,6 +69,8 @@ export const mockExamRepository: ExamRepository = {
       .uploadExam({ examRequestId, fileName, studentId }),
   updateRequestStatus: (examRequestId, status) =>
     useExamWorkflowStore.getState().updateRequestStatus(examRequestId, status),
+  reviewExam: ({ examRequestId, reviewNote }) =>
+    useExamWorkflowStore.getState().reviewExam({ examRequestId, reviewNote }),
 };
 
 export const mockProgressRepository: ProgressRepository = {
@@ -117,6 +123,11 @@ export const mockStudentJourneyRepository: StudentJourneyRepository = {
         domain: "assessment" as const,
         title: "Avaliacao enviada",
         description: submission.description,
+        statusLabel: submission.status === "pending" ? "Pendente" : "Revisada",
+        priority: getJourneyPriority(
+          submission.status === "pending" ? "high" : "medium"
+        ),
+        pending: submission.status === "pending",
         highlight:
           submission.status === "pending"
             ? "Aguardando devolutiva do professor"
@@ -131,6 +142,8 @@ export const mockStudentJourneyRepository: StudentJourneyRepository = {
         domain: "assessment" as const,
         title: "Devolutiva da avaliacao",
         description: review.summary,
+        statusLabel: review.createdNewPlan ? "Novo plano" : "Revisado",
+        priority: getJourneyPriority(review.createdNewPlan ? "high" : "medium"),
         highlight: review.suggestedChanges,
       }));
 
@@ -143,7 +156,23 @@ export const mockStudentJourneyRepository: StudentJourneyRepository = {
         domain: "exam" as const,
         title: request.title,
         description: request.note ?? "Solicitacao de exame sem observacao adicional.",
-        highlight: `Status: ${request.status}`,
+        statusLabel:
+          request.status === "pending"
+            ? "Pendente"
+            : request.status === "sent"
+              ? "Enviado"
+              : "Revisado",
+        priority: getJourneyPriority(
+          request.status === "pending"
+            ? "high"
+            : request.status === "sent"
+              ? "medium"
+              : "low"
+        ),
+        pending: request.status !== "reviewed",
+        highlight: request.reviewNote
+          ? `Feedback: ${request.reviewNote}`
+          : `Status: ${request.status}`,
       }));
 
     const progressEvents = progressEntriesMock
@@ -154,6 +183,8 @@ export const mockStudentJourneyRepository: StudentJourneyRepository = {
         domain: "progress" as const,
         title: `${entry.weightKg} kg / ${entry.bodyFatPercentage}% BF`,
         description: entry.notes ?? "Atualizacao de progresso.",
+        statusLabel: "Atualizado",
+        priority: "medium" as const,
         highlight: `${entry.photos.length} fotos registradas`,
       }));
 
@@ -165,6 +196,8 @@ export const mockStudentJourneyRepository: StudentJourneyRepository = {
         domain: "history" as const,
         title: record.title,
         description: record.description ?? "Registro historico do aluno.",
+        statusLabel: "Historico",
+        priority: "low" as const,
       }));
 
     const planEvent = {
@@ -173,6 +206,11 @@ export const mockStudentJourneyRepository: StudentJourneyRepository = {
       domain: "plan" as const,
       title: currentPlanMock.title,
       description: currentPlanMock.trainingPlan.notes ?? "Plano atual ativo.",
+      statusLabel: currentPlanMock.status === "draft" ? "Rascunho" : "Ativo",
+      priority: getJourneyPriority(
+        currentPlanMock.status === "draft" ? "high" : "medium"
+      ),
+      pending: currentPlanMock.status === "draft",
       highlight: currentPlanMock.status,
     };
 

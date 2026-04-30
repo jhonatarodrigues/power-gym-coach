@@ -10,6 +10,7 @@ import { FoodPickerItem } from "./FoodPickerItem";
 import { Header } from "./Header";
 import { ExerciseVideoCard } from "./ExerciseVideoCard";
 import { JourneyTimelineCard } from "./JourneyTimelineCard";
+import { ComparisonCard } from "./ComparisonCard";
 import { MetricCard } from "./MetricCard";
 import { PasswordField } from "./PasswordField";
 import { PendingAlertCard } from "./PendingAlertCard";
@@ -150,6 +151,13 @@ describe("misc components", () => {
           actionLabel="Abrir"
         />
         <JourneyTimelineCard event={event} />
+        <ComparisonCard
+          title="Peso"
+          currentValue="63.1 kg"
+          previousValue="61.8 kg"
+          deltaLabel="+1.3 kg em relacao ao ultimo registro"
+          trendLabel="ganho de peso"
+        />
       </>
     );
 
@@ -157,5 +165,6 @@ describe("misc components", () => {
     expect(screen.getByText("Decisao")).toBeTruthy();
     expect(screen.getByText("Pendencias")).toBeTruthy();
     expect(screen.getByText("Upload realizado")).toBeTruthy();
+    expect(screen.getByText("Peso")).toBeTruthy();
   });
 });

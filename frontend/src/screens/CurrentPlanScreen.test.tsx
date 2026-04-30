@@ -37,6 +37,16 @@ describe("CurrentPlanScreen", () => {
       useCurrentPlanStore
         .getState()
         .updateTrainingDayNotes("training-day-1", "Alteracao em aberto");
+      useCurrentPlanStore.getState().addSupplement({
+        name: "Cafeina",
+        timing: "Pre-treino",
+        dosage: "200 mg",
+        observation: "Somente treino pesado",
+        calories: 0,
+        carbs: 0,
+        protein: 0,
+        fat: 0,
+      });
     });
 
     renderWithProviders(<CurrentPlanScreen />);
@@ -45,12 +55,28 @@ describe("CurrentPlanScreen", () => {
       screen.getByText("Voce possui alteracoes nao salvas no plano atual.")
     ).toBeTruthy();
     expect(screen.getByText("Secoes alteradas")).toBeTruthy();
+    expect(screen.getByText("Diffs por secao")).toBeTruthy();
 
     fireEvent.press(screen.getByText("Descartar alteracoes"));
 
     expect(
       useCurrentPlanStore.getState().currentPlan.trainingPlan.days[0]?.notes
     ).toBe(currentPlanMock.trainingPlan.days[0]?.notes);
+  });
+
+  it("saves the current draft for teachers", () => {
+    act(() => {
+      useMockSessionStore.getState().signInAs("teacher");
+      useCurrentPlanStore
+        .getState()
+        .updateTrainingDayNotes("training-day-1", "Salvar no teste");
+    });
+
+    renderWithProviders(<CurrentPlanScreen />);
+
+    fireEvent.press(screen.getByText("Salvar alteracoes do plano"));
+
+    expect(useCurrentPlanStore.getState().hasUnsavedChanges).toBe(false);
   });
 
   it("hides teacher-only actions for student role", () => {

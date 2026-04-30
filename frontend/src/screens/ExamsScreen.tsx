@@ -29,6 +29,10 @@ interface ExamUploadFormValues {
   fileName: string;
 }
 
+interface ExamReviewFormValues {
+  reviewNote: string;
+}
+
 function getStatusLabel(status: "pending" | "sent" | "reviewed") {
   if (status === "pending") {
     return "Pendente";
@@ -41,15 +45,29 @@ function getStatusLabel(status: "pending" | "sent" | "reviewed") {
   return "Revisado";
 }
 
+function getPriorityLabel(status: "pending" | "sent" | "reviewed"): "high" | "medium" | "low" {
+  if (status === "pending") {
+    return "high";
+  }
+
+  if (status === "sent") {
+    return "medium";
+  }
+
+  return "low";
+}
+
 export function ExamsScreen() {
   const { theme } = useAppTheme();
   const { session } = useMockAuth();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const isTeacher = session.accessLevel === "teacher";
-  const { requests, timeline, uploads } = useExamTimeline();
+  const { pendingRequests, requests, reviewedRequests, sentRequests, timeline, uploads } =
+    useExamTimeline();
   const [requestFormVisible, setRequestFormVisible] = useState(false);
   const [uploadFormVisible, setUploadFormVisible] = useState(false);
+  const [reviewFormVisible, setReviewFormVisible] = useState(false);
   const requestForm = useForm<ExamRequestFormValues>({
     defaultValues: {
       title: "",
@@ -61,8 +79,13 @@ export function ExamsScreen() {
       fileName: "",
     },
   });
-  const nextUploadTarget = requests.find((request) => request.status !== "reviewed");
   const latestSentRequest = requests.find((request) => request.status === "sent");
+  const reviewForm = useForm<ExamReviewFormValues>({
+    defaultValues: {
+      reviewNote: latestSentRequest?.reviewNote ?? "",
+    },
+  });
+  const nextUploadTarget = requests.find((request) => request.status !== "reviewed");
 
   return (
     <Screen>
@@ -81,7 +104,7 @@ export function ExamsScreen() {
       />
       <PendingAlertCard
         actionLabel={isTeacher ? "Abrir solicitacao" : "Abrir upload"}
-        count={requests.filter((request) => request.status !== "reviewed").length}
+        count={pendingRequests.length + sentRequests.length}
         description="Exames que ainda exigem acao para fechar o ciclo de revisao."
         onActionPress={() =>
           isTeacher
@@ -90,6 +113,41 @@ export function ExamsScreen() {
         }
         title="Estado atual"
       />
+
+      {reviewFormVisible && isTeacher && latestSentRequest ? (
+        <View style={{ gap: theme.spacing.md }}>
+          <SectionTitle
+            title="Revisar exame enviado"
+            description="Registre o feedback do professor e feche a solicitacao."
+          />
+          <Controller
+            control={reviewForm.control}
+            name="reviewNote"
+            rules={{ required: true }}
+            render={({ field: { onBlur, onChange, value } }) => (
+              <TextField
+                label="Feedback da revisao"
+                multiline
+                onBlur={onBlur}
+                onChangeText={onChange}
+                placeholder="Descreva a leitura do exame e os proximos passos."
+                value={value}
+              />
+            )}
+          />
+          <Button
+            label="Salvar revisao do exame"
+            onPress={reviewForm.handleSubmit((values) => {
+              examRepository.reviewExam({
+                examRequestId: latestSentRequest.id,
+                reviewNote: values.reviewNote,
+              });
+              reviewForm.reset();
+              setReviewFormVisible(false);
+            })}
+          />
+        </View>
+      ) : null}
 
       {requestFormVisible && isTeacher ? (
         <View style={{ gap: theme.spacing.md }}>
@@ -198,7 +256,10 @@ export function ExamsScreen() {
                 domain: "exam",
                 title: request.title,
                 description: request.note ?? "Sem observacao adicional.",
-                highlight: `Uploads vinculados: ${requestUploads.length}`,
+                statusLabel: getStatusLabel(request.status),
+                priority: getPriorityLabel(request.status),
+                pending: request.status !== "reviewed",
+                highlight: request.reviewNote ?? `Uploads vinculados: ${requestUploads.length}`,
               }}
               key={request.id}
             />
@@ -248,6 +309,11 @@ export function ExamsScreen() {
                 <Text style={{ color: theme.colors.textMuted }}>
                   Uploads vinculados: {requestUploads.length}
                 </Text>
+                {request.reviewNote ? (
+                  <Text style={{ color: theme.colors.primary }}>
+                    Feedback: {request.reviewNote}
+                  </Text>
+                ) : null}
                 {requestUploads.length > 0 ? (
                   <View style={{ gap: theme.spacing.xs }}>
                     {requestUploads.map((upload) => (
@@ -284,6 +350,11 @@ export function ExamsScreen() {
               onPress={() => setRequestFormVisible((current) => !current)}
             />
             <Button
+              label="Abrir revisao do ultimo exame enviado"
+              onPress={() => setReviewFormVisible((current) => !current)}
+              variant="ghost"
+            />
+            <Button
               label="Marcar ultimo exame enviado como revisado"
               onPress={() => {
                 if (!latestSentRequest) {
@@ -293,6 +364,11 @@ export function ExamsScreen() {
                 examRepository.updateRequestStatus(latestSentRequest.id, "reviewed");
               }}
               variant="ghost"
+            />
+            <PendingAlertCard
+              count={reviewedRequests.length}
+              description="Solicitacoes ja revisadas e fechadas pelo professor."
+              title="Exames revisados"
             />
             <Button
               label="Voltar ao plano atual"

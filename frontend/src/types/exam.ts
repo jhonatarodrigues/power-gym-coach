@@ -9,7 +9,9 @@ export interface ExamRequest {
   title: string;
   note?: string;
   status: ExamRequestStatus;
+  reviewNote?: string;
   requestedAt: ISODateTimeString;
+  reviewedAt?: ISODateTimeString;
 }
 
 export interface ExamUpload {

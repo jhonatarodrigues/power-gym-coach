@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react-native";
+import { fireEvent, screen } from "@testing-library/react-native";
 
 import { renderWithProviders } from "@/test-utils/renderWithProviders";
 
@@ -17,5 +17,9 @@ describe("StudentDetailsScreen", () => {
     expect(screen.getAllByText("Abrir avaliacao").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Abrir exams").length).toBeGreaterThan(0);
     expect(screen.getByText("Abrir historico")).toBeTruthy();
+
+    fireEvent.press(screen.getByText(/Exams \(/));
+
+    expect(screen.getByText("Filtro atual: exam")).toBeTruthy();
   });
 });

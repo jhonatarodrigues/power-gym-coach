@@ -1,12 +1,34 @@
 import { Text, View } from "react-native";
 
-import { Card, Header, HistoryCard, MetricCard, Screen, SectionTitle } from "@/components";
+import {
+  Card,
+  ComparisonCard,
+  DecisionCard,
+  Header,
+  HistoryCard,
+  MetricCard,
+  PendingAlertCard,
+  Screen,
+  SectionTitle,
+} from "@/components";
 import { useProgressSummary } from "@/hooks/useProgressSummary";
 import { useAppTheme } from "@/theme";
 
 export function ProgressScreen() {
   const { theme } = useAppTheme();
-  const { bodyFatDelta, entries, latestEntry, weightDelta } = useProgressSummary();
+  const {
+    bodyFatDelta,
+    bodyFatDirection,
+    entries,
+    latestEntry,
+    latestPhotos,
+    previousBodyFatDelta,
+    previousEntry,
+    previousWeightDelta,
+    recentMomentum,
+    weightDelta,
+    weightDirection,
+  } = useProgressSummary();
 
   return (
     <Screen>
@@ -30,6 +52,49 @@ export function ProgressScreen() {
               : "--"
           }
           trend={`${bodyFatDelta}% desde a primeira medicao`}
+        />
+      </View>
+
+      <View style={{ gap: theme.spacing.md }}>
+        <DecisionCard
+          badgeLabel="Momentum"
+          description={recentMomentum}
+          highlight={`Ultima leitura em ${latestEntry?.date ?? "--"}`}
+          title="Direcao atual do progresso"
+        />
+        <PendingAlertCard
+          count={latestPhotos.length}
+          description="Fotos comparativas disponiveis para leitura visual da evolucao."
+          title="Galeria da ultima leitura"
+        />
+      </View>
+
+      <SectionTitle
+        title="Comparativo por periodo"
+        description="Leitura rapida entre a ultima entrada e a medicao anterior."
+      />
+      <View style={{ gap: theme.spacing.md }}>
+        <ComparisonCard
+          currentValue={latestEntry?.weightKg ? `${latestEntry.weightKg} kg` : "--"}
+          deltaLabel={`${previousWeightDelta} kg em relacao a leitura anterior`}
+          previousValue={previousEntry?.weightKg ? `${previousEntry.weightKg} kg` : "--"}
+          title="Peso corporal"
+          tone={Number(previousWeightDelta) <= 0 ? "success" : "info"}
+          trendLabel={weightDirection}
+        />
+        <ComparisonCard
+          currentValue={
+            latestEntry?.bodyFatPercentage ? `${latestEntry.bodyFatPercentage}%` : "--"
+          }
+          deltaLabel={`${previousBodyFatDelta}% em relacao a leitura anterior`}
+          previousValue={
+            previousEntry?.bodyFatPercentage
+              ? `${previousEntry.bodyFatPercentage}%`
+              : "--"
+          }
+          title="Gordura corporal"
+          tone={Number(previousBodyFatDelta) <= 0 ? "success" : "warning"}
+          trendLabel={bodyFatDirection}
         />
       </View>
 
@@ -61,10 +126,10 @@ export function ProgressScreen() {
                 {latestEntry.notes}
               </Text>
               <Text style={{ color: theme.colors.textMuted }}>
-                Fotos registradas: {latestEntry.photos.length}
+                Fotos registradas: {latestPhotos.length}
               </Text>
               <View style={{ gap: theme.spacing.sm }}>
-                {latestEntry.photos.map((photo) => (
+                {latestPhotos.map((photo) => (
                   <Card key={photo.id}>
                     <View style={{ gap: theme.spacing.xs }}>
                       <Text style={{ color: theme.colors.text, fontWeight: "700" }}>

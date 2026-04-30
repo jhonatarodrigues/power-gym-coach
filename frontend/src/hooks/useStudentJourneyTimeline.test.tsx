@@ -12,5 +12,7 @@ describe("useStudentJourneyTimeline", () => {
 
     expect(result.current.events.length).toBeGreaterThan(0);
     expect(result.current.latestEvents.length).toBeGreaterThan(0);
+    expect(result.current.pendingEvents.length).toBeGreaterThanOrEqual(0);
+    expect(result.current.countsByDomain.exam).toBeGreaterThanOrEqual(0);
   });
 });

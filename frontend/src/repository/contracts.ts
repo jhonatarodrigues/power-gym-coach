@@ -52,6 +52,10 @@ export interface ExamRepository {
     examRequestId: string,
     status: ExamRequestStatus
   ) => ExamRequest | null;
+  reviewExam: (input: {
+    examRequestId: string;
+    reviewNote: string;
+  }) => ExamRequest | null;
 }
 
 export interface ProgressRepository {
@@ -82,6 +86,9 @@ export interface StudentJourneyEvent {
   title: string;
   description: string;
   highlight?: string;
+  statusLabel?: string;
+  priority?: "high" | "medium" | "low";
+  pending?: boolean;
 }
 
 export interface StudentJourneyRepository {
