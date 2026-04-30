@@ -115,6 +115,9 @@ Recently completed:
 - current plan publish-readiness summary
 - student operational snapshot summary
 - progress next-checkpoint summary
+- Lucide icons adopted for app navigation and workout UI
+- student daily workout screen with exercise completion checklist
+- weekly training reading now separated explicitly by weekday
 
 ## Information architecture
 

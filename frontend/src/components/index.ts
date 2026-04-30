@@ -21,3 +21,4 @@ export * from "./StatusBadge";
 export * from "./SupplementCard";
 export * from "./TextField";
 export * from "./TrainingDayCard";
+export * from "./WorkoutExerciseCheckItem";

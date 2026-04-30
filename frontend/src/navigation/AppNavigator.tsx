@@ -1,4 +1,14 @@
 import {
+  Activity,
+  ClipboardList,
+  Dumbbell,
+  History,
+  House,
+  LayoutDashboard,
+  Library,
+  UserRound,
+} from "lucide-react-native";
+import {
   DarkTheme,
   DefaultTheme,
   NavigationContainer,
@@ -18,6 +28,7 @@ import { ProgressScreen } from "@/screens/ProgressScreen";
 import { RoleSelectionScreen } from "@/screens/RoleSelectionScreen";
 import { StudentHomeScreen } from "@/screens/StudentHomeScreen";
 import { StudentDetailsScreen } from "@/screens/StudentDetailsScreen";
+import { StudentWorkoutScreen } from "@/screens/StudentWorkoutScreen";
 import { SupplementEditorScreen } from "@/screens/SupplementEditorScreen";
 import { TeacherDashboardScreen } from "@/screens/TeacherDashboardScreen";
 import { TrainingEditorScreen } from "@/screens/TrainingEditorScreen";
@@ -37,7 +48,7 @@ function TeacherTabsNavigator() {
 
   return (
     <TeacherTabs.Navigator
-      screenOptions={{
+      screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.textMuted,
@@ -52,7 +63,28 @@ function TeacherTabsNavigator() {
           fontSize: theme.typography.caption,
           fontWeight: "700",
         },
-      }}
+        tabBarIcon: ({ color, size, focused }) => {
+          const strokeWidth = focused ? 2.5 : 2;
+
+          if (route.name === "TeacherDashboardTab") {
+            return <LayoutDashboard color={color} size={size} strokeWidth={strokeWidth} />;
+          }
+
+          if (route.name === "TeacherStudentTab") {
+            return <UserRound color={color} size={size} strokeWidth={strokeWidth} />;
+          }
+
+          if (route.name === "TeacherPlanTab") {
+            return <ClipboardList color={color} size={size} strokeWidth={strokeWidth} />;
+          }
+
+          if (route.name === "TeacherLibraryTab") {
+            return <Library color={color} size={size} strokeWidth={strokeWidth} />;
+          }
+
+          return <History color={color} size={size} strokeWidth={strokeWidth} />;
+        },
+      })}
     >
       <TeacherTabs.Screen
         component={TeacherDashboardScreen}
@@ -88,7 +120,7 @@ function StudentTabsNavigator() {
 
   return (
     <StudentTabs.Navigator
-      screenOptions={{
+      screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.textMuted,
@@ -103,7 +135,28 @@ function StudentTabsNavigator() {
           fontSize: theme.typography.caption,
           fontWeight: "700",
         },
-      }}
+        tabBarIcon: ({ color, size, focused }) => {
+          const strokeWidth = focused ? 2.5 : 2;
+
+          if (route.name === "StudentHomeTab") {
+            return <House color={color} size={size} strokeWidth={strokeWidth} />;
+          }
+
+          if (route.name === "StudentPlanTab") {
+            return <Dumbbell color={color} size={size} strokeWidth={strokeWidth} />;
+          }
+
+          if (route.name === "StudentProgressTab") {
+            return <Activity color={color} size={size} strokeWidth={strokeWidth} />;
+          }
+
+          if (route.name === "StudentAssessmentTab") {
+            return <ClipboardList color={color} size={size} strokeWidth={strokeWidth} />;
+          }
+
+          return <History color={color} size={size} strokeWidth={strokeWidth} />;
+        },
+      })}
     >
       <StudentTabs.Screen
         component={StudentHomeScreen}
@@ -192,6 +245,7 @@ export function AppNavigator() {
           <>
             <Stack.Screen name="StudentTabs" component={StudentTabsNavigator} />
             <Stack.Screen name="Exams" component={ExamsScreen} />
+            <Stack.Screen name="StudentWorkout" component={StudentWorkoutScreen} />
           </>
         )}
       </Stack.Navigator>

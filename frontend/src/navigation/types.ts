@@ -26,4 +26,5 @@ export type RootStackParamList = {
   SupplementEditor: undefined;
   Assessment: undefined;
   Exams: undefined;
+  StudentWorkout: undefined;
 };

@@ -1,4 +1,5 @@
-import { View } from "react-native";
+import { Text, View } from "react-native";
+import { CalendarDays, CirclePlay, Dumbbell } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
@@ -19,17 +20,20 @@ import {
 } from "@/repository/mock";
 import { useCurrentPlan } from "@/hooks/useCurrentPlan";
 import { useMockAuth } from "@/hooks/useMockAuth";
+import { useStudentTodayWorkout } from "@/hooks/useStudentTodayWorkout";
 import { useAppTheme } from "@/theme";
 import type { RootStackParamList } from "@/navigation/types";
+import { getWeekdayLabel } from "@/utils/weekdays";
 
 export function StudentHomeScreen() {
   const { theme } = useAppTheme();
   const { signInAs, signOut } = useMockAuth();
   const { currentPlan } = useCurrentPlan();
+  const { allDays, completedCount, todayLabel, todayTraining, totalExercises } =
+    useStudentTodayWorkout();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  const todayTraining = currentPlan.trainingPlan.days[0];
   const latestProgress = progressEntriesMock.at(-1);
   const latestAssessment = assessmentReviewsMock.at(-1);
   const pendingExams = examRequestsMock.filter(
@@ -53,7 +57,73 @@ export function StudentHomeScreen() {
         title="Treino de hoje"
         description="Sempre priorizar o plano atual antes do historico."
       />
-      <TrainingDayCard day={todayTraining} />
+      {todayTraining ? (
+        <>
+          <View style={{ gap: theme.spacing.sm }}>
+            <View
+              style={{
+                alignItems: "center",
+                flexDirection: "row",
+                gap: theme.spacing.sm,
+              }}
+            >
+              <CalendarDays color={theme.colors.primary} size={18} />
+              <View style={{ gap: theme.spacing.xs }}>
+                <MetricCard
+                  label={todayLabel}
+                  value={`${completedCount}/${totalExercises}`}
+                  trend="exercicios marcados no dia"
+                />
+              </View>
+            </View>
+            <TrainingDayCard day={todayTraining} />
+          </View>
+          <Button
+            label="Abrir treino do dia"
+            onPress={() => navigation.navigate("StudentWorkout")}
+          />
+        </>
+      ) : null}
+
+      <SectionTitle
+        title="Treinos da semana"
+        description="Separado por dias da semana para facilitar a leitura do aluno."
+      />
+      <View style={{ gap: theme.spacing.md }}>
+        {allDays.map((day) => (
+          <View
+            key={day.id}
+            style={{
+              backgroundColor: theme.colors.surface,
+              borderColor: theme.colors.border,
+              borderRadius: theme.radius.md,
+              borderWidth: 1,
+              gap: theme.spacing.sm,
+              padding: theme.spacing.lg,
+            }}
+          >
+            <View style={{ alignItems: "center", flexDirection: "row", gap: theme.spacing.sm }}>
+              <Dumbbell color={theme.colors.primary} size={18} />
+              <View style={{ flex: 1, gap: theme.spacing.xs }}>
+                <View style={{ alignItems: "center", flexDirection: "row", gap: theme.spacing.sm }}>
+                  <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
+                    {getWeekdayLabel(day.weekday)}
+                  </Text>
+                  {day.id === todayTraining?.id ? (
+                    <CirclePlay color={theme.colors.primary} size={16} />
+                  ) : null}
+                </View>
+                <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
+                  {day.title}
+                </Text>
+                <Text style={{ color: theme.colors.textMuted }}>
+                  {day.exercises.length} exercicios programados
+                </Text>
+              </View>
+            </View>
+          </View>
+        ))}
+      </View>
 
       <View style={{ gap: theme.spacing.md }}>
         <MetricCard
@@ -110,6 +180,11 @@ export function StudentHomeScreen() {
           onPress={() =>
             navigation.navigate("StudentTabs", { screen: "StudentPlanTab" })
           }
+          variant="ghost"
+        />
+        <Button
+          label="Ir para treino do dia"
+          onPress={() => navigation.navigate("StudentWorkout")}
           variant="ghost"
         />
         <Button label="Trocar para visao do professor" onPress={() => signInAs("teacher")} />

@@ -22,6 +22,8 @@ describe("StudentHomeScreen", () => {
     renderWithProviders(<StudentHomeScreen />);
 
     expect(screen.getByText("Seu plano atual")).toBeTruthy();
+    expect(screen.getByText("Treinos da semana")).toBeTruthy();
+    expect(screen.getByText("Abrir treino do dia")).toBeTruthy();
     expect(screen.getByText("Abrir assessment")).toBeTruthy();
     expect(screen.getByText("Abrir exams")).toBeTruthy();
   });
