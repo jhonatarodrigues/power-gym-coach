@@ -4,6 +4,7 @@ export function usePayments() {
   const teacherPlans = usePaymentStore((state) => state.teacherPlans);
   const subscriptions = usePaymentStore((state) => state.subscriptions);
   const paymentRecords = usePaymentStore((state) => state.paymentRecords);
+  const addTeacherPlan = usePaymentStore((state) => state.addTeacherPlan);
   const payRecord = usePaymentStore((state) => state.payRecord);
   const getOpenRecordsByUser = usePaymentStore((state) => state.getOpenRecordsByUser);
   const getPaymentStatusByStudent = usePaymentStore(
@@ -12,14 +13,19 @@ export function usePayments() {
   const getTeacherExpectedRevenue = usePaymentStore(
     (state) => state.getTeacherExpectedRevenue
   );
+  const getTeacherPlansByTeacher = usePaymentStore(
+    (state) => state.getTeacherPlansByTeacher
+  );
 
   return {
     teacherPlans,
     subscriptions,
     paymentRecords,
+    addTeacherPlan,
     payRecord,
     getOpenRecordsByUser,
     getPaymentStatusByStudent,
     getTeacherExpectedRevenue,
+    getTeacherPlansByTeacher,
   };
 }

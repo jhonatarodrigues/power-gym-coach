@@ -12,6 +12,7 @@ export const teacherPlansMock: TeacherPlanDefinition[] = [
     billingCycle: "monthly",
     monthlyAmount: 189.9,
     description: "Acompanhamento mensal com ajustes semanais.",
+    includedFeatures: ["diet", "training", "assessment"],
   },
   {
     id: "teacher-plan-quarterly",
@@ -20,6 +21,7 @@ export const teacherPlansMock: TeacherPlanDefinition[] = [
     billingCycle: "quarterly",
     monthlyAmount: 169.9,
     description: "Cobranca mensal recorrente por 3 meses, sem travar limite integral.",
+    includedFeatures: ["diet", "training", "assessment"],
   },
   {
     id: "teacher-plan-yearly",
@@ -28,6 +30,7 @@ export const teacherPlansMock: TeacherPlanDefinition[] = [
     billingCycle: "yearly",
     monthlyAmount: 149.9,
     description: "Cobranca mensal recorrente por 12 meses, sem comprometer todo o limite.",
+    includedFeatures: ["diet", "training"],
   },
 ];
 

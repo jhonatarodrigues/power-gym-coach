@@ -6,10 +6,12 @@ import {
   teacherPlansMock,
 } from "@/repository/mock";
 import type {
+  BillingCycle,
   PaymentMethod,
   PaymentRecord,
   PaymentStatus,
   StudentSubscription,
+  TeacherPlanFeature,
   TeacherPlanDefinition,
 } from "@/types";
 
@@ -17,10 +19,19 @@ interface PaymentStoreState {
   teacherPlans: TeacherPlanDefinition[];
   subscriptions: StudentSubscription[];
   paymentRecords: PaymentRecord[];
+  addTeacherPlan: (input: {
+    teacherId: string;
+    name: string;
+    billingCycle: BillingCycle;
+    monthlyAmount: number;
+    description: string;
+    includedFeatures: TeacherPlanFeature[];
+  }) => void;
   payRecord: (recordId: string, method: PaymentMethod) => void;
   getOpenRecordsByUser: (userId: string) => PaymentRecord[];
   getPaymentStatusByStudent: (studentId: string) => PaymentStatus | null;
   getTeacherExpectedRevenue: (teacherId: string) => number;
+  getTeacherPlansByTeacher: (teacherId: string) => TeacherPlanDefinition[];
   reset: () => void;
 }
 
@@ -56,6 +67,28 @@ export const usePaymentStore = create<PaymentStoreState>((set, get) => ({
   teacherPlans: initialTeacherPlans,
   subscriptions: initialSubscriptions,
   paymentRecords: initialPaymentRecords,
+  addTeacherPlan: ({
+    billingCycle,
+    description,
+    includedFeatures,
+    monthlyAmount,
+    name,
+    teacherId,
+  }) =>
+    set((state) => ({
+      teacherPlans: [
+        {
+          id: `teacher-plan-${state.teacherPlans.length + 1}`,
+          teacherId,
+          name,
+          billingCycle,
+          monthlyAmount,
+          description,
+          includedFeatures,
+        },
+        ...state.teacherPlans,
+      ],
+    })),
   payRecord: (recordId, method) =>
     set((state) => {
       const nextRecords = state.paymentRecords.map((record) =>
@@ -102,6 +135,8 @@ export const usePaymentStore = create<PaymentStoreState>((set, get) => ({
 
         return total + (plan?.monthlyAmount ?? 0);
       }, 0),
+  getTeacherPlansByTeacher: (teacherId) =>
+    get().teacherPlans.filter((plan) => plan.teacherId === teacherId),
   reset: () =>
     set({
       teacherPlans: JSON.parse(JSON.stringify(teacherPlansMock)) as TeacherPlanDefinition[],

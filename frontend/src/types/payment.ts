@@ -6,6 +6,8 @@ export type BillingCycle = "monthly" | "quarterly" | "yearly";
 
 export type PaymentKind = "platformFee" | "studentPlan";
 
+export type TeacherPlanFeature = "diet" | "training" | "assessment";
+
 export type PaymentStatus =
   | "paid"
   | "pending"
@@ -20,6 +22,7 @@ export interface TeacherPlanDefinition {
   billingCycle: BillingCycle;
   monthlyAmount: number;
   description: string;
+  includedFeatures: TeacherPlanFeature[];
 }
 
 export interface StudentSubscription {
