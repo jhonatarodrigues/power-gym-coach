@@ -1,10 +1,6 @@
 import { Text, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
 import {
   AthleteListItem,
-  Button,
   Card,
   Header,
   MetricCard,
@@ -19,15 +15,12 @@ import {
 import { useMockAuth } from "@/hooks/useMockAuth";
 import { usePayments } from "@/hooks/usePayments";
 import { useAppTheme } from "@/theme";
-import type { RootStackParamList } from "@/navigation/types";
 import { currentPlanMock } from "@/repository/mock";
 
 export function TeacherDashboardScreen() {
   const { theme } = useAppTheme();
   const { currentUser, signInAs, signOut, studentInvitations } = useMockAuth();
   const { getTeacherExpectedRevenue, subscriptions } = usePayments();
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const teacher = currentUser();
 
   const activeStudents = studentProfilesMock.length;
@@ -114,34 +107,31 @@ export function TeacherDashboardScreen() {
         </Card>
       ) : null}
 
-      <View style={{ gap: theme.spacing.md }}>
-        <Button
-          label="Abrir acompanhamento do aluno"
-          onPress={() =>
-            navigation.navigate("TeacherTabs", {
-              screen: "TeacherHome",
-              params: { screen: "TeacherStudentTab" },
-            })
-          }
-        />
-        <Button label="Abrir pagamentos" onPress={() => navigation.navigate("Payments")} />
-        <Button
-          label="Abrir biblioteca de exercicios"
-          onPress={() =>
-            navigation.navigate("TeacherTabs", {
-              screen: "TeacherLibrary",
-            })
-          }
-          variant="ghost"
-        />
-        <Button
-          label="Abrir perfil"
-          onPress={() => navigation.navigate("Profile")}
-          variant="ghost"
-        />
-        <Button label="Trocar para visao do aluno" onPress={() => signInAs("student")} />
-        <Button label="Selecionar perfil" onPress={signOut} variant="ghost" />
-      </View>
+      <Card>
+        <View style={{ gap: theme.spacing.sm }}>
+          <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
+            Como usar o painel
+          </Text>
+          <Text style={{ color: theme.colors.textMuted }}>
+            Use o menu lateral para abrir alunos, pagamentos, planos, biblioteca, exames e avaliacoes.
+          </Text>
+          <Text style={{ color: theme.colors.textMuted }}>
+            A home do professor fica reservada para indicadores uteis e leitura rapida da operacao.
+          </Text>
+          <Text
+            onPress={() => signInAs("student")}
+            style={{ color: theme.colors.primary, fontWeight: "700" }}
+          >
+            Trocar para visao do aluno
+          </Text>
+          <Text
+            onPress={signOut}
+            style={{ color: theme.colors.textMuted, fontWeight: "700" }}
+          >
+            Selecionar perfil
+          </Text>
+        </View>
+      </Card>
     </Screen>
   );
 }

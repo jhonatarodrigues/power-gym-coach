@@ -14,7 +14,6 @@ import {
   DefaultTheme,
   NavigationContainer,
 } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -42,124 +41,12 @@ import { useAppTheme } from "@/theme";
 import type {
   RootStackParamList,
   StudentDrawerParamList,
-  StudentTabParamList,
   TeacherDrawerParamList,
-  TeacherTabParamList,
 } from "./types";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
-const TeacherTabs = createBottomTabNavigator<TeacherTabParamList>();
-const StudentTabs = createBottomTabNavigator<StudentTabParamList>();
 const TeacherDrawer = createDrawerNavigator<TeacherDrawerParamList>();
 const StudentDrawer = createDrawerNavigator<StudentDrawerParamList>();
-
-function TeacherTabsNavigator() {
-  const { theme } = useAppTheme();
-
-  return (
-    <TeacherTabs.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.textMuted,
-        tabBarStyle: {
-          backgroundColor: theme.colors.surface,
-          borderTopColor: theme.colors.border,
-          paddingBottom: theme.spacing.sm,
-          paddingTop: theme.spacing.sm,
-          height: 72,
-        },
-        tabBarLabelStyle: {
-          fontSize: theme.typography.caption,
-          fontWeight: "700",
-        },
-        tabBarIcon: ({ color, size, focused }) => {
-          const strokeWidth = focused ? 2.5 : 2;
-
-          if (route.name === "TeacherDashboardTab") {
-            return <House color={color} size={size} strokeWidth={strokeWidth} />;
-          }
-
-          if (route.name === "TeacherStudentTab") {
-            return <UserRound color={color} size={size} strokeWidth={strokeWidth} />;
-          }
-
-          return <CreditCard color={color} size={size} strokeWidth={strokeWidth} />;
-        },
-      })}
-    >
-      <TeacherTabs.Screen
-        component={TeacherDashboardScreen}
-        name="TeacherDashboardTab"
-        options={{ title: "Dash" }}
-      />
-      <TeacherTabs.Screen
-        component={StudentDetailsScreen}
-        name="TeacherStudentTab"
-        options={{ title: "Alunos" }}
-      />
-      <TeacherTabs.Screen
-        component={PaymentsScreen}
-        name="TeacherPaymentsTab"
-        options={{ title: "Pagamentos" }}
-      />
-    </TeacherTabs.Navigator>
-  );
-}
-
-function StudentTabsNavigator() {
-  const { theme } = useAppTheme();
-
-  return (
-    <StudentTabs.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.textMuted,
-        tabBarStyle: {
-          backgroundColor: theme.colors.surface,
-          borderTopColor: theme.colors.border,
-          paddingBottom: theme.spacing.sm,
-          paddingTop: theme.spacing.sm,
-          height: 72,
-        },
-        tabBarLabelStyle: {
-          fontSize: theme.typography.caption,
-          fontWeight: "700",
-        },
-        tabBarIcon: ({ color, size, focused }) => {
-          const strokeWidth = focused ? 2.5 : 2;
-
-          if (route.name === "StudentHomeTab") {
-            return <House color={color} size={size} strokeWidth={strokeWidth} />;
-          }
-
-          if (route.name === "StudentWorkoutTab") {
-            return <Dumbbell color={color} size={size} strokeWidth={strokeWidth} />;
-          }
-
-          return <ClipboardList color={color} size={size} strokeWidth={strokeWidth} />;
-        },
-      })}
-    >
-      <StudentTabs.Screen
-        component={StudentHomeScreen}
-        name="StudentHomeTab"
-        options={{ title: "Dash" }}
-      />
-      <StudentTabs.Screen
-        component={StudentWorkoutScreen}
-        name="StudentWorkoutTab"
-        options={{ title: "Treino do dia" }}
-      />
-      <StudentTabs.Screen
-        component={StudentDietScreen}
-        name="StudentDietTab"
-        options={{ title: "Dieta" }}
-      />
-    </StudentTabs.Navigator>
-  );
-}
 
 function TeacherDrawerNavigator() {
   const { theme } = useAppTheme();
@@ -179,11 +66,27 @@ function TeacherDrawerNavigator() {
       }}
     >
       <TeacherDrawer.Screen
-        component={TeacherTabsNavigator}
+        component={TeacherDashboardScreen}
         name="TeacherHome"
         options={{
           title: "Painel do professor",
-          drawerIcon: ({ color, size }) => <MenuSquare color={color} size={size} />,
+          drawerIcon: ({ color, size }) => <House color={color} size={size} />,
+        }}
+      />
+      <TeacherDrawer.Screen
+        component={StudentDetailsScreen}
+        name="TeacherStudent"
+        options={{
+          title: "Alunos",
+          drawerIcon: ({ color, size }) => <UserRound color={color} size={size} />,
+        }}
+      />
+      <TeacherDrawer.Screen
+        component={PaymentsScreen}
+        name="TeacherPayments"
+        options={{
+          title: "Pagamentos",
+          drawerIcon: ({ color, size }) => <CreditCard color={color} size={size} />,
         }}
       />
       <TeacherDrawer.Screen
@@ -256,19 +159,27 @@ function StudentDrawerNavigator() {
       }}
     >
       <StudentDrawer.Screen
-        component={StudentTabsNavigator}
+        component={StudentHomeScreen}
         name="StudentHome"
         options={{
           title: "Painel do aluno",
-          drawerIcon: ({ color, size }) => <MenuSquare color={color} size={size} />,
+          drawerIcon: ({ color, size }) => <House color={color} size={size} />,
         }}
       />
       <StudentDrawer.Screen
-        component={ProfileScreen}
-        name="StudentProfile"
+        component={StudentWorkoutScreen}
+        name="StudentWorkout"
         options={{
-          title: "Seu perfil",
-          drawerIcon: ({ color, size }) => <UserRound color={color} size={size} />,
+          title: "Treino do dia",
+          drawerIcon: ({ color, size }) => <Dumbbell color={color} size={size} />,
+        }}
+      />
+      <StudentDrawer.Screen
+        component={StudentDietScreen}
+        name="StudentDiet"
+        options={{
+          title: "Dieta",
+          drawerIcon: ({ color, size }) => <ClipboardList color={color} size={size} />,
         }}
       />
       <StudentDrawer.Screen
@@ -277,6 +188,14 @@ function StudentDrawerNavigator() {
         options={{
           title: "Pagamentos",
           drawerIcon: ({ color, size }) => <CreditCard color={color} size={size} />,
+        }}
+      />
+      <StudentDrawer.Screen
+        component={ProfileScreen}
+        name="StudentProfile"
+        options={{
+          title: "Seu perfil",
+          drawerIcon: ({ color, size }) => <UserRound color={color} size={size} />,
         }}
       />
       <StudentDrawer.Screen
