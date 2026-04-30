@@ -22,6 +22,17 @@ function getDirectionLabel(delta: string, positiveLabel: string, negativeLabel: 
   return "estavel";
 }
 
+function getNextCheckInDate(date?: string) {
+  if (!date) {
+    return "--";
+  }
+
+  const nextDate = new Date(`${date}T12:00:00.000Z`);
+  nextDate.setUTCDate(nextDate.getUTCDate() + 14);
+
+  return nextDate.toISOString().slice(0, 10);
+}
+
 export function useProgressSummary() {
   const entries = progressRepository.listEntries();
   const latestEntry = entries.at(-1);
@@ -58,6 +69,7 @@ export function useProgressSummary() {
       "aumento de gordura corporal",
       "reducao de gordura corporal"
     ),
+    nextCheckInDate: getNextCheckInDate(latestEntry?.date),
     recentMomentum:
       Number(previousWeightDelta) > 0 || Number(previousBodyFatDelta) < 0
         ? "Resposta recente positiva no acompanhamento."

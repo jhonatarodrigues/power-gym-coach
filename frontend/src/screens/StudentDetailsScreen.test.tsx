@@ -22,4 +22,14 @@ describe("StudentDetailsScreen", () => {
 
     expect(screen.getByText("Filtro atual: exam")).toBeTruthy();
   });
+
+  it("can switch between timeline filters and return to all", () => {
+    renderWithProviders(<StudentDetailsScreen />);
+
+    fireEvent.press(screen.getByText(/Progress \(/));
+    expect(screen.getByText("Filtro atual: progress")).toBeTruthy();
+
+    fireEvent.press(screen.getByText("Mostrar timeline completa"));
+    expect(screen.getByText("Filtro atual: Tudo")).toBeTruthy();
+  });
 });

@@ -18,6 +18,7 @@ describe("ProgressScreen", () => {
     ).toBeGreaterThan(0);
     expect(screen.getByText("Comparativo por periodo")).toBeTruthy();
     expect(screen.getByText("Direcao atual do progresso")).toBeTruthy();
+    expect(screen.getByText("Janela da proxima leitura")).toBeTruthy();
     expect(screen.getAllByText(latestEntry?.notes ?? "")).toHaveLength(2);
   });
 });

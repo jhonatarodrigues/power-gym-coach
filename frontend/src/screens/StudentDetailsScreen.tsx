@@ -31,6 +31,7 @@ export function StudentDetailsScreen() {
     nextRecommendedAction,
     pendingExamCount,
     planDecisionSummary,
+    operationalSnapshot,
     studentProfile,
     studentUser,
     supplementsCount,
@@ -69,6 +70,12 @@ export function StudentDetailsScreen() {
         description={`${planDecisionSummary} Restricoes: ${studentProfile.restrictions}`}
         highlight={`Ultimo progresso: ${latestProgress?.weightKg} kg / ${latestProgress?.bodyFatPercentage}% BF`}
         title={currentPlanTitle}
+      />
+      <DecisionCard
+        badgeLabel="Snapshot"
+        description={operationalSnapshot}
+        highlight={`Status do plano: ${currentPlanStatus}`}
+        title="Resumo operacional"
       />
 
       <SectionTitle

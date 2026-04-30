@@ -29,6 +29,7 @@ describe("CurrentPlanScreen", () => {
     expect(screen.getByText("Editar dieta atual")).toBeTruthy();
     expect(screen.getByText("Editar suplementacao")).toBeTruthy();
     expect(screen.getByText("Review before save")).toBeTruthy();
+    expect(screen.getByText("Estado de publicacao do plano")).toBeTruthy();
   });
 
   it("shows unsaved changes state and allows discarding them", () => {
@@ -88,5 +89,16 @@ describe("CurrentPlanScreen", () => {
 
     expect(screen.queryByText("Editar treino atual")).toBeNull();
     expect(screen.queryByText("Review before save")).toBeNull();
+  });
+
+  it("shows synced plan state when nothing changed", () => {
+    act(() => {
+      useMockSessionStore.getState().signInAs("teacher");
+    });
+
+    renderWithProviders(<CurrentPlanScreen />);
+
+    expect(screen.getByText("Plano atual sincronizado com a ultima versao salva.")).toBeTruthy();
+    expect(screen.getByText("Pronto")).toBeTruthy();
   });
 });

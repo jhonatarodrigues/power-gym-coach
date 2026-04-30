@@ -104,12 +104,19 @@ export function usePlanReview() {
     supplementChanges > 0 ? "Suplementacao" : null,
   ].filter(Boolean) as string[];
 
+  const saveReadinessLabel = hasUnsavedChanges ? "Revisao pendente" : "Pronto";
+  const saveReadinessDescription = hasUnsavedChanges
+    ? "Existem mudancas em aberto. Revise o impacto do rascunho antes de publicar."
+    : "Plano atual alinhado com a ultima versao salva.";
+
   return {
     trainingChanges,
     mealChanges,
     supplementChanges,
     nutritionDelta,
     sectionDiffs,
+    saveReadinessLabel,
+    saveReadinessDescription,
     changedSections,
     changedSectionCount: changedSections.length,
     hasUnsavedChanges,

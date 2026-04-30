@@ -111,6 +111,10 @@ Recently completed:
 - current plan diff review with nutrition impact
 - student journey filters and pending-priority summaries
 - teacher review note flow for exams and assessment-triggered follow-up requests
+- test navigation wrapper now handles app routes cleanly
+- current plan publish-readiness summary
+- student operational snapshot summary
+- progress next-checkpoint summary
 
 ## Information architecture
 

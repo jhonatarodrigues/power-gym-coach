@@ -16,6 +16,7 @@ describe("usePlanReview", () => {
 
     expect(result.current.changedSectionCount).toBe(0);
     expect(result.current.hasUnsavedChanges).toBe(false);
+    expect(result.current.saveReadinessLabel).toBe("Pronto");
   });
 
   it("tracks draft changes across plan sections", () => {
@@ -46,6 +47,7 @@ describe("usePlanReview", () => {
       "Suplementacao",
     ]);
     expect(result.current.changedSectionCount).toBe(3);
+    expect(result.current.saveReadinessLabel).toBe("Revisao pendente");
   });
 
   it("counts sections even when the draft has new training days and meals", () => {

@@ -25,6 +25,7 @@ export function ProgressScreen() {
     previousBodyFatDelta,
     previousEntry,
     previousWeightDelta,
+    nextCheckInDate,
     recentMomentum,
     weightDelta,
     weightDirection,
@@ -66,6 +67,12 @@ export function ProgressScreen() {
           count={latestPhotos.length}
           description="Fotos comparativas disponiveis para leitura visual da evolucao."
           title="Galeria da ultima leitura"
+        />
+        <DecisionCard
+          badgeLabel="Checkpoint"
+          description="Sugestao de retorno para comparar resposta ao plano atual."
+          highlight={`Proxima revisao sugerida: ${nextCheckInDate}`}
+          title="Janela da proxima leitura"
         />
       </View>
 

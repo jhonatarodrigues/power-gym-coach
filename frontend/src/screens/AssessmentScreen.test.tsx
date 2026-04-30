@@ -36,6 +36,19 @@ describe("AssessmentScreen", () => {
     expect(useCurrentPlanStore.getState().currentPlan.status).toBe("draft");
   });
 
+  it("does not apply plan suggestions when there is no review", () => {
+    act(() => {
+      useMockSessionStore.getState().signInAs("teacher");
+      useAssessmentWorkflowStore.setState({ reviews: [] });
+    });
+
+    renderWithProviders(<AssessmentScreen />);
+
+    fireEvent.press(screen.getByText("Aplicar sugestoes ao plano atual"));
+
+    expect(useCurrentPlanStore.getState().currentPlan.status).not.toBe("draft");
+  });
+
   it("lets the teacher save a review and request follow-up labs", async () => {
     act(() => {
       useMockSessionStore.getState().signInAs("teacher");
@@ -128,5 +141,16 @@ describe("AssessmentScreen", () => {
     renderWithProviders(<AssessmentScreen />);
 
     expect(screen.getByText("Aguardando devolutiva do professor")).toBeTruthy();
+  });
+
+  it("shows empty state when no submission is available", () => {
+    act(() => {
+      useMockSessionStore.getState().signInAs("teacher");
+      useAssessmentWorkflowStore.setState({ submissions: [] });
+    });
+
+    renderWithProviders(<AssessmentScreen />);
+
+    expect(screen.getByText("Nenhuma avaliacao mockada disponivel no momento.")).toBeTruthy();
   });
 });

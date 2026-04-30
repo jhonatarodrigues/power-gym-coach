@@ -5,6 +5,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   Button,
   Card,
+  DecisionCard,
   ExerciseVideoCard,
   Header,
   MealCard,
@@ -35,6 +36,8 @@ export function CurrentPlanScreen() {
     changedSections,
     mealChanges,
     nutritionDelta,
+    saveReadinessDescription,
+    saveReadinessLabel,
     sectionDiffs,
     supplementChanges,
     trainingChanges,
@@ -113,6 +116,12 @@ export function CurrentPlanScreen() {
             description="Leitura rapida do que mudou no rascunho atual."
           />
           <View style={{ gap: theme.spacing.md }}>
+            <DecisionCard
+              badgeLabel={saveReadinessLabel}
+              description={saveReadinessDescription}
+              highlight={`Ultimo salvamento em ${lastSavedAt.slice(0, 16).replace("T", " ")}`}
+              title="Estado de publicacao do plano"
+            />
             <Card>
               <View style={{ gap: theme.spacing.sm }}>
                 <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
