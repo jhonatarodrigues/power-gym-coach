@@ -8,17 +8,19 @@ describe("StudentDetailsScreen", () => {
   it("renders the student summary and quick actions", () => {
     renderWithProviders(<StudentDetailsScreen />);
 
-    expect(screen.getByText("Student details")).toBeTruthy();
+    expect(screen.getByText("Acompanhamento do aluno")).toBeTruthy();
+    expect(screen.getByText("Plano atual do aluno")).toBeTruthy();
+    expect(screen.getByText("Historico de planos")).toBeTruthy();
     expect(screen.getByText("Sinais para decisao")).toBeTruthy();
     expect(screen.getByText("Timeline unificada")).toBeTruthy();
     expect(screen.getByText("Acoes rapidas")).toBeTruthy();
     expect(screen.getAllByText("Ajustar plano atual").length).toBeGreaterThan(0);
     expect(screen.getByText("Revisar progresso")).toBeTruthy();
     expect(screen.getAllByText("Abrir avaliacao").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Abrir exams").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Abrir exames").length).toBeGreaterThan(0);
     expect(screen.getByText("Abrir historico")).toBeTruthy();
 
-    fireEvent.press(screen.getByText(/Exams \(/));
+    fireEvent.press(screen.getByText(/Exames \(/));
 
     expect(screen.getByText("Filtro atual: exam")).toBeTruthy();
   });
@@ -26,7 +28,7 @@ describe("StudentDetailsScreen", () => {
   it("can switch between timeline filters and return to all", () => {
     renderWithProviders(<StudentDetailsScreen />);
 
-    fireEvent.press(screen.getByText(/Progress \(/));
+    fireEvent.press(screen.getByText(/Progresso \(/));
     expect(screen.getByText("Filtro atual: progress")).toBeTruthy();
 
     fireEvent.press(screen.getByText("Mostrar timeline completa"));

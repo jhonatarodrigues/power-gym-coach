@@ -67,12 +67,16 @@ export interface StudentOverview {
   studentProfile: StudentProfile;
   studentUser: User;
   currentPlanTitle: string;
+  currentPlanStartDate: string;
+  currentPlanEndDate?: string;
   latestAssessmentSummary?: string;
   latestAssessmentSuggestedChanges?: string;
   latestProgress?: ProgressEntry;
   pendingExamCount: number;
   latestHistory?: HistoryRecord;
   nextRecommendedAction: string;
+  archivedPlansCount: number;
+  latestArchivedPlan?: Plan;
 }
 
 export interface StudentOverviewRepository {

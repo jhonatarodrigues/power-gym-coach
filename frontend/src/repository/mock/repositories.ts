@@ -85,6 +85,7 @@ export const mockStudentOverviewRepository: StudentOverviewRepository = {
     const latestProgress = progressEntriesMock.at(-1);
     const latestReview = mockAssessmentRepository.listReviews()[0];
     const latestHistory = historyRecordsMock.at(-1);
+    const archivedPlans = mockPlanRepository.getArchivedPlans();
     const pendingExamCount = mockExamRepository.listRequests().filter(
       (request) =>
         request.studentId === studentProfile.userId && request.status !== "reviewed"
@@ -98,11 +99,15 @@ export const mockStudentOverviewRepository: StudentOverviewRepository = {
       studentProfile,
       studentUser,
       currentPlanTitle: currentPlanMock.title,
+      currentPlanStartDate: currentPlanMock.startDate,
+      currentPlanEndDate: currentPlanMock.endDate,
       latestAssessmentSummary: latestReview?.summary,
       latestAssessmentSuggestedChanges: latestReview?.suggestedChanges,
       latestProgress,
       pendingExamCount,
       latestHistory,
+      archivedPlansCount: archivedPlans.length,
+      latestArchivedPlan: archivedPlans[0],
       nextRecommendedAction:
         pendingExamCount > 0
           ? "Revisar exames pendentes antes de consolidar o proximo ajuste."

@@ -4,6 +4,7 @@ import { Card } from "@/components/Card";
 import { StatusBadge } from "@/components/StatusBadge";
 import type { StudentJourneyEvent } from "@/repository/contracts";
 import { useAppTheme } from "@/theme";
+import { formatDateBR } from "@/utils/dates";
 
 interface JourneyTimelineCardProps {
   event: StudentJourneyEvent;
@@ -11,22 +12,22 @@ interface JourneyTimelineCardProps {
 
 function getDomainLabel(domain: StudentJourneyEvent["domain"]) {
   if (domain === "assessment") {
-    return "Assessment";
+    return "Avaliacao";
   }
 
   if (domain === "exam") {
-    return "Exams";
+    return "Exames";
   }
 
   if (domain === "progress") {
-    return "Progress";
+    return "Progresso";
   }
 
   if (domain === "plan") {
-    return "Plan";
+    return "Plano";
   }
 
-  return "History";
+  return "Historico";
 }
 
 function getPriorityTone(priority?: StudentJourneyEvent["priority"]) {
@@ -61,7 +62,7 @@ export function JourneyTimelineCard({ event }: JourneyTimelineCardProps) {
           {event.pending ? <StatusBadge label="Pendente" tone="warning" /> : null}
         </View>
         <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
-          {event.date}
+          {formatDateBR(event.date)}
         </Text>
         <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
           {event.title}

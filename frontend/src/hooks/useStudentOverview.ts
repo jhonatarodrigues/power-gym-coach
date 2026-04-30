@@ -18,6 +18,8 @@ export function useStudentOverview() {
     planDecisionSummary,
     operationalSnapshot,
     currentPlanTitle: currentPlan.title,
+    currentPlanStartDate: currentPlan.startDate,
+    currentPlanEndDate: currentPlan.endDate,
     currentPlanStatus: hasUnsavedChanges ? "Rascunho com ajustes em aberto" : "Plano atual salvo",
     trainingDaysCount: currentPlan.trainingPlan.days.length,
     mealsCount: currentPlan.dietPlan.meals.length,

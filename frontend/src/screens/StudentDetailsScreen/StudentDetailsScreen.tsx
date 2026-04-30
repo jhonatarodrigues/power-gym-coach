@@ -17,6 +17,7 @@ import { useStudentJourneyTimeline } from "@/hooks/useStudentJourneyTimeline";
 import { useStudentOverview } from "@/hooks/useStudentOverview";
 import type { RootStackParamList } from "@/navigation/types";
 import { useAppTheme } from "@/theme";
+import { formatDateBR } from "@/utils/dates";
 
 export function StudentDetailsScreen() {
   const { theme } = useAppTheme();
@@ -25,12 +26,16 @@ export function StudentDetailsScreen() {
     currentPlanTitle,
     latestAssessmentSuggestedChanges,
     latestAssessmentSummary,
+    latestArchivedPlan,
     latestHistory,
     latestProgress,
     mealsCount,
     nextRecommendedAction,
     pendingExamCount,
     planDecisionSummary,
+    archivedPlansCount,
+    currentPlanEndDate,
+    currentPlanStartDate,
     operationalSnapshot,
     studentProfile,
     studentUser,
@@ -42,7 +47,7 @@ export function StudentDetailsScreen() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [activeFilter, setActiveFilter] = useState<
-    "all" | "assessment" | "exam" | "progress" | "history" | "plan"
+      "all" | "assessment" | "exam" | "progress" | "history" | "plan"
   >("all");
   const filteredEvents = useMemo(
     () =>
@@ -55,8 +60,8 @@ export function StudentDetailsScreen() {
   return (
     <Screen>
       <Header
-        title="Student details"
-        subtitle="Visao consolidada do aluno para o professor decidir proximos ajustes."
+        title="Acompanhamento do aluno"
+        subtitle="Visao consolidada do aluno para o professor decidir os proximos passos do plano."
       />
 
       <AthleteListItem
@@ -79,6 +84,33 @@ export function StudentDetailsScreen() {
       />
 
       <SectionTitle
+        title="Plano atual do aluno"
+        description="Treino, dieta e suplementacao do plano ativo ficam sempre vinculados a este aluno."
+      />
+      <View style={{ gap: theme.spacing.md }}>
+        <DecisionCard
+          actionLabel="Abrir plano atual"
+          badgeLabel={currentPlanStatus}
+          description={`Vigencia de ${formatDateBR(currentPlanStartDate)} ate ${formatDateBR(currentPlanEndDate)}.`}
+          highlight={`${trainingDaysCount} dias de treino, ${mealsCount} refeicoes e ${supplementsCount} suplementos ativos.`}
+          onActionPress={() =>
+            navigation.navigate("TeacherTabs", { screen: "TeacherPlan" })
+          }
+          title={currentPlanTitle}
+        />
+        <DecisionCard
+          badgeLabel="Historico"
+          description={`${archivedPlansCount} plano(s) anterior(es) arquivado(s) para consulta.`}
+          highlight={
+            latestArchivedPlan
+              ? `Ultimo encerrado: ${latestArchivedPlan.title} ate ${formatDateBR(latestArchivedPlan.endDate)}`
+              : "Nenhum plano anterior arquivado."
+          }
+          title="Historico de planos"
+        />
+      </View>
+
+      <SectionTitle
         title="Sinais para decisao"
         description="Pontos que ajudam o professor a decidir o proximo ajuste."
       />
@@ -97,7 +129,7 @@ export function StudentDetailsScreen() {
           title="Leitura tecnica mais recente"
         />
         <PendingAlertCard
-          actionLabel="Abrir exams"
+          actionLabel="Abrir exames"
           count={pendingExamCount}
           description={latestHistory?.title ?? "Nenhum registro recente no historico."}
           onActionPress={() => navigation.navigate("Exams")}
@@ -135,27 +167,27 @@ export function StudentDetailsScreen() {
           variant={activeFilter === "all" ? "primary" : "ghost"}
         />
         <Button
-          label={`Assessment (${countsByDomain.assessment ?? 0})`}
+          label={`Avaliacao (${countsByDomain.assessment ?? 0})`}
           onPress={() => setActiveFilter("assessment")}
           variant={activeFilter === "assessment" ? "primary" : "ghost"}
         />
         <Button
-          label={`Exams (${countsByDomain.exam ?? 0})`}
+          label={`Exames (${countsByDomain.exam ?? 0})`}
           onPress={() => setActiveFilter("exam")}
           variant={activeFilter === "exam" ? "primary" : "ghost"}
         />
         <Button
-          label={`Progress (${countsByDomain.progress ?? 0})`}
+          label={`Progresso (${countsByDomain.progress ?? 0})`}
           onPress={() => setActiveFilter("progress")}
           variant={activeFilter === "progress" ? "primary" : "ghost"}
         />
         <Button
-          label={`History (${countsByDomain.history ?? 0})`}
+          label={`Historico (${countsByDomain.history ?? 0})`}
           onPress={() => setActiveFilter("history")}
           variant={activeFilter === "history" ? "primary" : "ghost"}
         />
         <Button
-          label={`Plan (${countsByDomain.plan ?? 0})`}
+          label={`Plano (${countsByDomain.plan ?? 0})`}
           onPress={() => setActiveFilter("plan")}
           variant={activeFilter === "plan" ? "primary" : "ghost"}
         />
@@ -195,7 +227,7 @@ export function StudentDetailsScreen() {
           variant="ghost"
         />
         <Button
-          label="Abrir exams"
+          label="Abrir exames"
           onPress={() => navigation.navigate("Exams")}
           variant="ghost"
         />

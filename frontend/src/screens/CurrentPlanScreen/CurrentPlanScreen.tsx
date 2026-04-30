@@ -20,6 +20,7 @@ import { useMockAuth } from "@/hooks/useMockAuth";
 import { usePlanReview } from "@/hooks/usePlanReview";
 import type { RootStackParamList } from "@/navigation/types";
 import { useAppTheme } from "@/theme";
+import { formatDateBR, formatDateTimeBR } from "@/utils/dates";
 
 export function CurrentPlanScreen() {
   const { theme } = useAppTheme();
@@ -49,8 +50,8 @@ export function CurrentPlanScreen() {
   return (
     <Screen>
       <Header
-        title="Plano atual"
-        subtitle="Plano ativo com treino, dieta, suplementacao e totais principais."
+        title="Plano atual do aluno"
+        subtitle="Plano ativo com treino, dieta, suplementacao e historico de revisao do aluno."
       />
 
       <Card>
@@ -65,10 +66,10 @@ export function CurrentPlanScreen() {
             {currentPlan.title}
           </Text>
           <Text style={{ color: theme.colors.textMuted }}>
-            Vigencia: {currentPlan.startDate} ate {currentPlan.endDate}
+            Vigencia: {formatDateBR(currentPlan.startDate)} ate {formatDateBR(currentPlan.endDate)}
           </Text>
           <Text style={{ color: theme.colors.textMuted }}>
-            Ultimo salvamento: {lastSavedAt.slice(0, 16).replace("T", " ")}
+            Ultimo salvamento: {formatDateTimeBR(lastSavedAt)}
           </Text>
         </View>
       </Card>
@@ -119,7 +120,7 @@ export function CurrentPlanScreen() {
             <DecisionCard
               badgeLabel={saveReadinessLabel}
               description={saveReadinessDescription}
-              highlight={`Ultimo salvamento em ${lastSavedAt.slice(0, 16).replace("T", " ")}`}
+              highlight={`Ultimo salvamento em ${formatDateTimeBR(lastSavedAt)}`}
               title="Estado de publicacao do plano"
             />
             <Card>

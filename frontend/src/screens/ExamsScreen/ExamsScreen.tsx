@@ -19,6 +19,7 @@ import { useMockAuth } from "@/hooks/useMockAuth";
 import type { RootStackParamList } from "@/navigation/types";
 import { examRepository } from "@/repository";
 import { useAppTheme } from "@/theme";
+import { formatDateBR } from "@/utils/dates";
 
 interface ExamRequestFormValues {
   title: string;
@@ -90,7 +91,7 @@ export function ExamsScreen() {
   return (
     <Screen>
       <Header
-        title="Exams"
+        title="Exames"
         subtitle="Area mockada para acompanhar solicitacoes, envios e revisoes de exames."
       />
 
@@ -304,7 +305,7 @@ export function ExamsScreen() {
                   {request.title}
                 </Text>
                 <Text style={{ color: theme.colors.textMuted }}>
-                  Solicitado em: {request.requestedAt.slice(0, 10)}
+                  Solicitado em: {formatDateBR(request.requestedAt)}
                 </Text>
                 <Text style={{ color: theme.colors.textMuted }}>
                   Uploads vinculados: {requestUploads.length}

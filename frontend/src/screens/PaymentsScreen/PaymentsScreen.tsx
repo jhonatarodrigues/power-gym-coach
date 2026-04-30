@@ -4,6 +4,7 @@ import { Button, Card, Header, MetricCard, Screen, SectionTitle, StatusBadge } f
 import { useMockAuth } from "@/hooks/useMockAuth";
 import { usePayments } from "@/hooks/usePayments";
 import { useAppTheme } from "@/theme";
+import { formatDateBR } from "@/utils/dates";
 import { formatCurrency, getPaymentStatusLabel, getPaymentStatusTone } from "@/utils/payments";
 
 export function PaymentsScreen() {
@@ -88,10 +89,10 @@ export function PaymentsScreen() {
                   tone={getPaymentStatusTone(subscription.status)}
                 />
                 <Text style={{ color: theme.colors.textMuted }}>
-                  Proximo vencimento: {subscription.nextDueDate}
+                  Proximo vencimento: {formatDateBR(subscription.nextDueDate)}
                 </Text>
                 <Text style={{ color: theme.colors.textMuted }}>
-                  Tolerancia ate: {subscription.graceUntilDate}
+                  Tolerancia ate: {formatDateBR(subscription.graceUntilDate)}
                 </Text>
               </View>
             </Card>
@@ -140,7 +141,9 @@ export function PaymentsScreen() {
               <Text style={{ color: theme.colors.textMuted }}>
                 Referencia: {record.referenceMonth}
               </Text>
-              <Text style={{ color: theme.colors.textMuted }}>Vencimento: {record.dueDate}</Text>
+              <Text style={{ color: theme.colors.textMuted }}>
+                Vencimento: {formatDateBR(record.dueDate)}
+              </Text>
               <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
                 {formatCurrency(record.amount)}
               </Text>

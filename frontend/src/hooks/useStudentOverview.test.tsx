@@ -18,6 +18,7 @@ describe("useStudentOverview", () => {
     expect(result.current.studentUser.name).toBe("Marina Costa");
     expect(result.current.trainingDaysCount).toBeGreaterThan(0);
     expect(result.current.currentPlanStatus).toBe("Plano atual salvo");
+    expect(result.current.archivedPlansCount).toBeGreaterThan(0);
     expect(result.current.operationalSnapshot).toContain("dias de treino");
   });
 

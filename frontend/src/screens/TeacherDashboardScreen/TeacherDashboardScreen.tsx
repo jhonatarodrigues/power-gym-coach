@@ -20,6 +20,7 @@ import { useMockAuth } from "@/hooks/useMockAuth";
 import { usePayments } from "@/hooks/usePayments";
 import { useAppTheme } from "@/theme";
 import type { RootStackParamList } from "@/navigation/types";
+import { currentPlanMock } from "@/repository/mock";
 
 export function TeacherDashboardScreen() {
   const { theme } = useAppTheme();
@@ -36,6 +37,9 @@ export function TeacherDashboardScreen() {
   const reviewedAssessments = assessmentReviewsMock.length;
   const studentsInGracePeriod = subscriptions.filter(
     (subscription) => subscription.status === "gracePeriod"
+  ).length;
+  const activePlans = studentProfilesMock.filter(
+    (student) => student.userId === currentPlanMock.studentId
   ).length;
   const monthlyRevenue = teacher ? getTeacherExpectedRevenue(teacher.id) : 0;
   const firstInvitation = studentInvitations.find(
@@ -58,9 +62,14 @@ export function TeacherDashboardScreen() {
 
       <View style={{ gap: theme.spacing.md }}>
         <MetricCard
-          label="avaliacoes revisadas"
+          label="avaliacoes concluídas"
           value={String(reviewedAssessments)}
           trend="ultima revisao ha 1 dia"
+        />
+        <MetricCard
+          label="planos ativos"
+          value={String(activePlans)}
+          trend="cada plano sempre pertence a um aluno"
         />
         <MetricCard
           label="exames pendentes"
@@ -80,12 +89,12 @@ export function TeacherDashboardScreen() {
       </View>
 
       <SectionTitle
-        title="Aluno em destaque"
-        description="A vitrine principal aqui e o aluno, nao um plano isolado."
+        title="Carteira de alunos"
+        description="O dashboard do professor mostra operacao geral. Plano, treino, dieta e avaliacao ficam dentro do contexto de cada aluno."
       />
       <AthleteListItem
         name="Marina Costa"
-        focus="Hipertrofia com revisao de dieta, treino por dias e pendencia financeira em prazo."
+        focus="Hipertrofia com plano ativo, revisao de dieta e acompanhamento de exames."
         status="Acompanhamento ativo"
       />
 
@@ -107,7 +116,7 @@ export function TeacherDashboardScreen() {
 
       <View style={{ gap: theme.spacing.md }}>
         <Button
-          label="Abrir dados do aluno"
+          label="Abrir acompanhamento do aluno"
           onPress={() =>
             navigation.navigate("TeacherTabs", {
               screen: "TeacherHome",
@@ -116,26 +125,18 @@ export function TeacherDashboardScreen() {
           }
         />
         <Button label="Abrir pagamentos" onPress={() => navigation.navigate("Payments")} />
-        <Button label="Abrir perfil" onPress={() => navigation.navigate("Profile")} variant="ghost" />
-        <Button label="Abrir editor de dieta" onPress={() => navigation.navigate("DietEditor")} />
         <Button
-          label="Abrir editor de treino"
-          onPress={() => navigation.navigate("TrainingEditor")}
+          label="Abrir biblioteca de exercicios"
+          onPress={() =>
+            navigation.navigate("TeacherTabs", {
+              screen: "TeacherLibrary",
+            })
+          }
           variant="ghost"
         />
         <Button
-          label="Abrir editor de suplementacao"
-          onPress={() => navigation.navigate("SupplementEditor")}
-          variant="ghost"
-        />
-        <Button
-          label="Abrir avaliacao"
-          onPress={() => navigation.navigate("Assessment")}
-          variant="ghost"
-        />
-        <Button
-          label="Abrir exames"
-          onPress={() => navigation.navigate("Exams")}
+          label="Abrir perfil"
+          onPress={() => navigation.navigate("Profile")}
           variant="ghost"
         />
         <Button label="Trocar para visao do aluno" onPress={() => signInAs("student")} />
