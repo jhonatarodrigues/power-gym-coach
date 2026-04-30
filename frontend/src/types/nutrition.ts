@@ -53,6 +53,7 @@ export interface Meal extends MacroTotals {
   id: ID;
   type: MealType;
   title: string;
+  sequenceLabel?: string;
   observation?: string;
   items: MealItem[];
 }

@@ -32,6 +32,7 @@ export interface DietPlan extends MacroTotals {
   id: ID;
   title: string;
   notes?: string;
+  waterLitersTarget: number;
   meals: Meal[];
   supplements: Supplement[];
 }

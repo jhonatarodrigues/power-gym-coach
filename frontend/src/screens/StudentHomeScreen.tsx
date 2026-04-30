@@ -20,15 +20,18 @@ import {
 } from "@/repository/mock";
 import { useCurrentPlan } from "@/hooks/useCurrentPlan";
 import { useMockAuth } from "@/hooks/useMockAuth";
+import { usePayments } from "@/hooks/usePayments";
 import { useStudentTodayWorkout } from "@/hooks/useStudentTodayWorkout";
 import { useAppTheme } from "@/theme";
 import type { RootStackParamList } from "@/navigation/types";
 import { getWeekdayLabel } from "@/utils/weekdays";
+import { getPaymentStatusLabel } from "@/utils/payments";
 
 export function StudentHomeScreen() {
   const { theme } = useAppTheme();
-  const { signInAs, signOut } = useMockAuth();
+  const { session, signInAs, signOut } = useMockAuth();
   const { currentPlan } = useCurrentPlan();
+  const { getOpenRecordsByUser, getPaymentStatusByStudent } = usePayments();
   const { allDays, completedCount, todayLabel, todayTraining, totalExercises } =
     useStudentTodayWorkout();
   const navigation =
@@ -39,13 +42,40 @@ export function StudentHomeScreen() {
   const pendingExams = examRequestsMock.filter(
     (request) => request.status === "pending"
   ).length;
+  const currentUser = session.currentUser;
+  const openPayments = currentUser ? getOpenRecordsByUser(currentUser.id) : [];
+  const paymentStatus = currentUser
+    ? getPaymentStatusByStudent(currentUser.id)
+    : null;
 
   return (
     <Screen>
       <Header
-        title="Seu plano atual"
-        subtitle="Resumo mockado do que o aluno precisa ver primeiro ao abrir o app."
+        title="Dashboard do aluno"
+        subtitle="Seu treino do dia, dieta, pagamentos e progresso em um unico lugar."
       />
+
+      {paymentStatus && paymentStatus !== "paid" ? (
+        <View
+          style={{
+            backgroundColor: theme.colors.primaryMuted,
+            borderColor: theme.colors.primary,
+            borderRadius: theme.radius.lg,
+            borderWidth: 1,
+            gap: theme.spacing.sm,
+            padding: theme.spacing.lg,
+          }}
+        >
+          <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
+            Pagamento pendente
+          </Text>
+          <Text style={{ color: theme.colors.textMuted }}>
+            Sua conta esta em status "{getPaymentStatusLabel(paymentStatus)}". Voce tem 3 dias
+            para regularizar antes da inativacao.
+          </Text>
+          <Button label="Regularizar agora" onPress={() => navigation.navigate("Payments")} />
+        </View>
+      ) : null}
 
       <MetricCard
         label="calorias do plano"
@@ -136,6 +166,11 @@ export function StudentHomeScreen() {
           value={String(pendingExams)}
           trend="envie quando tiver os resultados"
         />
+        <MetricCard
+          label="pagamentos em aberto"
+          value={String(openPayments.length)}
+          trend="plataforma e plano do professor"
+        />
       </View>
 
       <SectionTitle
@@ -165,21 +200,29 @@ export function StudentHomeScreen() {
 
       <View style={{ gap: theme.spacing.md }}>
         <Button
-          label="Abrir assessment"
+          label="Abrir avaliacao"
           onPress={() =>
-            navigation.navigate("StudentTabs", { screen: "StudentAssessmentTab" })
+            navigation.navigate("Assessment")
           }
         />
         <Button
-          label="Abrir exams"
+          label="Abrir exames"
           onPress={() => navigation.navigate("Exams")}
           variant="ghost"
         />
         <Button
-          label="Abrir plano atual"
-          onPress={() =>
-            navigation.navigate("StudentTabs", { screen: "StudentPlanTab" })
-          }
+          label="Abrir dieta do dia"
+          onPress={() => navigation.navigate("StudentDiet")}
+          variant="ghost"
+        />
+        <Button
+          label="Abrir pagamentos"
+          onPress={() => navigation.navigate("Payments")}
+          variant="ghost"
+        />
+        <Button
+          label="Abrir perfil"
+          onPress={() => navigation.navigate("Profile")}
           variant="ghost"
         />
         <Button

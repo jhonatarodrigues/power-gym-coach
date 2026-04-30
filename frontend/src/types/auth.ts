@@ -6,8 +6,12 @@ export interface User {
   id: ID;
   name: string;
   email: string;
+  cpf: string;
+  phone: string;
+  password: string;
   accessLevel: AccessLevel;
   avatarUrl?: string;
+  firstAccessCompleted: boolean;
   createdAt: ISODateTimeString;
   updatedAt: ISODateTimeString;
 }
@@ -26,6 +30,16 @@ export interface StudentProfile {
   birthDate?: string;
   goal: string;
   restrictions?: string;
+}
+
+export interface StudentInvitation {
+  id: ID;
+  teacherId: ID;
+  studentEmail: string;
+  studentName?: string;
+  generatedAt: ISODateTimeString;
+  firstAccessLink: string;
+  status: "pending" | "completed";
 }
 
 export interface AuthSession {

@@ -7,14 +7,18 @@ import { useMockAuth } from "./useMockAuth";
 
 describe("useMockAuth", () => {
   beforeEach(() => {
-    useMockSessionStore.getState().signOut();
+    useMockSessionStore.getState().reset();
   });
 
   it("exposes session and sign in helpers", () => {
     const { result } = renderHook(() => useMockAuth(), { wrapper: Providers });
 
     act(() => {
-      result.current.signInAs("teacher");
+      result.current.signIn({
+        accessLevel: "teacher",
+        email: "rafael@powergymcoach.app",
+        password: "Rafael123",
+      });
     });
 
     expect(result.current.session.accessLevel).toBe("teacher");

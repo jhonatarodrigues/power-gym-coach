@@ -28,7 +28,7 @@ describe("CurrentPlanScreen", () => {
     expect(screen.getByText("Editar treino atual")).toBeTruthy();
     expect(screen.getByText("Editar dieta atual")).toBeTruthy();
     expect(screen.getByText("Editar suplementacao")).toBeTruthy();
-    expect(screen.getByText("Review before save")).toBeTruthy();
+    expect(screen.getByText("Revisao antes de salvar")).toBeTruthy();
     expect(screen.getByText("Estado de publicacao do plano")).toBeTruthy();
   });
 
@@ -88,7 +88,7 @@ describe("CurrentPlanScreen", () => {
     renderWithProviders(<CurrentPlanScreen />);
 
     expect(screen.queryByText("Editar treino atual")).toBeNull();
-    expect(screen.queryByText("Review before save")).toBeNull();
+    expect(screen.queryByText("Revisao antes de salvar")).toBeNull();
   });
 
   it("shows synced plan state when nothing changed", () => {

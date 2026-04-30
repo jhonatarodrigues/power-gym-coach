@@ -373,7 +373,7 @@ export function ExamsScreen() {
             <Button
               label="Voltar ao plano atual"
               onPress={() =>
-                navigation.navigate("TeacherTabs", { screen: "TeacherPlanTab" })
+                navigation.navigate("TeacherTabs", { screen: "TeacherPlan" })
               }
               variant="ghost"
             />
@@ -387,7 +387,7 @@ export function ExamsScreen() {
             <Button
               label="Ver plano atual"
               onPress={() =>
-                navigation.navigate("StudentTabs", { screen: "StudentPlanTab" })
+                navigation.navigate("StudentTabs", { screen: "StudentPlan" })
               }
               variant="ghost"
             />

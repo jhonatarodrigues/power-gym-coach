@@ -259,7 +259,7 @@ export function AssessmentScreen() {
                   review.summary,
                   review.suggestedChanges
                 );
-                navigation.navigate("TeacherTabs", { screen: "TeacherPlanTab" });
+                navigation.navigate("TeacherTabs", { screen: "TeacherPlan" });
               }}
             />
             <Button
@@ -299,7 +299,7 @@ export function AssessmentScreen() {
             <Button
               label="Ver plano atualizado"
               onPress={() =>
-                navigation.navigate("StudentTabs", { screen: "StudentPlanTab" })
+                navigation.navigate("StudentTabs", { screen: "StudentPlan" })
               }
               variant="ghost"
             />

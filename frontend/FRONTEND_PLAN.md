@@ -118,23 +118,35 @@ Recently completed:
 - Lucide icons adopted for app navigation and workout UI
 - student daily workout screen with exercise completion checklist
 - weekly training reading now separated explicitly by weekday
+- login mockado com email, senha e seletor superior de perfil
+- fluxo de primeiro acesso do aluno por email de convite
+- drawer navigation para acomodar menus secundarios
+- tela de perfil para professor e aluno
+- area de pagamentos para professor e aluno
+- dieta diaria do aluno com checklist por refeicao e controle de agua
 
 ## Information architecture
 
 ### Teacher app sections
 1. Dashboard
 2. Students
-3. Current plan
-4. Assessment
-5. Exams
-6. History
+3. Payments
+4. Current plan
+5. Assessment
+6. Exams
+7. History
+8. Profile
 
 ### Student app sections
 1. Home
-2. Current plan
-3. Assessment
-4. Progress
-5. History
+2. Daily workout
+3. Diet
+4. Payments
+5. Current plan
+6. Assessment
+7. Progress
+8. History
+9. Profile
 
 ## Recommended navigation
 
@@ -146,9 +158,11 @@ Recently completed:
 - Bottom tabs:
   - Dashboard
   - Students
-  - Current Plan
-  - History
+  - Payments
 - Nested flows:
+  - Profile
+  - Current plan
+  - Exercise library
   - Student details
   - Training editor
   - Diet editor
@@ -158,10 +172,13 @@ Recently completed:
 ### Student navigation
 - Bottom tabs:
   - Home
-  - Current Plan
-  - Progress
-  - History
+  - Daily workout
+  - Diet
 - Nested flows:
+  - Profile
+  - Payments
+  - Current plan
+  - Progress
   - Training details
   - Diet details
   - Assessment submission

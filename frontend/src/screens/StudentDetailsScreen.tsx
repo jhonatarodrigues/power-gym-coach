@@ -115,7 +115,7 @@ export function StudentDetailsScreen() {
           badgeLabel="Proximo passo"
           description={nextRecommendedAction}
           onActionPress={() =>
-            navigation.navigate("TeacherTabs", { screen: "TeacherPlanTab" })
+            navigation.navigate("TeacherTabs", { screen: "TeacherPlan" })
           }
           title="Decisao recomendada"
         />
@@ -174,7 +174,7 @@ export function StudentDetailsScreen() {
         <Button
           label="Ajustar plano atual"
           onPress={() =>
-            navigation.navigate("TeacherTabs", { screen: "TeacherPlanTab" })
+            navigation.navigate("TeacherTabs", { screen: "TeacherPlan" })
           }
         />
         <Button
@@ -185,7 +185,7 @@ export function StudentDetailsScreen() {
         <Button
           label="Revisar progresso"
           onPress={() =>
-            navigation.navigate("TeacherTabs", { screen: "TeacherHistoryTab" })
+            navigation.navigate("TeacherTabs", { screen: "TeacherHistory" })
           }
           variant="ghost"
         />
@@ -202,7 +202,7 @@ export function StudentDetailsScreen() {
         <Button
           label="Abrir historico"
           onPress={() =>
-            navigation.navigate("TeacherTabs", { screen: "TeacherHistoryTab" })
+            navigation.navigate("TeacherTabs", { screen: "TeacherHistory" })
           }
           variant="ghost"
         />

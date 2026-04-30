@@ -6,4 +6,5 @@ export * from "./exercise";
 export * from "./nutrition";
 export * from "./plan";
 export * from "./progress";
+export * from "./payment";
 export * from "./theme";

@@ -8,7 +8,6 @@ jest.mock("@/repository/mock", () => {
     assessmentReviewsMock: [],
     examRequestsMock: [],
     studentProfilesMock: [],
-    usersMock: [],
   };
 });
 
@@ -30,10 +29,10 @@ describe("TeacherDashboardScreen empty states", () => {
     });
   });
 
-  it("renders without highlighted athlete when no matching user exists", () => {
+  it("renders sem depender de destaque de plano atual", () => {
     renderWithProviders(<TeacherDashboardScreen />);
 
     expect(screen.getAllByText("0").length).toBeGreaterThan(0);
-    expect(screen.queryByText("Plano ativo")).toBeNull();
+    expect(screen.queryByText("Plano atual em destaque")).toBeNull();
   });
 });

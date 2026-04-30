@@ -5,6 +5,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   AthleteListItem,
   Button,
+  Card,
   Header,
   MetricCard,
   Screen,
@@ -14,41 +15,44 @@ import {
   assessmentReviewsMock,
   examRequestsMock,
   studentProfilesMock,
-  usersMock,
 } from "@/repository/mock";
-import { useCurrentPlan } from "@/hooks/useCurrentPlan";
 import { useMockAuth } from "@/hooks/useMockAuth";
+import { usePayments } from "@/hooks/usePayments";
 import { useAppTheme } from "@/theme";
 import type { RootStackParamList } from "@/navigation/types";
 
 export function TeacherDashboardScreen() {
   const { theme } = useAppTheme();
-  const { signInAs, signOut } = useMockAuth();
-  const { currentPlan } = useCurrentPlan();
+  const { currentUser, signInAs, signOut, studentInvitations } = useMockAuth();
+  const { getTeacherExpectedRevenue, subscriptions } = usePayments();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const teacher = currentUser();
 
   const activeStudents = studentProfilesMock.length;
   const pendingExamRequests = examRequestsMock.filter(
     (request) => request.status === "pending"
   ).length;
   const reviewedAssessments = assessmentReviewsMock.length;
-
-  const studentUser = usersMock.find(
-    (user) => user.id === currentPlan.studentId
+  const studentsInGracePeriod = subscriptions.filter(
+    (subscription) => subscription.status === "gracePeriod"
+  ).length;
+  const monthlyRevenue = teacher ? getTeacherExpectedRevenue(teacher.id) : 0;
+  const firstInvitation = studentInvitations.find(
+    (invitation) => invitation.status === "pending"
   );
 
   return (
     <Screen>
       <Header
         title="Dashboard do professor"
-        subtitle="Visao inicial mockada para acompanhar alunos, plano atual, exames e avaliacoes."
+        subtitle="Visao geral da carteira de alunos, pagamentos e operacao do dia."
       />
 
       <MetricCard
         label="alunos ativos"
         value={String(activeStudents)}
-        trend="1 aluna em foco no mock atual"
+        trend="acompanhamento ativo na base mockada"
       />
 
       <View style={{ gap: theme.spacing.md }}>
@@ -62,71 +66,74 @@ export function TeacherDashboardScreen() {
           value={String(pendingExamRequests)}
           trend="1 solicitacao aguardando envio"
         />
-      </View>
-
-      <SectionTitle
-        title="Plano atual em destaque"
-        description="O plano ativo deve sempre ficar facil de encontrar."
-      />
-      <View
-        style={{
-          backgroundColor: theme.colors.surface,
-          borderColor: theme.colors.border,
-          borderRadius: theme.radius.lg,
-          borderWidth: 1,
-          gap: theme.spacing.sm,
-          padding: theme.spacing.lg,
-        }}
-      >
-        <Text
-          style={{
-            color: theme.colors.text,
-            fontSize: theme.typography.subtitle,
-            fontWeight: "700",
-          }}
-        >
-          {currentPlan.title}
-        </Text>
-        <Text style={{ color: theme.colors.textMuted }}>
-          Dieta atual: {currentPlan.dietPlan.calories} kcal /{" "}
-          {currentPlan.dietPlan.protein.toFixed(1)} g proteina
-        </Text>
-        <Text style={{ color: theme.colors.textMuted }}>
-          Treino: {currentPlan.trainingPlan.days.length} dias configurados
-        </Text>
+        <MetricCard
+          label="recebimento previsto"
+          value={`R$ ${monthlyRevenue.toFixed(2)}`}
+          trend="estimativa mensal dos planos ativos"
+        />
+        <MetricCard
+          label="pagamentos em tolerancia"
+          value={String(studentsInGracePeriod)}
+          trend="alunos com 3 dias para regularizar"
+        />
       </View>
 
       <SectionTitle
         title="Aluno em destaque"
-        description="Primeiro dado mockado conectado ao dashboard."
+        description="A vitrine principal aqui e o aluno, nao um plano isolado."
       />
-      {studentUser ? (
-        <AthleteListItem
-          name={studentUser.name}
-          focus="Hipertrofia com ajuste de dieta e progressao de treino"
-          status="Plano ativo"
-        />
+      <AthleteListItem
+        name="Marina Costa"
+        focus="Hipertrofia com revisao de dieta, treino por dias e pendencia financeira em prazo."
+        status="Acompanhamento ativo"
+      />
+
+      {firstInvitation ? (
+        <Card>
+          <View style={{ gap: theme.spacing.sm }}>
+            <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
+              Link de primeiro acesso gerado
+            </Text>
+            <Text style={{ color: theme.colors.textMuted }}>
+              {firstInvitation.studentEmail}
+            </Text>
+            <Text style={{ color: theme.colors.primary }}>
+              {firstInvitation.firstAccessLink}
+            </Text>
+          </View>
+        </Card>
       ) : null}
 
       <View style={{ gap: theme.spacing.md }}>
-        <Button label="Abrir diet editor" onPress={() => navigation.navigate("DietEditor")} />
         <Button
-          label="Abrir training editor"
+          label="Abrir dados do aluno"
+          onPress={() =>
+            navigation.navigate("TeacherTabs", {
+              screen: "TeacherHome",
+              params: { screen: "TeacherStudentTab" },
+            })
+          }
+        />
+        <Button label="Abrir pagamentos" onPress={() => navigation.navigate("Payments")} />
+        <Button label="Abrir perfil" onPress={() => navigation.navigate("Profile")} variant="ghost" />
+        <Button label="Abrir editor de dieta" onPress={() => navigation.navigate("DietEditor")} />
+        <Button
+          label="Abrir editor de treino"
           onPress={() => navigation.navigate("TrainingEditor")}
           variant="ghost"
         />
         <Button
-          label="Abrir supplement editor"
+          label="Abrir editor de suplementacao"
           onPress={() => navigation.navigate("SupplementEditor")}
           variant="ghost"
         />
         <Button
-          label="Abrir assessment"
+          label="Abrir avaliacao"
           onPress={() => navigation.navigate("Assessment")}
           variant="ghost"
         />
         <Button
-          label="Abrir exams"
+          label="Abrir exames"
           onPress={() => navigation.navigate("Exams")}
           variant="ghost"
         />

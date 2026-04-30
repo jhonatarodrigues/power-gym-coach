@@ -49,7 +49,7 @@ export function CurrentPlanScreen() {
   return (
     <Screen>
       <Header
-        title="Current plan"
+        title="Plano atual"
         subtitle="Plano ativo com treino, dieta, suplementacao e totais principais."
       />
 
@@ -112,7 +112,7 @@ export function CurrentPlanScreen() {
       {isTeacher ? (
         <>
           <SectionTitle
-            title="Review before save"
+            title="Revisao antes de salvar"
             description="Leitura rapida do que mudou no rascunho atual."
           />
           <View style={{ gap: theme.spacing.md }}>
@@ -190,7 +190,7 @@ export function CurrentPlanScreen() {
       ) : null}
 
       <SectionTitle
-        title="Training"
+        title="Treino"
         description="Dias configurados no plano atual."
       />
       <View style={{ gap: theme.spacing.md }}>
@@ -200,7 +200,7 @@ export function CurrentPlanScreen() {
       </View>
 
       <SectionTitle
-        title="Diet summary"
+        title="Resumo da dieta"
         description="Totais nutricionais do plano ativo."
       />
       <MacroSummaryCard
@@ -213,7 +213,7 @@ export function CurrentPlanScreen() {
       />
 
       <SectionTitle
-        title="Meals"
+        title="Refeicoes"
         description="Refeicoes atuais do plano alimentar."
       />
       <View style={{ gap: theme.spacing.md }}>
@@ -223,7 +223,7 @@ export function CurrentPlanScreen() {
       </View>
 
       <SectionTitle
-        title="Supplementation"
+        title="Suplementacao"
         description="Rotina de suplementos do plano."
       />
       <View style={{ gap: theme.spacing.md }}>
@@ -233,7 +233,7 @@ export function CurrentPlanScreen() {
       </View>
 
       <SectionTitle
-        title="Exercise video"
+        title="Video do exercicio"
         description="Preview do padrao visual para exercicios com demonstracao."
       />
       <ExerciseVideoCard
@@ -266,7 +266,7 @@ export function CurrentPlanScreen() {
           <Button
             label="Abrir historico do aluno"
             onPress={() =>
-              navigation.navigate("TeacherTabs", { screen: "TeacherHistoryTab" })
+              navigation.navigate("TeacherTabs", { screen: "TeacherHistory" })
             }
             variant="ghost"
           />

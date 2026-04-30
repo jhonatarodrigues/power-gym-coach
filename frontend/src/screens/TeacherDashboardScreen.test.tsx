@@ -22,8 +22,8 @@ describe("TeacherDashboardScreen", () => {
     renderWithProviders(<TeacherDashboardScreen />);
 
     expect(screen.getByText("Dashboard do professor")).toBeTruthy();
-    expect(screen.getByText("Abrir training editor")).toBeTruthy();
-    expect(screen.getByText("Abrir supplement editor")).toBeTruthy();
-    expect(screen.getByText("Abrir exams")).toBeTruthy();
+    expect(screen.getByText("Abrir dados do aluno")).toBeTruthy();
+    expect(screen.getByText("Abrir editor de treino")).toBeTruthy();
+    expect(screen.getByText("Abrir pagamentos")).toBeTruthy();
   });
 });

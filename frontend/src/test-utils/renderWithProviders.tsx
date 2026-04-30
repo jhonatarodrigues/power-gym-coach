@@ -18,6 +18,7 @@ export function Providers({ children }: PropsWithChildren) {
           screenOptions={{ headerShown: false }}
         >
           <Stack.Screen component={PlaceholderScreen} name="RoleSelection" />
+          <Stack.Screen component={PlaceholderScreen} name="FirstAccess" />
           <Stack.Screen component={PlaceholderScreen} name="TeacherTabs" />
           <Stack.Screen component={PlaceholderScreen} name="StudentTabs" />
           <Stack.Screen component={PlaceholderScreen} name="DietEditor" />
@@ -27,6 +28,9 @@ export function Providers({ children }: PropsWithChildren) {
           <Stack.Screen component={PlaceholderScreen} name="Assessment" />
           <Stack.Screen component={PlaceholderScreen} name="Exams" />
           <Stack.Screen component={PlaceholderScreen} name="StudentWorkout" />
+          <Stack.Screen component={PlaceholderScreen} name="Payments" />
+          <Stack.Screen component={PlaceholderScreen} name="Profile" />
+          <Stack.Screen component={PlaceholderScreen} name="StudentDiet" />
           <Stack.Screen name="TestScreen">
             {() => children}
           </Stack.Screen>

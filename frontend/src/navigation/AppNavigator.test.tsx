@@ -1,3 +1,26 @@
+jest.mock("@react-navigation/drawer", () => {
+  const React = require("react");
+
+  return {
+    createDrawerNavigator: () => ({
+      Navigator: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+      Screen: ({
+        component: Component,
+        children,
+      }: {
+        component?: React.ComponentType;
+        children?: () => React.ReactNode;
+      }) => {
+        if (Component) {
+          return <Component />;
+        }
+
+        return <>{children?.()}</>;
+      },
+    }),
+  };
+});
+
 import { render, screen } from "@testing-library/react-native";
 
 import { useMockSessionStore } from "@/store/useMockSessionStore";
@@ -44,6 +67,6 @@ describe("AppNavigator", () => {
       </AppThemeProvider>
     );
 
-    expect(screen.getByText("Seu plano atual")).toBeTruthy();
+    expect(screen.getByText("Dashboard do aluno")).toBeTruthy();
   });
 });
