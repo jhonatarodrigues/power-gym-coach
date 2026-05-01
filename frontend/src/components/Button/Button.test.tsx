@@ -1,4 +1,5 @@
 import { fireEvent, screen } from "@testing-library/react-native";
+import { ChevronRight } from "lucide-react-native";
 
 import { renderWithProviders } from "@/test-utils/renderWithProviders";
 
@@ -23,5 +24,19 @@ describe("Button", () => {
     fireEvent.press(screen.getByText("Desabilitado"));
 
     expect(onPress).not.toHaveBeenCalled();
+  });
+
+  it("renders compact soft button with icon", () => {
+    renderWithProviders(
+      <Button
+        fullWidth={false}
+        label="Abrir planos"
+        rightIcon={<ChevronRight size={14} />}
+        size="sm"
+        variant="soft"
+      />
+    );
+
+    expect(screen.getByText("Abrir planos")).toBeTruthy();
   });
 });

@@ -1,6 +1,7 @@
 import { View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ArrowUpRight } from "lucide-react-native";
 
 import {
   AthleteListItem,
@@ -96,13 +97,15 @@ export function CoachStudentsScreen() {
                 }}
               >
                 <Button
-                  label={`Abrir planos de ${user.name.split(" ")[0]}`}
+                  label="Abrir planos"
                   fullWidth={false}
                   onPress={() => {
                     selectStudent(user.id);
                     navigation.navigate("CoachStudentPlans");
                   }}
-                  variant="ghost"
+                  rightIcon={<ArrowUpRight color={theme.colors.primary} size={14} />}
+                  size="sm"
+                  variant="soft"
                 />
               </View>
             </View>
