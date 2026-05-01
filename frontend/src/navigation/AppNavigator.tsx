@@ -22,6 +22,7 @@ import {
   DrawerItemList,
   type DrawerContentComponentProps,
 } from "@react-navigation/drawer";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View } from "react-native";
 
@@ -55,12 +56,16 @@ import { useAppTheme } from "@/theme";
 import type {
   RootStackParamList,
   StudentDrawerParamList,
+  StudentTabParamList,
   TeacherDrawerParamList,
+  TeacherTabParamList,
 } from "./types";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const TeacherDrawer = createDrawerNavigator<TeacherDrawerParamList>();
 const StudentDrawer = createDrawerNavigator<StudentDrawerParamList>();
+const TeacherTabs = createBottomTabNavigator<TeacherTabParamList>();
+const StudentTabs = createBottomTabNavigator<StudentTabParamList>();
 
 function AppDrawerContent(props: DrawerContentComponentProps) {
   const { theme } = useAppTheme();
@@ -108,27 +113,11 @@ function TeacherDrawerNavigator() {
       }}
     >
       <TeacherDrawer.Screen
-        component={TeacherDashboardScreen}
-        name="TeacherHome"
+        component={TeacherTabNavigator}
+        name="TeacherMain"
         options={{
-          title: "Dashboard",
+          title: "Atalhos",
           drawerIcon: ({ color, size }) => <House color={color} size={size} />,
-        }}
-      />
-      <TeacherDrawer.Screen
-        component={CoachStudentsScreen}
-        name="TeacherStudent"
-        options={{
-          title: "Alunos",
-          drawerIcon: ({ color, size }) => <UserRound color={color} size={size} />,
-        }}
-      />
-      <TeacherDrawer.Screen
-        component={PaymentsScreen}
-        name="TeacherPayments"
-        options={{
-          title: "Pagamentos",
-          drawerIcon: ({ color, size }) => <CreditCard color={color} size={size} />,
         }}
       />
       <TeacherDrawer.Screen
@@ -151,6 +140,49 @@ function TeacherDrawerNavigator() {
   );
 }
 
+function TeacherTabNavigator() {
+  const { theme } = useAppTheme();
+
+  return (
+    <TeacherTabs.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.textMuted,
+        tabBarStyle: {
+          backgroundColor: theme.colors.surface,
+          borderTopColor: theme.colors.border,
+        },
+      }}
+    >
+      <TeacherTabs.Screen
+        component={TeacherDashboardScreen}
+        name="TeacherHome"
+        options={{
+          title: "Dashboard",
+          tabBarIcon: ({ color, size }) => <House color={color} size={size} />,
+        }}
+      />
+      <TeacherTabs.Screen
+        component={CoachStudentsScreen}
+        name="TeacherStudent"
+        options={{
+          title: "Alunos",
+          tabBarIcon: ({ color, size }) => <UserRound color={color} size={size} />,
+        }}
+      />
+      <TeacherTabs.Screen
+        component={PaymentsScreen}
+        name="TeacherPayments"
+        options={{
+          title: "Pagamentos",
+          tabBarIcon: ({ color, size }) => <CreditCard color={color} size={size} />,
+        }}
+      />
+    </TeacherTabs.Navigator>
+  );
+}
+
 function StudentDrawerNavigator() {
   const { theme } = useAppTheme();
 
@@ -167,35 +199,11 @@ function StudentDrawerNavigator() {
       }}
     >
       <StudentDrawer.Screen
-        component={StudentHomeScreen}
-        name="StudentHome"
+        component={StudentTabNavigator}
+        name="StudentMain"
         options={{
-          title: "Painel do aluno",
+          title: "Atalhos",
           drawerIcon: ({ color, size }) => <House color={color} size={size} />,
-        }}
-      />
-      <StudentDrawer.Screen
-        component={StudentWorkoutScreen}
-        name="StudentWorkout"
-        options={{
-          title: "Treino do dia",
-          drawerIcon: ({ color, size }) => <Dumbbell color={color} size={size} />,
-        }}
-      />
-      <StudentDrawer.Screen
-        component={StudentDietScreen}
-        name="StudentDiet"
-        options={{
-          title: "Dieta",
-          drawerIcon: ({ color, size }) => <ClipboardList color={color} size={size} />,
-        }}
-      />
-      <StudentDrawer.Screen
-        component={PaymentsScreen}
-        name="StudentPayments"
-        options={{
-          title: "Pagamentos",
-          drawerIcon: ({ color, size }) => <CreditCard color={color} size={size} />,
         }}
       />
       <StudentDrawer.Screen
@@ -255,6 +263,57 @@ function StudentDrawerNavigator() {
         }}
       />
     </StudentDrawer.Navigator>
+  );
+}
+
+function StudentTabNavigator() {
+  const { theme } = useAppTheme();
+
+  return (
+    <StudentTabs.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.textMuted,
+        tabBarStyle: {
+          backgroundColor: theme.colors.surface,
+          borderTopColor: theme.colors.border,
+        },
+      }}
+    >
+      <StudentTabs.Screen
+        component={StudentHomeScreen}
+        name="StudentHome"
+        options={{
+          title: "Home",
+          tabBarIcon: ({ color, size }) => <House color={color} size={size} />,
+        }}
+      />
+      <StudentTabs.Screen
+        component={StudentWorkoutScreen}
+        name="StudentWorkout"
+        options={{
+          title: "Treino",
+          tabBarIcon: ({ color, size }) => <Dumbbell color={color} size={size} />,
+        }}
+      />
+      <StudentTabs.Screen
+        component={StudentDietScreen}
+        name="StudentDiet"
+        options={{
+          title: "Dieta",
+          tabBarIcon: ({ color, size }) => <ClipboardList color={color} size={size} />,
+        }}
+      />
+      <StudentTabs.Screen
+        component={PaymentsScreen}
+        name="StudentPayments"
+        options={{
+          title: "Pagamentos",
+          tabBarIcon: ({ color, size }) => <CreditCard color={color} size={size} />,
+        }}
+      />
+    </StudentTabs.Navigator>
   );
 }
 

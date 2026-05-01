@@ -1,7 +1,10 @@
 import type { StudentJourneyEvent } from "@/repository/contracts";
-import { fireEvent, screen } from "@testing-library/react-native";
+import { fireEvent, render, screen } from "@testing-library/react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { renderWithProviders } from "@/test-utils/renderWithProviders";
+import { AppThemeProvider } from "@/theme";
 
 import { ComparisonCard } from "@/components/ComparisonCard";
 import { DecisionCard } from "@/components/DecisionCard";
@@ -19,6 +22,8 @@ import { Showcase } from "@/components/Showcase";
 import { StatusBadge } from "@/components/StatusBadge";
 import { TextField } from "@/components/TextField";
 import { BrandLogo } from "@/components/BrandLogo";
+
+const Stack = createNativeStackNavigator();
 
 describe("misc components", () => {
   it("renders empty state with action", () => {
@@ -44,6 +49,8 @@ describe("misc components", () => {
     rerender(<Header title="Titulo simples" />);
 
     expect(screen.getByText("Titulo simples")).toBeTruthy();
+    expect(screen.getByText("Menu")).toBeTruthy();
+    fireEvent.press(screen.getByText("Menu"));
   });
 
   it("toggles the password field helper text", () => {
@@ -185,5 +192,30 @@ describe("misc components", () => {
     expect(screen.getByText("Pendencias")).toBeTruthy();
     expect(screen.getByText("Upload realizado")).toBeTruthy();
     expect(screen.getByText("Peso")).toBeTruthy();
+  });
+
+  it("renders header with back action when there is navigation history", () => {
+    const PlaceholderScreen = () => null;
+
+    render(
+      <AppThemeProvider>
+        <NavigationContainer
+          initialState={{
+            index: 1,
+            routes: [{ name: "Home" }, { name: "Detalhes" }],
+          }}
+        >
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen component={PlaceholderScreen} name="Home" />
+            <Stack.Screen name="Detalhes">
+              {() => <Header title="Detalhes" />}
+            </Stack.Screen>
+          </Stack.Navigator>
+        </NavigationContainer>
+      </AppThemeProvider>
+    );
+
+    expect(screen.getByText("Voltar")).toBeTruthy();
+    fireEvent.press(screen.getByText("Voltar"));
   });
 });

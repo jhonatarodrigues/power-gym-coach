@@ -1,18 +1,26 @@
 import type { NavigatorScreenParams } from "@react-navigation/native";
 
-export type TeacherDrawerParamList = {
+export type TeacherTabParamList = {
   TeacherHome: undefined;
   TeacherStudent: undefined;
   TeacherPayments: undefined;
+};
+
+export type TeacherDrawerParamList = {
+  TeacherMain: NavigatorScreenParams<TeacherTabParamList> | undefined;
   TeacherProfile: undefined;
   TeacherLibrary: undefined;
 };
 
-export type StudentDrawerParamList = {
+export type StudentTabParamList = {
   StudentHome: undefined;
   StudentWorkout: undefined;
   StudentDiet: undefined;
   StudentPayments: undefined;
+};
+
+export type StudentDrawerParamList = {
+  StudentMain: NavigatorScreenParams<StudentTabParamList> | undefined;
   StudentProfile: undefined;
   StudentPlan: undefined;
   StudentProgress: undefined;

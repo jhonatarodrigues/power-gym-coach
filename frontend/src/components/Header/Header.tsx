@@ -1,6 +1,6 @@
 import { Pressable, Text, View } from "react-native";
-import { ChevronLeft } from "lucide-react-native";
-import { useNavigation } from "@react-navigation/native";
+import { ChevronLeft, Menu } from "lucide-react-native";
+import { DrawerActions, useNavigation } from "@react-navigation/native";
 
 import { BrandLogo } from "@/components/BrandLogo";
 import { useAppTheme } from "@/theme";
@@ -21,13 +21,21 @@ export function Header({
   const { theme } = useAppTheme();
   const navigation = useNavigation();
   const shouldRenderBack = showBackButton && navigation.canGoBack();
+  const shouldRenderMenu = !shouldRenderBack;
 
   return (
     <View style={{ gap: theme.spacing.sm }}>
-      {shouldRenderBack ? (
+      {shouldRenderBack || shouldRenderMenu ? (
         <Pressable
-          accessibilityLabel="Voltar"
-          onPress={() => navigation.goBack()}
+          accessibilityLabel={shouldRenderBack ? "Voltar" : "Abrir menu"}
+          onPress={() => {
+            if (shouldRenderBack) {
+              navigation.goBack();
+              return;
+            }
+
+            navigation.dispatch(DrawerActions.toggleDrawer());
+          }}
           style={{
             alignItems: "center",
             alignSelf: "flex-start",
@@ -35,7 +43,11 @@ export function Header({
             gap: theme.spacing.xs,
           }}
         >
-          <ChevronLeft color={theme.colors.primary} size={18} />
+          {shouldRenderBack ? (
+            <ChevronLeft color={theme.colors.primary} size={18} />
+          ) : (
+            <Menu color={theme.colors.primary} size={18} />
+          )}
           <Text
             style={{
               color: theme.colors.primary,
@@ -43,7 +55,7 @@ export function Header({
               fontWeight: "700",
             }}
           >
-            Voltar
+            {shouldRenderBack ? "Voltar" : "Menu"}
           </Text>
         </Pressable>
       ) : null}

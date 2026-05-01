@@ -24,6 +24,29 @@ jest.mock("@react-navigation/drawer", () => {
   };
 });
 
+jest.mock("@react-navigation/bottom-tabs", () => {
+  const React = require("react");
+
+  return {
+    createBottomTabNavigator: () => ({
+      Navigator: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+      Screen: ({
+        component: Component,
+        children,
+      }: {
+        component?: React.ComponentType;
+        children?: () => React.ReactNode;
+      }) => {
+        if (Component) {
+          return <Component />;
+        }
+
+        return <>{children?.()}</>;
+      },
+    }),
+  };
+});
+
 import { render, screen } from "@testing-library/react-native";
 
 import { useMockSessionStore } from "@/store/useMockSessionStore";
