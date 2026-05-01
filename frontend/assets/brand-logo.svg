@@ -1,0 +1,17 @@
+<svg width="1800" height="700" viewBox="0 0 1800 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(60 90) scale(0.62)">
+    <circle cx="512" cy="512" r="352" stroke="#FF6A00" stroke-width="42"/>
+    <path d="M360 280H575C681 280 766 365 766 470C766 576 681 661 575 661H470L518 570H575C630 570 675 525 675 470C675 415 630 370 575 370H420L360 280Z" fill="#FF6A00"/>
+    <path d="M275 705L405 492H315L465 274L400 470H505L275 705Z" fill="#FF6A00"/>
+    <circle cx="460" cy="394" r="72" fill="#F5F7FA"/>
+    <path d="M385 515C418 477 465 456 517 462C589 470 643 521 658 592C634 614 604 628 571 628C544 628 519 620 499 604C463 576 419 560 372 560H316L385 515Z" fill="#F5F7FA"/>
+    <path d="M604 366C626 366 646 378 656 398L694 470L646 461C623 457 600 465 584 482L556 511L548 480C542 455 549 429 565 410L585 385C589 374 600 366 612 366H604Z" fill="#F5F7FA"/>
+  </g>
+  <text x="700" y="275" fill="#F5F7FA" font-family="Arial, Helvetica, sans-serif" font-size="220" font-style="italic" font-weight="900">POWER</text>
+  <rect x="1300" y="112" width="230" height="48" rx="8" fill="#FF6A00"/>
+  <text x="700" y="470" fill="#FF6A00" font-family="Arial, Helvetica, sans-serif" font-size="168" font-style="italic" font-weight="900">GYM</text>
+  <text x="1140" y="470" fill="#FF6A00" font-family="Arial, Helvetica, sans-serif" font-size="160" font-style="italic" font-weight="900">COACH</text>
+  <path d="M700 555H1160" stroke="#FF6A00" stroke-width="14" stroke-linecap="round"/>
+  <path d="M1280 555H1700" stroke="#FF6A00" stroke-width="14" stroke-linecap="round"/>
+  <path d="M1185 555L1218 510L1240 600L1275 528" stroke="#FF6A00" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

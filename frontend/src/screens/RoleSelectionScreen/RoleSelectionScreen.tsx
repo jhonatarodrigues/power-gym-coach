@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { BrandLogo, Button, Card, PasswordField, Screen, TextField } from "@/components";
+import { Button, Card, PasswordField, Screen, TextField } from "@/components";
 import { useMockAuth } from "@/hooks/useMockAuth";
 import type { RootStackParamList } from "@/navigation/types";
 import { useAppTheme } from "@/theme";
@@ -24,6 +24,8 @@ const roleDefaults = {
     password: "Marina123",
   },
 } as const;
+
+const brandLogo = require("../../../assets/brand-logo.png");
 
 export function RoleSelectionScreen() {
   const { theme } = useAppTheme();
@@ -56,7 +58,15 @@ export function RoleSelectionScreen() {
     <Screen>
       <View style={{ flex: 1, justifyContent: "center", gap: theme.spacing.xl }}>
         <View style={{ alignItems: "center", gap: theme.spacing.md }}>
-          <BrandLogo showWordmark={false} size="lg" />
+          <Image
+            resizeMode="contain"
+            source={brandLogo}
+            style={{
+              height: 120,
+              maxWidth: 360,
+              width: "100%",
+            }}
+          />
           <Text
             style={{
               color: theme.colors.textMuted,
