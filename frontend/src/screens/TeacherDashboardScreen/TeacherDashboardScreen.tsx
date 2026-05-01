@@ -1,11 +1,12 @@
 import { Text, View } from "react-native";
+import { AlertCircle, ArrowUpRight, Wallet } from "lucide-react-native";
 import {
   AthleteListItem,
-  BrandLogo,
-  ComparisonCard,
   Card,
+  DashboardHero,
   Header,
-  MetricCard,
+  MiniBarChart,
+  ProgressLineCard,
   Screen,
   SectionTitle,
 } from "@/components";
@@ -38,9 +39,19 @@ export function TeacherDashboardScreen() {
   ).length;
   const monthlyRevenue = teacher ? getTeacherExpectedRevenue(teacher.id) : 0;
   const paidRecords = paymentRecords.filter((record) => record.status === "paid").length;
+  const totalRecords = paymentRecords.length;
   const firstInvitation = studentInvitations.find(
     (invitation) => invitation.status === "pending"
   );
+  const financialProgress = totalRecords > 0 ? paidRecords / totalRecords : 0;
+  const attentionProgress =
+    activeStudents > 0 ? (pendingExamRequests + studentsInGracePeriod) / activeStudents : 0;
+  const operationChartItems = [
+    { label: "Alunos", value: activeStudents, hint: "ativos" },
+    { label: "Aval.", value: reviewedAssessments, hint: "review" },
+    { label: "Exames", value: pendingExamRequests, hint: "pend." },
+    { label: "Pagos", value: paidRecords, hint: "ok" },
+  ];
 
   return (
     <Screen>
@@ -48,77 +59,106 @@ export function TeacherDashboardScreen() {
         showBackButton={false}
         showBrand
         title="Dashboard do coach"
-        subtitle="Visao geral da carteira de alunos, pagamentos e operacao do dia."
+        subtitle="Visao operacional da carteira, com foco no que exige acao hoje."
       />
 
+      <DashboardHero
+        accentLabel="Visao rapida de operacao"
+        eyebrow="Coach"
+        stats={[
+          { label: "Alunos ativos", value: String(activeStudents) },
+          { label: "Planos ativos", value: String(activePlans) },
+          { label: "Recebimento", value: `R$ ${monthlyRevenue.toFixed(0)}` },
+        ]}
+        subtitle="Tudo que e treino, dieta, feedback e plano continua dentro do contexto do aluno. Aqui ficam apenas os sinais mais importantes da operacao."
+        title="Painel mais limpo para decidir rapido"
+      />
+
+      <View style={{ gap: theme.spacing.md }}>
+        <ProgressLineCard
+          currentLabel={`${paidRecords}/${totalRecords || 0}`}
+          helper="Proporcao entre cobrancas ja liquidadas e cobrancas abertas do ciclo."
+          progress={financialProgress}
+          targetLabel="cobrancas pagas"
+          title="Saude financeira"
+        />
+        <ProgressLineCard
+          currentLabel={`${Math.round(attentionProgress * 100)}%`}
+          helper="Soma de exames pendentes e alunos em tolerancia financeira."
+          progress={attentionProgress}
+          targetLabel="risco na carteira"
+          title="Itens que pedem atencao"
+          tone="warning"
+        />
+      </View>
+
+      <MiniBarChart
+        description="Mini grafico para leitura imediata dos pilares mais importantes do dia."
+        items={operationChartItems}
+        title="Panorama da operacao"
+      />
+
+      <SectionTitle
+        title="Acoes prioritarias"
+        description="O coach deve conseguir entender rapido quem precisa de cuidado primeiro."
+      />
       <Card>
         <View style={{ gap: theme.spacing.md }}>
-          <BrandLogo showWordmark subtitle="Painel do coach" />
-          <SectionTitle
-            title="Leitura de hoje"
-            description="A dashboard do coach precisa responder rapido quem exige acao primeiro."
-          />
-          <View style={{ gap: theme.spacing.md }}>
-            <ComparisonCard
-              currentValue={String(activeStudents)}
-              previousValue={String(activePlans)}
-              deltaLabel="Relacao entre pessoas ativas e ciclos em andamento"
-              trendLabel="Base acompanhada"
-              title="Base acompanhada"
-            />
-            <ComparisonCard
-              currentValue={String(paidRecords)}
-              previousValue={String(studentsInGracePeriod)}
-              deltaLabel="Comparativo entre receitas confirmadas e alunos em tolerancia"
-              trendLabel="Saude financeira"
-              title="Saude financeira"
-            />
+          <View
+            style={{
+              alignItems: "center",
+              flexDirection: "row",
+              gap: theme.spacing.sm,
+            }}
+          >
+            <AlertCircle color={theme.colors.warning} size={18} />
+            <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
+              {pendingExamRequests} exames aguardam retorno e {studentsInGracePeriod} aluno(s)
+              estao em tolerancia.
+            </Text>
+          </View>
+          <View
+            style={{
+              alignItems: "center",
+              flexDirection: "row",
+              gap: theme.spacing.sm,
+            }}
+          >
+            <Wallet color={theme.colors.primary} size={18} />
+            <Text style={{ color: theme.colors.textMuted, flex: 1 }}>
+              O ciclo atual projeta R$ {monthlyRevenue.toFixed(2)} em recebimento recorrente.
+            </Text>
+          </View>
+          <View
+            style={{
+              alignItems: "center",
+              flexDirection: "row",
+              gap: theme.spacing.sm,
+            }}
+          >
+            <ArrowUpRight color={theme.colors.success} size={18} />
+            <Text style={{ color: theme.colors.textMuted, flex: 1 }}>
+              {reviewedAssessments} feedback(s) ja foram revisados e a base segue com {activePlans}{" "}
+              plano(s) em andamento.
+            </Text>
           </View>
         </View>
       </Card>
 
-      <View style={{ gap: theme.spacing.md }}>
-        <MetricCard
-          label="feedbacks concluidos"
-          value={String(reviewedAssessments)}
-          trend="ultima revisao ha 1 dia"
-        />
-        <MetricCard
-          label="planos ativos"
-          value={String(activePlans)}
-          trend="cada plano sempre pertence a um aluno"
-        />
-        <MetricCard
-          label="exames pendentes"
-          value={String(pendingExamRequests)}
-          trend="1 solicitacao aguardando envio"
-        />
-        <MetricCard
-          label="recebimento previsto"
-          value={`R$ ${monthlyRevenue.toFixed(2)}`}
-          trend="estimativa mensal dos planos ativos"
-        />
-        <MetricCard
-          label="pagamentos em tolerancia"
-          value={String(studentsInGracePeriod)}
-          trend="alunos com 3 dias para regularizar"
-        />
-      </View>
-
       <SectionTitle
         title="Carteira de alunos"
-        description="Plano, dieta, treino e feedback sempre ficam dentro do contexto do aluno."
+        description="A stack principal continua sendo aluno, plano, dieta, treino e feedback."
       />
-      <View style={{ gap: theme.spacing.md }}>
+      <View style={{ gap: theme.spacing.sm }}>
         <AthleteListItem
           name="Marina Costa"
-          focus="Hipertrofia com plano ativo, revisao de dieta e acompanhamento de exames."
+          focus="Hipertrofia com revisao de dieta, treino atual e exames pendentes."
           status="Prioridade alta"
         />
         <AthleteListItem
           name="Lucas Andrade"
-          focus="Rotina de definicao com necessidade de organizar treino e aderencia."
-          status="Acompanhamento em dia"
+          focus="Plano em acompanhamento com rotina mais estavel e menor risco no dia."
+          status="Operacao estavel"
         />
       </View>
 
@@ -137,20 +177,6 @@ export function TeacherDashboardScreen() {
           </View>
         </Card>
       ) : null}
-
-      <Card>
-        <View style={{ gap: theme.spacing.sm }}>
-          <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
-            Como usar o painel
-          </Text>
-          <Text style={{ color: theme.colors.textMuted }}>
-            Use o menu lateral para abrir alunos, pagamentos, planos, biblioteca, exames e avaliacoes.
-          </Text>
-          <Text style={{ color: theme.colors.textMuted }}>
-            A home do coach fica reservada para indicadores uteis e leitura rapida da operacao.
-          </Text>
-        </View>
-      </Card>
     </Screen>
   );
 }

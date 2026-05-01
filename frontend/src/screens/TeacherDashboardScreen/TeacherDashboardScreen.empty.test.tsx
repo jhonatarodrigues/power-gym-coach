@@ -34,5 +34,6 @@ describe("TeacherDashboardScreen empty states", () => {
 
     expect(screen.getAllByText("0").length).toBeGreaterThan(0);
     expect(screen.queryByText("Plano atual em destaque")).toBeNull();
+    expect(screen.getByText("Panorama da operacao")).toBeTruthy();
   });
 });

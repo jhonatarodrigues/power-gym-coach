@@ -35,6 +35,6 @@ describe("StudentHomeScreen empty states", () => {
 
     expect(screen.getAllByText("0").length).toBeGreaterThan(0);
     expect(screen.getByText("undefined kg / undefined% BF")).toBeTruthy();
-    expect(screen.getByText("pagamentos em aberto")).toBeTruthy();
+    expect(screen.getByText("Pendencias do momento")).toBeTruthy();
   });
 });

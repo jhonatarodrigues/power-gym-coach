@@ -7,6 +7,7 @@ import { renderWithProviders } from "@/test-utils/renderWithProviders";
 import { AppThemeProvider } from "@/theme";
 
 import { ComparisonCard } from "@/components/ComparisonCard";
+import { DashboardHero } from "@/components/DashboardHero";
 import { DecisionCard } from "@/components/DecisionCard";
 import { EmptyState } from "@/components/EmptyState";
 import { ExerciseItem } from "@/components/ExerciseItem";
@@ -15,8 +16,10 @@ import { FoodPickerItem } from "@/components/FoodPickerItem";
 import { Header } from "@/components/Header";
 import { JourneyTimelineCard } from "@/components/JourneyTimelineCard";
 import { MetricCard } from "@/components/MetricCard";
+import { MiniBarChart } from "@/components/MiniBarChart";
 import { PasswordField } from "@/components/PasswordField";
 import { PendingAlertCard } from "@/components/PendingAlertCard";
+import { ProgressLineCard } from "@/components/ProgressLineCard";
 import { Screen } from "@/components/Screen";
 import { Showcase } from "@/components/Showcase";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -192,6 +195,72 @@ describe("misc components", () => {
     expect(screen.getByText("Pendencias")).toBeTruthy();
     expect(screen.getByText("Upload realizado")).toBeTruthy();
     expect(screen.getByText("Peso")).toBeTruthy();
+  });
+
+  it("renders the new dashboard visualization components", () => {
+    renderWithProviders(
+      <>
+        <DashboardHero
+          accentLabel="Operacao do dia"
+          eyebrow="Coach"
+          stats={[
+            { label: "Alunos", value: "2" },
+            { label: "Planos", value: "1" },
+          ]}
+          subtitle="Resumo rapido da operacao."
+          title="Painel limpo"
+        />
+        <ProgressLineCard
+          currentLabel="1200 kcal"
+          helper="Meta de 2000 kcal."
+          progress={0.6}
+          targetLabel="800 kcal restantes"
+          title="Calorias do dia"
+        />
+        <MiniBarChart
+          description="Leitura compacta."
+          items={[
+            { label: "Ref 1", value: 1, hint: "itens" },
+            { label: "Ref 2", value: 3, hint: "itens" },
+          ]}
+          title="Consumo por refeicao"
+        />
+      </>
+    );
+
+    expect(screen.getByText("Painel limpo")).toBeTruthy();
+    expect(screen.getByText("60% concluido")).toBeTruthy();
+    expect(screen.getByText("Consumo por refeicao")).toBeTruthy();
+  });
+
+  it("renders dashboard visualization components without optional props", () => {
+    renderWithProviders(
+      <>
+        <DashboardHero
+          stats={[{ label: "Alunos", value: "0" }]}
+          subtitle="Resumo sem destaque opcional."
+          title="Painel compacto"
+        />
+        <ProgressLineCard
+          currentLabel="2/2"
+          progress={1.5}
+          title="Treino concluido"
+          tone="warning"
+        />
+        <MiniBarChart
+          color="#22C55E"
+          items={[
+            { label: "Ref 1", value: 0 },
+            { label: "Ref 2", value: 2 },
+          ]}
+          title="Mini grafico simples"
+        />
+      </>
+    );
+
+    expect(screen.getByText("Painel compacto")).toBeTruthy();
+    expect(screen.getByText("100% concluido")).toBeTruthy();
+    expect(screen.getByText("Mini grafico simples")).toBeTruthy();
   });
 
   it("renders header with back action when there is navigation history", () => {

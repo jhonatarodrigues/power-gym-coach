@@ -21,12 +21,11 @@ describe("StudentHomeScreen", () => {
   it("renders the student home summary and quick actions", () => {
     renderWithProviders(<StudentHomeScreen />);
 
-    expect(screen.getByText("Power Gym Coach")).toBeTruthy();
-    expect(screen.getByText("calorias consumidas hoje")).toBeTruthy();
-    expect(screen.getByText("0")).toBeTruthy();
+    expect(screen.getByText("Calorias do dia")).toBeTruthy();
+    expect(screen.getByText("Consumo por refeicao")).toBeTruthy();
     expect(screen.getByText("Treinos da semana")).toBeTruthy();
     expect(screen.getByText("Abrir treino do dia")).toBeTruthy();
-    expect(screen.getByText("Sua leitura rapida do dia")).toBeTruthy();
+    expect(screen.getByText("Atalhos do dia")).toBeTruthy();
     expect(screen.getByText("Abrir dieta de hoje")).toBeTruthy();
     expect(screen.getByText("Ver pagamentos")).toBeTruthy();
   });

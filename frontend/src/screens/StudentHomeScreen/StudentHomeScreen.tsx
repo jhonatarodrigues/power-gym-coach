@@ -4,12 +4,13 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import {
-  BrandLogo,
   Button,
   Card,
+  DashboardHero,
   Header,
   HistoryCard,
-  MetricCard,
+  MiniBarChart,
+  ProgressLineCard,
   Screen,
   SectionTitle,
   TrainingDayCard,
@@ -35,7 +36,14 @@ export function StudentHomeScreen() {
   const { session } = useMockAuth();
   const { currentPlan } = useCurrentPlan();
   const { getOpenRecordsByUser, getPaymentStatusByStudent } = usePayments();
-  const { consumedCalories, remainingCalories } = useStudentDailyDiet();
+  const {
+    consumedCalories,
+    consumedMealItems,
+    meals,
+    remainingCalories,
+    waterIntake,
+    waterTarget,
+  } = useStudentDailyDiet();
   const { allDays, completedCount, todayLabel, todayTraining, totalExercises } =
     useStudentTodayWorkout();
   const navigation =
@@ -51,14 +59,25 @@ export function StudentHomeScreen() {
   const paymentStatus = currentUser
     ? getPaymentStatusByStudent(currentUser.id)
     : null;
+  const calorieProgress =
+    currentPlan.dietPlan.calories > 0
+      ? consumedCalories / currentPlan.dietPlan.calories
+      : 0;
+  const waterProgress = waterTarget > 0 ? waterIntake / waterTarget : 0;
+  const mealChartItems = meals.map((meal) => ({
+    hint: `${meal.items.length} itens`,
+    label: meal.sequenceLabel ?? meal.title,
+    value: consumedMealItems[meal.id]?.length ?? 0,
+  }));
+  const weekProgress = totalExercises > 0 ? completedCount / totalExercises : 0;
 
   return (
     <Screen>
       <Header
         showBackButton={false}
         showBrand
-        title="Dashboard do aluno"
-        subtitle="Seu treino do dia, dieta, pagamentos e progresso em um unico lugar."
+        title="Home do aluno"
+        subtitle="Resumo do dia com treino, dieta, progresso e pagamentos sem poluicao visual."
       />
 
       {paymentStatus && paymentStatus !== "paid" ? (
@@ -83,18 +102,40 @@ export function StudentHomeScreen() {
         </View>
       ) : null}
 
-      <View style={{ gap: theme.spacing.md }}>
-        <MetricCard
-          label="calorias do plano"
-          value={String(currentPlan.dietPlan.calories)}
-          trend={`${currentPlan.dietPlan.carbs.toFixed(1)}g carb / ${currentPlan.dietPlan.protein.toFixed(1)}g prot`}
-        />
-        <MetricCard
-          label="calorias consumidas hoje"
-          value={String(consumedCalories)}
-          trend={`${remainingCalories} kcal restantes no dia`}
-        />
-      </View>
+      <DashboardHero
+        accentLabel={todayTraining ? `${todayLabel} ativo` : "Sem treino hoje"}
+        eyebrow="Seu dia"
+        stats={[
+          { label: "Plano", value: `${currentPlan.dietPlan.calories} kcal` },
+          { label: "Consumido", value: `${consumedCalories} kcal` },
+          { label: "Restante", value: `${remainingCalories} kcal` },
+        ]}
+        subtitle="Um painel mais direto para enxergar energia, treino e progresso sem precisar abrir varias telas."
+        title={`Hoje o foco e manter constancia${currentUser ? `, ${currentUser.name.split(" ")[0]}` : ""}`}
+      />
+
+      <ProgressLineCard
+        currentLabel={`${consumedCalories} kcal`}
+        helper={`Meta diaria de ${currentPlan.dietPlan.calories} kcal com ${Math.round(calorieProgress * 100)}% do plano consumido.`}
+        progress={calorieProgress}
+        targetLabel={`${remainingCalories} kcal restantes`}
+        title="Calorias do dia"
+      />
+
+      <ProgressLineCard
+        currentLabel={`${waterIntake.toFixed(1)} L`}
+        helper={`Meta diaria de hidratacao: ${waterTarget.toFixed(1)} litros.`}
+        progress={waterProgress}
+        targetLabel={`${Math.max(0, waterTarget - waterIntake).toFixed(1)} L restantes`}
+        title="Agua do dia"
+        tone="success"
+      />
+
+      <MiniBarChart
+        description="Mini grafico de marcacao das refeicoes do dia, por refeicao."
+        items={mealChartItems}
+        title="Consumo por refeicao"
+      />
 
       <SectionTitle
         title="Treino de hoje"
@@ -111,13 +152,9 @@ export function StudentHomeScreen() {
               }}
             >
               <CalendarDays color={theme.colors.primary} size={18} />
-              <View style={{ gap: theme.spacing.xs }}>
-                <MetricCard
-                  label={todayLabel}
-                  value={`${completedCount}/${totalExercises}`}
-                  trend="exercicios marcados no dia"
-                />
-              </View>
+              <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
+                {todayLabel}: {completedCount}/{totalExercises} exercicios concluidos
+              </Text>
             </View>
             <TrainingDayCard day={todayTraining} />
           </View>
@@ -127,6 +164,15 @@ export function StudentHomeScreen() {
           />
         </>
       ) : null}
+
+      <ProgressLineCard
+        currentLabel={`${completedCount}/${totalExercises}`}
+        helper="Leitura rapida dos exercicios marcados dentro do treino programado para hoje."
+        progress={weekProgress}
+        targetLabel="progresso do treino do dia"
+        title="Execucao do treino"
+        tone="warning"
+      />
 
       <SectionTitle
         title="Treinos da semana"
@@ -168,23 +214,19 @@ export function StudentHomeScreen() {
         ))}
       </View>
 
-      <View style={{ gap: theme.spacing.md }}>
-        <MetricCard
-          label="avaliacao recente"
-          value={latestAssessment ? "1" : "0"}
-          trend="feedback do coach disponivel"
-        />
-        <MetricCard
-          label="exames pendentes"
-          value={String(pendingExams)}
-          trend="envie quando tiver os resultados"
-        />
-        <MetricCard
-          label="pagamentos em aberto"
-          value={String(openPayments.length)}
-          trend="plataforma e plano do coach"
-        />
-      </View>
+      <MiniBarChart
+        description="Leitura compacta das pendencias e retornos mais importantes do momento."
+        items={[
+          {
+            label: "Feedback",
+            value: latestAssessment ? 1 : 0,
+            hint: latestAssessment ? "ok" : "sem",
+          },
+          { label: "Exames", value: pendingExams, hint: "pend." },
+          { label: "Pagtos", value: openPayments.length, hint: "aberto" },
+        ]}
+        title="Pendencias do momento"
+      />
 
       <SectionTitle
         title="Progresso"
@@ -213,7 +255,12 @@ export function StudentHomeScreen() {
 
       <Card>
         <View style={{ gap: theme.spacing.sm }}>
-          <BrandLogo size="sm" subtitle="Sua leitura rapida do dia" />
+          <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
+            Atalhos do dia
+          </Text>
+          <Text style={{ color: theme.colors.textMuted }}>
+            Abra as areas mais usadas sem perder a leitura da home.
+          </Text>
           <Button label="Abrir dieta de hoje" onPress={() => navigation.navigate("StudentDiet")} />
           <Button
             label="Ver pagamentos"

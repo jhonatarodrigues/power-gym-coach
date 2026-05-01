@@ -82,7 +82,7 @@ describe("AppNavigator", () => {
       </AppThemeProvider>
     );
 
-    expect(screen.getByText("Leitura de hoje")).toBeTruthy();
+    expect(screen.getByText("Painel mais limpo para decidir rapido")).toBeTruthy();
   });
 
   it("renders the student app shell when authenticated as student", () => {
@@ -95,6 +95,8 @@ describe("AppNavigator", () => {
       </AppThemeProvider>
     );
 
-    expect(screen.getByText("Seu treino do dia, dieta, pagamentos e progresso em um unico lugar.")).toBeTruthy();
+    expect(
+      screen.getByText("Resumo do dia com treino, dieta, progresso e pagamentos sem poluicao visual.")
+    ).toBeTruthy();
   });
 });
