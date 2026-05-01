@@ -131,6 +131,13 @@ describe("misc components", () => {
     expect(screen.queryByText("Power Gym Coach")).toBeNull();
   });
 
+  it("renders brand logo with subtitle when wordmark is visible", () => {
+    renderWithProviders(<BrandLogo size="lg" subtitle="Painel operacional" />);
+
+    expect(screen.getByText("Power Gym Coach")).toBeTruthy();
+    expect(screen.getByText("Painel operacional")).toBeTruthy();
+  });
+
   it("renders text field without optional label and hint", () => {
     renderWithProviders(<TextField placeholder="Livre" />);
 

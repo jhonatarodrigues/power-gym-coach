@@ -10,10 +10,12 @@ describe("RoleSelectionScreen", () => {
     useMockSessionStore.getState().reset();
   });
 
-  it("renders the app name and allows entering as teacher with email and senha", async () => {
+  it("renders the login intro and allows entering as teacher with email and senha", async () => {
     renderWithProviders(<RoleSelectionScreen />);
 
-    expect(screen.getByText("Power Gym Coach")).toBeTruthy();
+    expect(
+      screen.getByText("Entre com email e senha. Escolha acima se o acesso e de coach ou aluno.")
+    ).toBeTruthy();
     expect(screen.queryByText("Primeiro acesso do aluno")).toBeNull();
 
     fireEvent.press(screen.getByText("Entrar"));

@@ -45,7 +45,9 @@ describe("AppNavigator", () => {
       </AppThemeProvider>
     );
 
-    expect(screen.getByText("Power Gym Coach")).toBeTruthy();
+    expect(
+      screen.getByText("Entre com email e senha. Escolha acima se o acesso e de coach ou aluno.")
+    ).toBeTruthy();
   });
 
   it("renders the teacher app shell when authenticated as teacher", () => {

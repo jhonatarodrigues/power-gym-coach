@@ -55,10 +55,18 @@ export function RoleSelectionScreen() {
   return (
     <Screen>
       <View style={{ flex: 1, justifyContent: "center", gap: theme.spacing.xl }}>
-        <BrandLogo
-          size="lg"
-          subtitle="Entre com email e senha. Escolha acima se o acesso e de coach ou aluno."
-        />
+        <View style={{ alignItems: "center", gap: theme.spacing.md }}>
+          <BrandLogo showWordmark={false} size="lg" />
+          <Text
+            style={{
+              color: theme.colors.textMuted,
+              fontSize: theme.typography.body,
+              textAlign: "center",
+            }}
+          >
+            Entre com email e senha. Escolha acima se o acesso e de coach ou aluno.
+          </Text>
+        </View>
 
         <Card>
           <View style={{ gap: theme.spacing.lg }}>
