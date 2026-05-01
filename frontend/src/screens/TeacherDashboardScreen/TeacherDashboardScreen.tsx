@@ -1,6 +1,8 @@
 import { Text, View } from "react-native";
 import {
   AthleteListItem,
+  BrandLogo,
+  ComparisonCard,
   Card,
   Header,
   MetricCard,
@@ -19,8 +21,8 @@ import { currentPlanMock } from "@/repository/mock";
 
 export function TeacherDashboardScreen() {
   const { theme } = useAppTheme();
-  const { currentUser, signInAs, signOut, studentInvitations } = useMockAuth();
-  const { getTeacherExpectedRevenue, subscriptions } = usePayments();
+  const { currentUser, studentInvitations } = useMockAuth();
+  const { getTeacherExpectedRevenue, subscriptions, paymentRecords } = usePayments();
   const teacher = currentUser();
 
   const activeStudents = studentProfilesMock.length;
@@ -35,6 +37,7 @@ export function TeacherDashboardScreen() {
     (student) => student.userId === currentPlanMock.studentId
   ).length;
   const monthlyRevenue = teacher ? getTeacherExpectedRevenue(teacher.id) : 0;
+  const paidRecords = paymentRecords.filter((record) => record.status === "paid").length;
   const firstInvitation = studentInvitations.find(
     (invitation) => invitation.status === "pending"
   );
@@ -43,19 +46,40 @@ export function TeacherDashboardScreen() {
     <Screen>
       <Header
         showBackButton={false}
-        title="Dashboard do professor"
+        showBrand
+        title="Dashboard do coach"
         subtitle="Visao geral da carteira de alunos, pagamentos e operacao do dia."
       />
 
-      <MetricCard
-        label="alunos ativos"
-        value={String(activeStudents)}
-        trend="acompanhamento ativo na base mockada"
-      />
+      <Card>
+        <View style={{ gap: theme.spacing.md }}>
+          <BrandLogo showWordmark subtitle="Painel do coach" />
+          <SectionTitle
+            title="Leitura de hoje"
+            description="A dashboard do coach precisa responder rapido quem exige acao primeiro."
+          />
+          <View style={{ gap: theme.spacing.md }}>
+            <ComparisonCard
+              currentValue={String(activeStudents)}
+              previousValue={String(activePlans)}
+              deltaLabel="Relacao entre pessoas ativas e ciclos em andamento"
+              trendLabel="Base acompanhada"
+              title="Base acompanhada"
+            />
+            <ComparisonCard
+              currentValue={String(paidRecords)}
+              previousValue={String(studentsInGracePeriod)}
+              deltaLabel="Comparativo entre receitas confirmadas e alunos em tolerancia"
+              trendLabel="Saude financeira"
+              title="Saude financeira"
+            />
+          </View>
+        </View>
+      </Card>
 
       <View style={{ gap: theme.spacing.md }}>
         <MetricCard
-          label="avaliacoes concluídas"
+          label="feedbacks concluidos"
           value={String(reviewedAssessments)}
           trend="ultima revisao ha 1 dia"
         />
@@ -83,13 +107,20 @@ export function TeacherDashboardScreen() {
 
       <SectionTitle
         title="Carteira de alunos"
-        description="O dashboard do professor mostra operacao geral. Plano, treino, dieta e avaliacao ficam dentro do contexto de cada aluno."
+        description="Plano, dieta, treino e feedback sempre ficam dentro do contexto do aluno."
       />
-      <AthleteListItem
-        name="Marina Costa"
-        focus="Hipertrofia com plano ativo, revisao de dieta e acompanhamento de exames."
-        status="Acompanhamento ativo"
-      />
+      <View style={{ gap: theme.spacing.md }}>
+        <AthleteListItem
+          name="Marina Costa"
+          focus="Hipertrofia com plano ativo, revisao de dieta e acompanhamento de exames."
+          status="Prioridade alta"
+        />
+        <AthleteListItem
+          name="Lucas Andrade"
+          focus="Rotina de definicao com necessidade de organizar treino e aderencia."
+          status="Acompanhamento em dia"
+        />
+      </View>
 
       {firstInvitation ? (
         <Card>
@@ -116,19 +147,7 @@ export function TeacherDashboardScreen() {
             Use o menu lateral para abrir alunos, pagamentos, planos, biblioteca, exames e avaliacoes.
           </Text>
           <Text style={{ color: theme.colors.textMuted }}>
-            A home do professor fica reservada para indicadores uteis e leitura rapida da operacao.
-          </Text>
-          <Text
-            onPress={() => signInAs("student")}
-            style={{ color: theme.colors.primary, fontWeight: "700" }}
-          >
-            Trocar para visao do aluno
-          </Text>
-          <Text
-            onPress={signOut}
-            style={{ color: theme.colors.textMuted, fontWeight: "700" }}
-          >
-            Selecionar perfil
+            A home do coach fica reservada para indicadores uteis e leitura rapida da operacao.
           </Text>
         </View>
       </Card>

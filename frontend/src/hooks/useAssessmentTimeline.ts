@@ -19,7 +19,7 @@ export function useAssessmentTimeline() {
           id: review.id,
           date: review.reviewedAt.slice(0, 10),
           titleTeacher: "Devolutiva registrada",
-          titleStudent: "Professor revisou sua avaliacao",
+          titleStudent: "Coach revisou sua avaliacao",
           description: review.summary,
         },
       ]

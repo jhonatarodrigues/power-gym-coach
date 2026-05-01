@@ -57,7 +57,7 @@ export function DietEditorScreen() {
     <Screen>
       <Header
         title="Diet editor"
-        subtitle="Mock do fluxo em que o professor escolhe alimentos e ajusta porcao para recalcular macros."
+        subtitle="Mock do fluxo em que o coach escolhe alimentos e ajusta porcao para recalcular macros."
       />
 
       <SectionTitle

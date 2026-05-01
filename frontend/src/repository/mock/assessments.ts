@@ -5,6 +5,7 @@ export const assessmentSubmissionsMock: AssessmentSubmission[] = [
     id: "assessment-submission-1",
     studentId: "user-student-1",
     teacherId: "user-teacher-1",
+    planId: "plan-current-1",
     status: "reviewed",
     description:
       "Envio de atualizacao apos 4 semanas. Mantive a dieta na maior parte dos dias e senti melhora no rendimento de pernas.",
@@ -31,6 +32,7 @@ export const assessmentReviewsMock: AssessmentReview[] = [
     id: "assessment-review-1",
     submissionId: "assessment-submission-1",
     teacherId: "user-teacher-1",
+    planId: "plan-current-1",
     summary:
       "Boa evolucao visual em dorsais e deltoides, com reducao discreta de gordura abdominal.",
     observations:
@@ -39,5 +41,19 @@ export const assessmentReviewsMock: AssessmentReview[] = [
       "Novo planejamento com ajuste de carboidrato no almoco e no jantar e progressao de carga em quadriceps.",
     createdNewPlan: true,
     reviewedAt: "2026-04-27T09:30:00.000Z",
+  },
+  {
+    id: "assessment-review-2",
+    submissionId: "assessment-submission-1",
+    teacherId: "user-teacher-1",
+    planId: "plan-current-1",
+    summary:
+      "Feedback complementar de aderencia: boa consistencia no cafe da manha e no treino de quadriceps.",
+    observations:
+      "Manter comunicacao sobre saciedade no final da tarde e registrar fotos apos 14 dias.",
+    suggestedChanges:
+      "Sem troca estrutural no plano, apenas ajuste fino na refeicao 3 e reforco tecnico no agachamento.",
+    createdNewPlan: false,
+    reviewedAt: "2026-04-29T10:15:00.000Z",
   },
 ];

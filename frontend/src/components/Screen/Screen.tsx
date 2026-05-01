@@ -33,7 +33,9 @@ export function Screen({ children, scrollable = true }: ScreenProps) {
     >
       {scrollable ? (
         <ScrollView
+          automaticallyAdjustContentInsets={false}
           contentContainerStyle={styles.scrollContent}
+          contentInsetAdjustmentBehavior="never"
           style={{ backgroundColor: theme.colors.background }}
         >
           {content}

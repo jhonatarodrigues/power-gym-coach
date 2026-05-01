@@ -7,7 +7,7 @@ const meta = {
   component: ExerciseVideoCard,
   args: {
     title: "Supino reto com barra",
-    description: "Video gravado pelo professor para orientar a execucao correta.",
+    description: "Video gravado pelo coach para orientar a execucao correta.",
     available: true,
   },
 } satisfies Meta<typeof ExerciseVideoCard>;

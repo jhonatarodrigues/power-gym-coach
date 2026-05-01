@@ -94,13 +94,13 @@ export function PaymentsScreen() {
       <Screen>
         <Header
           title="Pagamentos"
-          subtitle="Acompanhe previsao de recebimento, alunos pagantes e os planos cadastrados."
+          subtitle="Acompanhe previsao de recebimento, alunos pagantes e os planos cadastrados pelo coach."
         />
 
         <MetricCard
           label="recebimento mensal previsto"
           value={formatCurrency(expectedRevenue)}
-          trend="soma das mensalidades ativas do professor"
+          trend="soma das mensalidades ativas do coach"
         />
 
         <MetricCard
@@ -241,7 +241,7 @@ export function PaymentsScreen() {
         </View>
 
         <SectionTitle
-          title="Planos do professor"
+          title="Planos do coach"
           description="Mensal, trimestral e anual sempre cobrados mes a mes, com entregas definidas por plano."
         />
         <View style={{ gap: theme.spacing.md }}>
@@ -319,7 +319,7 @@ export function PaymentsScreen() {
     <Screen>
       <Header
         title="Seus pagamentos"
-        subtitle="Acompanhe a mensalidade da plataforma e a cobranca do seu plano com o professor."
+        subtitle="Acompanhe a mensalidade da plataforma e a cobranca do seu plano com o coach."
       />
 
       {currentStatus ? (
@@ -343,7 +343,7 @@ export function PaymentsScreen() {
         <Card>
           <View style={{ gap: theme.spacing.sm }}>
             <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
-              Seu plano com o professor
+              Seu plano com o coach
             </Text>
             <Text style={{ color: theme.colors.textMuted }}>{currentTeacherPlan.name}</Text>
             <Text style={{ color: theme.colors.textMuted }}>

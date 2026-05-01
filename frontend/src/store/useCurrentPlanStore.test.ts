@@ -20,6 +20,17 @@ describe("useCurrentPlanStore", () => {
     expect(updatedDay?.notes).toBe("Nova observacao de treino");
   });
 
+  it("loads a selected plan into the current plan context", () => {
+    useCurrentPlanStore.getState().loadCurrentPlan({
+      ...currentPlanMock,
+      id: "another-plan",
+      title: "Plano carregado",
+    });
+
+    expect(useCurrentPlanStore.getState().currentPlan.title).toBe("Plano carregado");
+    expect(useCurrentPlanStore.getState().savedPlan.id).toBe("another-plan");
+  });
+
   it("adds a new exercise to a day", () => {
     const targetDay = currentPlanMock.trainingPlan.days[0];
     const initialCount = targetDay.exercises.length;

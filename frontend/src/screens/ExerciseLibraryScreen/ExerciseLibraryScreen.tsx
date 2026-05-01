@@ -13,7 +13,7 @@ export function ExerciseLibraryScreen() {
     <Screen>
       <Header
         title="Exercise library"
-        subtitle="Biblioteca base de exercicios para o professor selecionar ao montar o treino."
+        subtitle="Biblioteca base de exercicios para o coach selecionar ao montar o treino."
       />
 
       <SectionTitle

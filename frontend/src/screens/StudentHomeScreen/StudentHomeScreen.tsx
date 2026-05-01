@@ -4,7 +4,9 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import {
+  BrandLogo,
   Button,
+  Card,
   Header,
   HistoryCard,
   MetricCard,
@@ -30,7 +32,7 @@ import { getPaymentStatusLabel } from "@/utils/payments";
 
 export function StudentHomeScreen() {
   const { theme } = useAppTheme();
-  const { session, signInAs, signOut } = useMockAuth();
+  const { session } = useMockAuth();
   const { currentPlan } = useCurrentPlan();
   const { getOpenRecordsByUser, getPaymentStatusByStudent } = usePayments();
   const { consumedCalories, remainingCalories } = useStudentDailyDiet();
@@ -54,6 +56,7 @@ export function StudentHomeScreen() {
     <Screen>
       <Header
         showBackButton={false}
+        showBrand
         title="Dashboard do aluno"
         subtitle="Seu treino do dia, dieta, pagamentos e progresso em um unico lugar."
       />
@@ -169,7 +172,7 @@ export function StudentHomeScreen() {
         <MetricCard
           label="avaliacao recente"
           value={latestAssessment ? "1" : "0"}
-          trend="feedback do professor disponivel"
+          trend="feedback do coach disponivel"
         />
         <MetricCard
           label="exames pendentes"
@@ -179,7 +182,7 @@ export function StudentHomeScreen() {
         <MetricCard
           label="pagamentos em aberto"
           value={String(openPayments.length)}
-          trend="plataforma e plano do professor"
+          trend="plataforma e plano do coach"
         />
       </View>
 
@@ -208,41 +211,17 @@ export function StudentHomeScreen() {
         ))}
       </View>
 
-      <View style={{ gap: theme.spacing.md }}>
-        <Button
-          label="Abrir avaliacao"
-          onPress={() =>
-            navigation.navigate("Assessment")
-          }
-        />
-        <Button
-          label="Abrir exames"
-          onPress={() => navigation.navigate("Exams")}
-          variant="ghost"
-        />
-        <Button
-          label="Abrir dieta do dia"
-          onPress={() => navigation.navigate("StudentDiet")}
-          variant="ghost"
-        />
-        <Button
-          label="Abrir pagamentos"
-          onPress={() => navigation.navigate("Payments")}
-          variant="ghost"
-        />
-        <Button
-          label="Abrir perfil"
-          onPress={() => navigation.navigate("Profile")}
-          variant="ghost"
-        />
-        <Button
-          label="Ir para treino do dia"
-          onPress={() => navigation.navigate("StudentWorkout")}
-          variant="ghost"
-        />
-        <Button label="Trocar para visao do professor" onPress={() => signInAs("teacher")} />
-        <Button label="Selecionar perfil" onPress={signOut} variant="ghost" />
-      </View>
+      <Card>
+        <View style={{ gap: theme.spacing.sm }}>
+          <BrandLogo size="sm" subtitle="Sua leitura rapida do dia" />
+          <Button label="Abrir dieta de hoje" onPress={() => navigation.navigate("StudentDiet")} />
+          <Button
+            label="Ver pagamentos"
+            onPress={() => navigation.navigate("Payments")}
+            variant="ghost"
+          />
+        </View>
+      </Card>
     </Screen>
   );
 }

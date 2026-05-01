@@ -12,6 +12,7 @@ export interface AssessmentSubmission {
   id: ID;
   studentId: ID;
   teacherId: ID;
+  planId?: ID;
   status: AssessmentStatus;
   description: string;
   images: AssessmentImage[];
@@ -22,6 +23,7 @@ export interface AssessmentReview {
   id: ID;
   submissionId: ID;
   teacherId: ID;
+  planId?: ID;
   summary: string;
   observations: string;
   suggestedChanges?: string;

@@ -1,4 +1,5 @@
 export * from "./AthleteListItem";
+export * from "./BrandLogo";
 export * from "./Button";
 export * from "./Card";
 export * from "./ComparisonCard";

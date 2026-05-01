@@ -32,6 +32,7 @@ interface CurrentPlanState {
   savedPlan: Plan;
   hasUnsavedChanges: boolean;
   lastSavedAt: string;
+  loadCurrentPlan: (plan: Plan) => void;
   resetCurrentPlan: () => void;
   saveCurrentPlan: () => void;
   discardCurrentPlanChanges: () => void;
@@ -123,6 +124,11 @@ function createStateFromPlan(currentPlan: Plan, savedPlan: Plan) {
 
 export const useCurrentPlanStore = create<CurrentPlanState>((set) => ({
   ...createStateFromPlan(clonePlan(currentPlanMock), clonePlan(currentPlanMock)),
+  loadCurrentPlan: (plan) => {
+    const nextPlan = clonePlan(plan);
+
+    set(createStateFromPlan(nextPlan, clonePlan(plan)));
+  },
   resetCurrentPlan: () => {
     const initialPlan = clonePlan(currentPlanMock);
 

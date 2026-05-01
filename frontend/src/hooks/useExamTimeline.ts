@@ -62,7 +62,7 @@ export function useExamTimeline() {
                 id: `review-${request.id}`,
                 date: request.reviewedAt.slice(0, 10),
                 title: `Revisao: ${request.title}`,
-                description: request.reviewNote ?? "Exame revisado pelo professor.",
+                description: request.reviewNote ?? "Exame revisado pelo coach.",
                 statusLabel: "Revisado",
                 priority: "low" as const,
               },

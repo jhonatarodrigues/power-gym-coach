@@ -119,7 +119,7 @@ export function ExamsScreen() {
         <View style={{ gap: theme.spacing.md }}>
           <SectionTitle
             title="Revisar exame enviado"
-            description="Registre o feedback do professor e feche a solicitacao."
+            description="Registre o feedback do coach e feche a solicitacao."
           />
           <Controller
             control={reviewForm.control}
@@ -368,14 +368,12 @@ export function ExamsScreen() {
             />
             <PendingAlertCard
               count={reviewedRequests.length}
-              description="Solicitacoes ja revisadas e fechadas pelo professor."
+              description="Solicitacoes ja revisadas e fechadas pelo coach."
               title="Exames revisados"
             />
             <Button
               label="Voltar ao plano atual"
-              onPress={() =>
-                navigation.navigate("TeacherTabs", { screen: "TeacherPlan" })
-              }
+              onPress={() => navigation.navigate("CoachPlanHub")}
               variant="ghost"
             />
           </>

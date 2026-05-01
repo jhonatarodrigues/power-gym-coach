@@ -52,7 +52,7 @@ describe("PaymentsScreen", () => {
 
     renderWithProviders(<PaymentsScreen />);
 
-    expect(screen.getByText("Seu plano com o professor")).toBeTruthy();
+    expect(screen.getByText("Seu plano com o coach")).toBeTruthy();
     expect(screen.getByText("Entregas inclusas: Dieta, Treino, Avaliacao")).toBeTruthy();
 
     fireEvent.press(screen.getAllByText("Pagar com Pix")[0]);

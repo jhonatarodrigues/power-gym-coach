@@ -135,7 +135,7 @@ export const mockStudentJourneyRepository: StudentJourneyRepository = {
         pending: submission.status === "pending",
         highlight:
           submission.status === "pending"
-            ? "Aguardando devolutiva do professor"
+            ? "Aguardando devolutiva do coach"
             : "Avaliacao revisada",
       }));
 

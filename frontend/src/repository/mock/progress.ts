@@ -51,7 +51,7 @@ export const historyRecordsMock: HistoryRecord[] = [
     studentId: "user-student-1",
     type: "assessment",
     title: "Avaliacao corporal revisada",
-    description: "Revisao do professor com novo ajuste de treino e dieta.",
+    description: "Revisao do coach com novo ajuste de treino e dieta.",
     date: "2026-04-27",
   },
   {

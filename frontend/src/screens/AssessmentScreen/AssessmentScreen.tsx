@@ -73,7 +73,7 @@ export function AssessmentScreen() {
     <Screen>
       <Header
         title="Assessment"
-        subtitle="Fluxo mockado de envio de imagens pelo aluno e devolutiva do professor."
+        subtitle="Fluxo mockado de envio de imagens pelo aluno e devolutiva do coach."
       />
 
       <SectionTitle
@@ -88,7 +88,7 @@ export function AssessmentScreen() {
       />
 
       <SectionTitle
-        title={isTeacher ? "Devolutiva do professor" : "Feedback recebido"}
+        title={isTeacher ? "Devolutiva do coach" : "Feedback recebido"}
         description="Resumo e observacoes da ultima avaliacao."
       />
       <DecisionCard
@@ -99,7 +99,7 @@ export function AssessmentScreen() {
             : "O aluno ja enviou novo material e o proximo ajuste de plano ainda nao foi consolidado."
         }
         highlight={
-          hasReview ? review.suggestedChanges : "Aguardando devolutiva do professor"
+          hasReview ? review.suggestedChanges : "Aguardando devolutiva do coach"
         }
         title={hasReview ? review.summary : "Feedback pendente"}
       />
@@ -124,7 +124,7 @@ export function AssessmentScreen() {
         <View style={{ gap: theme.spacing.md }}>
           <SectionTitle
             title="Revisao rapida"
-            description="Use este formulario para registrar a devolutiva do professor."
+            description="Use este formulario para registrar a devolutiva do coach."
           />
           <Controller
             control={teacherForm.control}
@@ -259,7 +259,7 @@ export function AssessmentScreen() {
                   review.summary,
                   review.suggestedChanges
                 );
-                navigation.navigate("TeacherTabs", { screen: "TeacherPlan" });
+                navigation.navigate("CoachPlanHub");
               }}
             />
             <Button
@@ -285,7 +285,7 @@ export function AssessmentScreen() {
               variant="ghost"
             />
             <Button
-              label="Abrir exams"
+              label="Abrir exames"
               onPress={() => navigation.navigate("Exams")}
               variant="ghost"
             />
@@ -304,7 +304,7 @@ export function AssessmentScreen() {
               variant="ghost"
             />
             <Button
-              label="Abrir exams"
+              label="Abrir exames"
               onPress={() => navigation.navigate("Exams")}
               variant="ghost"
             />

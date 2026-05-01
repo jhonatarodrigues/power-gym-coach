@@ -3,6 +3,7 @@ export * from "./auth";
 export * from "./common";
 export * from "./exam";
 export * from "./exercise";
+export * from "./message";
 export * from "./nutrition";
 export * from "./plan";
 export * from "./progress";

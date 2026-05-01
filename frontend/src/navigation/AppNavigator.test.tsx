@@ -2,6 +2,9 @@ jest.mock("@react-navigation/drawer", () => {
   const React = require("react");
 
   return {
+    DrawerContentScrollView: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    DrawerItemList: () => null,
+    DrawerItem: ({ label }: { label: string }) => <>{label}</>,
     createDrawerNavigator: () => ({
       Navigator: ({ children }: { children: React.ReactNode }) => <>{children}</>,
       Screen: ({
@@ -54,7 +57,7 @@ describe("AppNavigator", () => {
       </AppThemeProvider>
     );
 
-    expect(screen.getByText("Dashboard do professor")).toBeTruthy();
+    expect(screen.getByText("Leitura de hoje")).toBeTruthy();
   });
 
   it("renders the student app shell when authenticated as student", () => {
@@ -67,6 +70,6 @@ describe("AppNavigator", () => {
       </AppThemeProvider>
     );
 
-    expect(screen.getByText("Dashboard do aluno")).toBeTruthy();
+    expect(screen.getByText("Seu treino do dia, dieta, pagamentos e progresso em um unico lugar.")).toBeTruthy();
   });
 });

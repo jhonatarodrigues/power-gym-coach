@@ -14,9 +14,11 @@ import { JourneyTimelineCard } from "@/components/JourneyTimelineCard";
 import { MetricCard } from "@/components/MetricCard";
 import { PasswordField } from "@/components/PasswordField";
 import { PendingAlertCard } from "@/components/PendingAlertCard";
+import { Screen } from "@/components/Screen";
 import { Showcase } from "@/components/Showcase";
 import { StatusBadge } from "@/components/StatusBadge";
 import { TextField } from "@/components/TextField";
+import { BrandLogo } from "@/components/BrandLogo";
 
 describe("misc components", () => {
   it("renders empty state with action", () => {
@@ -117,6 +119,16 @@ describe("misc components", () => {
     expect(screen.getByText("Power Gym Coach UI")).toBeTruthy();
     expect(screen.getByText("Criar novo treino")).toBeTruthy();
     expect(screen.getByText("Nenhum treino criado")).toBeTruthy();
+  });
+
+  it("renders brand logo without wordmark and screen without scroll", () => {
+    renderWithProviders(
+      <Screen scrollable={false}>
+        <BrandLogo showWordmark={false} />
+      </Screen>
+    );
+
+    expect(screen.queryByText("Power Gym Coach")).toBeNull();
   });
 
   it("renders text field without optional label and hint", () => {

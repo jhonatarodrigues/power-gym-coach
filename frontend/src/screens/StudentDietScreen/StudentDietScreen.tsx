@@ -37,7 +37,7 @@ export function StudentDietScreen() {
 
       <SectionTitle
         title="Agua do dia"
-        description="Meta em litros definida pelo professor."
+        description="Meta em litros definida pelo coach."
       />
       <Card>
         <View style={{ gap: theme.spacing.md }}>

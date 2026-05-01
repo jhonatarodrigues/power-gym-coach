@@ -15,9 +15,39 @@ export function useStudentTodayWorkout() {
 
   const todayWeekday = getCurrentWeekday();
   const todayTraining = useMemo(
-    () =>
-      currentPlan.trainingPlan.days.find((day) => day.weekday === todayWeekday) ??
-      currentPlan.trainingPlan.days[0],
+    () => {
+      const matchedDayIndex = currentPlan.trainingPlan.days.findIndex(
+        (day) => day.weekday === todayWeekday
+      );
+      const matchedDay =
+        matchedDayIndex >= 0 ? currentPlan.trainingPlan.days[matchedDayIndex] : undefined;
+
+      if (matchedDay && matchedDay.exercises.length > 0) {
+        return matchedDay;
+      }
+
+      for (let index = matchedDayIndex - 1; index >= 0; index -= 1) {
+        const previousDay = currentPlan.trainingPlan.days[index];
+
+        if (previousDay.exercises.length > 0) {
+          return previousDay;
+        }
+      }
+
+      for (
+        let index = matchedDayIndex + 1;
+        index < currentPlan.trainingPlan.days.length;
+        index += 1
+      ) {
+        const nextDay = currentPlan.trainingPlan.days[index];
+
+        if (nextDay.exercises.length > 0) {
+          return nextDay;
+        }
+      }
+
+      return matchedDay ?? currentPlan.trainingPlan.days[0];
+    },
     [currentPlan.trainingPlan.days, todayWeekday]
   );
 

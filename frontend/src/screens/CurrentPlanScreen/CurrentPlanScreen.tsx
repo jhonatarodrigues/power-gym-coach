@@ -239,7 +239,7 @@ export function CurrentPlanScreen() {
       />
       <ExerciseVideoCard
         available
-        description="Esse bloco pode abrir o player de video do professor no fluxo final."
+        description="Esse bloco pode abrir o player de video do coach no fluxo final."
         title={currentPlan.trainingPlan.days[0]?.exercises[0]?.exerciseName ?? "Exercicio"}
       />
 
@@ -266,9 +266,7 @@ export function CurrentPlanScreen() {
           />
           <Button
             label="Abrir historico do aluno"
-            onPress={() =>
-              navigation.navigate("TeacherTabs", { screen: "TeacherHistory" })
-            }
+            onPress={() => navigation.navigate("CoachStudentPlans")}
             variant="ghost"
           />
         </View>

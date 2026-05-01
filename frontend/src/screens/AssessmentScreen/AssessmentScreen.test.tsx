@@ -140,7 +140,7 @@ describe("AssessmentScreen", () => {
 
     renderWithProviders(<AssessmentScreen />);
 
-    expect(screen.getByText("Aguardando devolutiva do professor")).toBeTruthy();
+    expect(screen.getByText("Aguardando devolutiva do coach")).toBeTruthy();
   });
 
   it("shows empty state when no submission is available", () => {

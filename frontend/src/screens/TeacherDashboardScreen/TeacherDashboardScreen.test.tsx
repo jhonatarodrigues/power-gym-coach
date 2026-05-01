@@ -21,7 +21,7 @@ describe("TeacherDashboardScreen", () => {
   it("renders dashboard highlights and navigation actions", () => {
     renderWithProviders(<TeacherDashboardScreen />);
 
-    expect(screen.getByText("Dashboard do professor")).toBeTruthy();
+    expect(screen.getByText("Leitura de hoje")).toBeTruthy();
     expect(screen.getByText("Carteira de alunos")).toBeTruthy();
     expect(screen.getByText("Como usar o painel")).toBeTruthy();
     expect(screen.queryByText("Abrir pagamentos")).toBeNull();

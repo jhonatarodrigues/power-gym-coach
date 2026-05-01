@@ -61,7 +61,7 @@ export function StudentDetailsScreen() {
     <Screen>
       <Header
         title="Acompanhamento do aluno"
-        subtitle="Visao consolidada do aluno para o professor decidir os proximos passos do plano."
+        subtitle="Visao consolidada do aluno para o coach decidir os proximos passos do plano."
       />
 
       <AthleteListItem
@@ -93,9 +93,7 @@ export function StudentDetailsScreen() {
           badgeLabel={currentPlanStatus}
           description={`Vigencia de ${formatDateBR(currentPlanStartDate)} ate ${formatDateBR(currentPlanEndDate)}.`}
           highlight={`${trainingDaysCount} dias de treino, ${mealsCount} refeicoes e ${supplementsCount} suplementos ativos.`}
-          onActionPress={() =>
-            navigation.navigate("TeacherTabs", { screen: "TeacherPlan" })
-          }
+          onActionPress={() => navigation.navigate("CoachPlanHub")}
           title={currentPlanTitle}
         />
         <DecisionCard
@@ -112,7 +110,7 @@ export function StudentDetailsScreen() {
 
       <SectionTitle
         title="Sinais para decisao"
-        description="Pontos que ajudam o professor a decidir o proximo ajuste."
+        description="Pontos que ajudam o coach a decidir o proximo ajuste."
       />
       <View style={{ gap: theme.spacing.md }}>
         <DecisionCard
@@ -146,9 +144,7 @@ export function StudentDetailsScreen() {
           actionLabel="Ajustar plano atual"
           badgeLabel="Proximo passo"
           description={nextRecommendedAction}
-          onActionPress={() =>
-            navigation.navigate("TeacherTabs", { screen: "TeacherPlan" })
-          }
+          onActionPress={() => navigation.navigate("CoachPlanHub")}
           title="Decisao recomendada"
         />
       </View>
@@ -200,14 +196,12 @@ export function StudentDetailsScreen() {
 
       <SectionTitle
         title="Acoes rapidas"
-        description="Centro operacional do professor para agir a partir do contexto do aluno."
+        description="Centro operacional do coach para agir a partir do contexto do aluno."
       />
       <View style={{ gap: theme.spacing.md }}>
         <Button
           label="Ajustar plano atual"
-          onPress={() =>
-            navigation.navigate("TeacherTabs", { screen: "TeacherPlan" })
-          }
+          onPress={() => navigation.navigate("CoachPlanHub")}
         />
         <Button
           label="Editar dieta"
@@ -216,9 +210,7 @@ export function StudentDetailsScreen() {
         />
         <Button
           label="Revisar progresso"
-          onPress={() =>
-            navigation.navigate("TeacherTabs", { screen: "TeacherHistory" })
-          }
+          onPress={() => navigation.navigate("CoachStudentPlans")}
           variant="ghost"
         />
         <Button
@@ -233,9 +225,7 @@ export function StudentDetailsScreen() {
         />
         <Button
           label="Abrir historico"
-          onPress={() =>
-            navigation.navigate("TeacherTabs", { screen: "TeacherHistory" })
-          }
+          onPress={() => navigation.navigate("CoachStudentPlans")}
           variant="ghost"
         />
       </View>

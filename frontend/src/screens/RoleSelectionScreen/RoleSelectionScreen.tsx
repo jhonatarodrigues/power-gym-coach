@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { Button, Card, Header, PasswordField, Screen, TextField } from "@/components";
+import { BrandLogo, Button, Card, PasswordField, Screen, TextField } from "@/components";
 import { useMockAuth } from "@/hooks/useMockAuth";
 import type { RootStackParamList } from "@/navigation/types";
 import { useAppTheme } from "@/theme";
@@ -55,10 +55,9 @@ export function RoleSelectionScreen() {
   return (
     <Screen>
       <View style={{ flex: 1, justifyContent: "center", gap: theme.spacing.xl }}>
-        <Header
-          showBackButton={false}
-          title="Power Gym Coach"
-          subtitle="Entre com email e senha. Escolha acima se o acesso e de professor ou aluno."
+        <BrandLogo
+          size="lg"
+          subtitle="Entre com email e senha. Escolha acima se o acesso e de coach ou aluno."
         />
 
         <Card>
@@ -72,7 +71,7 @@ export function RoleSelectionScreen() {
               }}
             >
               {[
-                { label: "Professor", value: "teacher" as const },
+                { label: "Coach", value: "teacher" as const },
                 { label: "Aluno", value: "student" as const },
               ].map((role) => {
                 const active = role.value === selectedRole;

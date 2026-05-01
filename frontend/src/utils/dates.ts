@@ -17,6 +17,17 @@ export function formatDateBR(value?: string | null) {
   }).format(date);
 }
 
+export function normalizeDateInputToISO(value: string) {
+  const trimmedValue = value.trim();
+
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(trimmedValue)) {
+    const [day, month, year] = trimmedValue.split("/");
+    return `${year}-${month}-${day}`;
+  }
+
+  return trimmedValue;
+}
+
 export function formatDateTimeBR(value?: string | null) {
   if (!value) {
     return "--/--/---- --:--";

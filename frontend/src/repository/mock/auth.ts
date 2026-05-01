@@ -35,6 +35,20 @@ export const usersMock: User[] = [
     createdAt: "2026-04-02T08:00:00.000Z",
     updatedAt: "2026-04-28T11:00:00.000Z",
   },
+  {
+    id: "user-student-2",
+    name: "Lucas Andrade",
+    email: "lucas@powergymcoach.app",
+    cpf: "456.789.123-45",
+    phone: "(11) 97777-2222",
+    password: "Lucas123",
+    accessLevel: "student",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80",
+    firstAccessCompleted: true,
+    createdAt: "2026-04-05T08:00:00.000Z",
+    updatedAt: "2026-04-28T11:00:00.000Z",
+  },
 ];
 
 export const teacherProfilesMock: TeacherProfile[] = [
@@ -54,6 +68,14 @@ export const studentProfilesMock: StudentProfile[] = [
     birthDate: "1998-08-10",
     goal: "Hipertrofia com ganho de massa magra e melhora do condicionamento.",
     restrictions: "Leve desconforto no joelho esquerdo em agachamentos profundos.",
+  },
+  {
+    id: "student-profile-2",
+    userId: "user-student-2",
+    teacherId: "user-teacher-1",
+    birthDate: "1995-02-18",
+    goal: "Emagrecimento com manutenção de massa magra e organização da rotina.",
+    restrictions: "Baixa tolerância a treinos muito longos em dias úteis.",
   },
 ];
 

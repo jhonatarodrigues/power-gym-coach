@@ -31,6 +31,11 @@ export function Providers({ children }: PropsWithChildren) {
           <Stack.Screen component={PlaceholderScreen} name="Payments" />
           <Stack.Screen component={PlaceholderScreen} name="Profile" />
           <Stack.Screen component={PlaceholderScreen} name="StudentDiet" />
+          <Stack.Screen component={PlaceholderScreen} name="CoachStudentPlans" />
+          <Stack.Screen component={PlaceholderScreen} name="CoachPlanHub" />
+          <Stack.Screen component={PlaceholderScreen} name="CoachPlanCreate" />
+          <Stack.Screen component={PlaceholderScreen} name="CoachFeedbacks" />
+          <Stack.Screen component={PlaceholderScreen} name="Messages" />
           <Stack.Screen name="TestScreen">
             {() => children}
           </Stack.Screen>

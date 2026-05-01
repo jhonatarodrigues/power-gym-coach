@@ -6,10 +6,6 @@ export type TeacherDrawerParamList = {
   TeacherPayments: undefined;
   TeacherProfile: undefined;
   TeacherLibrary: undefined;
-  TeacherHistory: undefined;
-  TeacherPlan: undefined;
-  TeacherAssessment: undefined;
-  TeacherExams: undefined;
 };
 
 export type StudentDrawerParamList = {
@@ -23,6 +19,7 @@ export type StudentDrawerParamList = {
   StudentAssessment: undefined;
   StudentHistory: undefined;
   StudentExams: undefined;
+  StudentMessages: undefined;
 };
 
 export type RootStackParamList = {
@@ -40,4 +37,9 @@ export type RootStackParamList = {
   Payments: undefined;
   Profile: undefined;
   StudentDiet: undefined;
+  CoachStudentPlans: undefined;
+  CoachPlanHub: undefined;
+  CoachPlanCreate: undefined;
+  CoachFeedbacks: undefined;
+  Messages: undefined;
 };

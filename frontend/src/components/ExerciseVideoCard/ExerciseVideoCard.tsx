@@ -14,7 +14,7 @@ interface ExerciseVideoCardProps {
 export function ExerciseVideoCard({
   title,
   description,
-  videoLabel = "Video do professor",
+  videoLabel = "Video do coach",
   available = true,
 }: ExerciseVideoCardProps) {
   const { theme } = useAppTheme();

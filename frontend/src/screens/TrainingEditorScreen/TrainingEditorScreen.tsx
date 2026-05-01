@@ -81,7 +81,7 @@ export function TrainingEditorScreen() {
     <Screen>
       <Header
         title="Training editor"
-        subtitle="Edicao mockada do treino por dia da semana para validar o fluxo do professor."
+        subtitle="Edicao mockada do treino por dia da semana para validar o fluxo do coach."
       />
 
       <SectionTitle

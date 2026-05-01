@@ -460,4 +460,49 @@ export const archivedPlansMock: Plan[] = [
     createdAt: "2026-03-01T09:00:00.000Z",
     updatedAt: "2026-04-14T18:00:00.000Z",
   },
+  {
+    id: "plan-student-2-active",
+    studentId: "user-student-2",
+    teacherId: "user-teacher-1",
+    title: "Plano Atual - Definicao e rotina executiva",
+    status: "active",
+    startDate: "2026-04-10",
+    endDate: "2026-05-10",
+    trainingPlan: {
+      id: "training-plan-student-2",
+      title: "Treino AB com cardio curto",
+      notes: "Blocos curtos para encaixar na rotina de trabalho.",
+      days: [
+        {
+          id: "training-day-student-2-1",
+          weekday: "monday",
+          title: "Membros superiores",
+          exercises: [],
+        },
+        {
+          id: "training-day-student-2-2",
+          weekday: "wednesday",
+          title: "Inferiores + cardio",
+          exercises: [],
+        },
+      ],
+    },
+    dietPlan: {
+      id: "diet-plan-student-2",
+      title: "Dieta de rotina pratica",
+      notes: "Maior previsibilidade nas refeicoes de trabalho.",
+      meals: [],
+      supplements: [],
+      waterLitersTarget: 2.8,
+      calories: 1680,
+      carbs: 170,
+      protein: 150,
+      fat: 46,
+      fiber: 26,
+    },
+    createdAt: "2026-04-10T08:00:00.000Z",
+    updatedAt: "2026-04-28T18:00:00.000Z",
+  },
 ];
+
+export const allPlansMock: Plan[] = [currentPlanMock, ...archivedPlansMock];

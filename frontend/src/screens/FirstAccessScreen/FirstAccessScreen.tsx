@@ -53,7 +53,7 @@ export function FirstAccessScreen() {
     <Screen>
       <Header
         title="Primeiro acesso"
-        subtitle="Digite seu email para localizar o convite enviado pelo professor e concluir seu cadastro."
+        subtitle="Digite seu email para localizar o convite enviado pelo coach e concluir seu cadastro."
       />
 
       <Card>

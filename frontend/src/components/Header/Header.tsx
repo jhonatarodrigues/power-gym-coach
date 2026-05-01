@@ -2,18 +2,21 @@ import { Pressable, Text, View } from "react-native";
 import { ChevronLeft } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 
+import { BrandLogo } from "@/components/BrandLogo";
 import { useAppTheme } from "@/theme";
 
 interface HeaderProps {
   title: string;
   subtitle?: string;
   showBackButton?: boolean;
+  showBrand?: boolean;
 }
 
 export function Header({
   title,
   subtitle,
   showBackButton = true,
+  showBrand = false,
 }: HeaderProps) {
   const { theme } = useAppTheme();
   const navigation = useNavigation();
@@ -45,15 +48,22 @@ export function Header({
         </Pressable>
       ) : null}
 
-      <Text
-        style={{
-          color: theme.colors.text,
-          fontSize: theme.typography.title,
-          fontWeight: "800",
-        }}
-      >
-        {title}
-      </Text>
+      {showBrand ? (
+        <BrandLogo
+          showWordmark={false}
+          size="md"
+        />
+      ) : (
+        <Text
+          style={{
+            color: theme.colors.text,
+            fontSize: theme.typography.title,
+            fontWeight: "800",
+          }}
+        >
+          {title}
+        </Text>
+      )}
 
       {subtitle ? (
         <Text

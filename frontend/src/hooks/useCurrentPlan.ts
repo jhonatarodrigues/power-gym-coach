@@ -5,6 +5,7 @@ export function useCurrentPlan() {
   const savedPlan = useCurrentPlanStore((state) => state.savedPlan);
   const hasUnsavedChanges = useCurrentPlanStore((state) => state.hasUnsavedChanges);
   const lastSavedAt = useCurrentPlanStore((state) => state.lastSavedAt);
+  const loadCurrentPlan = useCurrentPlanStore((state) => state.loadCurrentPlan);
   const resetCurrentPlan = useCurrentPlanStore((state) => state.resetCurrentPlan);
   const saveCurrentPlan = useCurrentPlanStore((state) => state.saveCurrentPlan);
   const discardCurrentPlanChanges = useCurrentPlanStore(
@@ -28,6 +29,7 @@ export function useCurrentPlan() {
     savedPlan,
     hasUnsavedChanges,
     lastSavedAt,
+    loadCurrentPlan,
     resetCurrentPlan,
     saveCurrentPlan,
     discardCurrentPlanChanges,
