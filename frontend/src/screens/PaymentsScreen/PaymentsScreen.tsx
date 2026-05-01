@@ -2,7 +2,18 @@ import { useState } from "react";
 import { Text, View } from "react-native";
 import { Controller, useForm } from "react-hook-form";
 
-import { Button, Card, Header, MetricCard, Screen, SectionTitle, StatusBadge, TextField } from "@/components";
+import {
+  Button,
+  Card,
+  DashboardHero,
+  Header,
+  MiniBarChart,
+  ProgressLineCard,
+  Screen,
+  SectionTitle,
+  StatusBadge,
+  TextField,
+} from "@/components";
 import { useMockAuth } from "@/hooks/useMockAuth";
 import { usePayments } from "@/hooks/usePayments";
 import { useAppTheme } from "@/theme";
@@ -89,6 +100,8 @@ export function PaymentsScreen() {
       (record) => record.teacherId === currentUser.id && record.kind === "studentPlan"
     );
     const paidStudents = teacherRecords.filter((record) => record.status === "paid").length;
+    const lateStudents = subscriptions.filter((subscription) => subscription.status === "gracePeriod")
+      .length;
 
     return (
       <Screen>
@@ -97,16 +110,34 @@ export function PaymentsScreen() {
           subtitle="Acompanhe previsao de recebimento, alunos pagantes e os planos cadastrados pelo coach."
         />
 
-        <MetricCard
-          label="recebimento mensal previsto"
-          value={formatCurrency(expectedRevenue)}
-          trend="soma das mensalidades ativas do coach"
+        <DashboardHero
+          accentLabel="Financeiro do coach"
+          eyebrow="Pagamentos"
+          stats={[
+            { label: "Previsto", value: formatCurrency(expectedRevenue) },
+            { label: "Pagos", value: String(paidStudents) },
+            { label: "Planos", value: String(teacherOwnedPlans.length) },
+          ]}
+          subtitle="Financeiro mais limpo para entender previsao, alunos adimplentes e os planos comerciais ativos."
+          title="Controle financeiro mais claro"
         />
 
-        <MetricCard
-          label="pagamentos confirmados"
-          value={String(paidStudents)}
-          trend="parcelas ja confirmadas neste mock"
+        <ProgressLineCard
+          currentLabel={`${paidStudents}/${teacherRecords.length || 0}`}
+          helper="Relacao entre pagamentos confirmados e cobrancas do plano do coach."
+          progress={teacherRecords.length > 0 ? paidStudents / teacherRecords.length : 0}
+          targetLabel="parcelas liquidadas"
+          title="Saude do recebimento"
+        />
+
+        <MiniBarChart
+          description="Mini grafico para leitura imediata das frentes mais relevantes do financeiro."
+          items={[
+            { label: "Planos", value: teacherOwnedPlans.length, hint: "ativos" },
+            { label: "Pagos", value: paidStudents, hint: "ok" },
+            { label: "Atraso", value: lateStudents, hint: "alerta" },
+          ]}
+          title="Panorama financeiro"
         />
 
         <SectionTitle
@@ -322,6 +353,18 @@ export function PaymentsScreen() {
         subtitle="Acompanhe a mensalidade da plataforma e a cobranca do seu plano com o coach."
       />
 
+      <DashboardHero
+        accentLabel="Financeiro do aluno"
+        eyebrow="Conta"
+        stats={[
+          { label: "Pendencias", value: String(openRecords.length) },
+          { label: "Plano", value: currentTeacherPlan ? formatCurrency(currentTeacherPlan.monthlyAmount) : "--" },
+          { label: "Plataforma", value: "R$ 10,00" },
+        ]}
+        subtitle="Visao simples para entender sua situacao atual, o plano contratado e o que ainda precisa ser pago."
+        title="Seus pagamentos em leitura rapida"
+      />
+
       {currentStatus ? (
         <Card>
           <View style={{ gap: theme.spacing.sm }}>
@@ -339,6 +382,15 @@ export function PaymentsScreen() {
         </Card>
       ) : null}
 
+      <ProgressLineCard
+        currentLabel={`${openRecords.length}`}
+        helper="Quantidade de cobrancas abertas no momento para regularizar sua conta."
+        progress={Math.max(0, 1 - openRecords.length / 3)}
+        targetLabel="nivel de regularizacao"
+        title="Situacao da conta"
+        tone={openRecords.length > 0 ? "warning" : "success"}
+      />
+
       {currentTeacherPlan ? (
         <Card>
           <View style={{ gap: theme.spacing.sm }}>
@@ -355,6 +407,30 @@ export function PaymentsScreen() {
           </View>
         </Card>
       ) : null}
+
+      <MiniBarChart
+        description="Leitura compacta dos registros pagos e do que ainda esta aberto."
+        items={[
+          {
+            label: "Abertos",
+            value: openRecords.length,
+            hint: "agora",
+          },
+          {
+            label: "Pagos",
+            value: paymentRecords.filter(
+              (record) => record.userId === currentUser.id && record.status === "paid"
+            ).length,
+            hint: "hist.",
+          },
+          {
+            label: "Plano",
+            value: currentTeacherPlan ? Math.round(currentTeacherPlan.monthlyAmount) : 0,
+            hint: "R$",
+          },
+        ]}
+        title="Panorama da conta"
+      />
 
       <SectionTitle
         title="Pendencias abertas"

@@ -20,7 +20,8 @@ describe("CoachPlanHubScreen", () => {
   it("renders the selected plan structure and coach actions", () => {
     renderWithProviders(<CoachPlanHubScreen />);
 
-    expect(screen.getByText("Estrutura do plano")).toBeTruthy();
+    expect(screen.getByText("Hub do plano do aluno")).toBeTruthy();
+    expect(screen.getByText("Composicao do plano")).toBeTruthy();
     expect(screen.getByText("Dieta (4 refeicoes)")).toBeTruthy();
     expect(screen.getByText("Treino (5 dias)")).toBeTruthy();
     expect(screen.getByText("Feedbacks (2)")).toBeTruthy();
@@ -34,6 +35,16 @@ describe("CoachPlanHubScreen", () => {
 
     renderWithProviders(<CoachPlanHubScreen />);
 
-    expect(screen.queryByText("Estrutura do plano")).toBeNull();
+    expect(screen.queryByText("Hub do plano do aluno")).toBeNull();
+  });
+
+  it("renders nothing when the selected student is missing", () => {
+    act(() => {
+      useCoachContextStore.setState({ selectedStudentId: "" });
+    });
+
+    renderWithProviders(<CoachPlanHubScreen />);
+
+    expect(screen.queryByText("Hub do plano do aluno")).toBeNull();
   });
 });

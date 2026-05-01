@@ -1,7 +1,17 @@
 import { Pressable, Text, View } from "react-native";
 import { Droplets } from "lucide-react-native";
 
-import { Button, Card, Header, MacroSummaryCard, Screen, SectionTitle } from "@/components";
+import {
+  Button,
+  Card,
+  DashboardHero,
+  Header,
+  MacroSummaryCard,
+  MiniBarChart,
+  ProgressLineCard,
+  Screen,
+  SectionTitle,
+} from "@/components";
 import { useCurrentPlan } from "@/hooks/useCurrentPlan";
 import { useStudentDailyDiet } from "@/hooks/useStudentDailyDiet";
 import { useAppTheme } from "@/theme";
@@ -11,8 +21,10 @@ export function StudentDietScreen() {
   const { currentPlan } = useCurrentPlan();
   const {
     addWater,
+    consumedCalories,
     consumedMealItems,
     meals,
+    remainingCalories,
     todayKey,
     toggleMealItem,
     waterIntake,
@@ -26,6 +38,18 @@ export function StudentDietScreen() {
         subtitle="Marque o que voce ja consumiu em cada refeicao e acompanhe sua agua."
       />
 
+      <DashboardHero
+        accentLabel="Checklist alimentar"
+        eyebrow="Dieta"
+        stats={[
+          { label: "Plano", value: `${currentPlan.dietPlan.calories} kcal` },
+          { label: "Consumido", value: `${consumedCalories} kcal` },
+          { label: "Restante", value: `${remainingCalories} kcal` },
+        ]}
+        subtitle="Tela mais limpa para acompanhar refeicoes, hidratar e visualizar progresso sem excesso de caixas."
+        title="Leitura do consumo do dia"
+      />
+
       <MacroSummaryCard
         calories={currentPlan.dietPlan.calories}
         carbs={currentPlan.dietPlan.carbs}
@@ -35,9 +59,29 @@ export function StudentDietScreen() {
         title="Resumo do dia"
       />
 
+      <ProgressLineCard
+        currentLabel={`${consumedCalories} kcal`}
+        helper="Mostra quanto do plano diario ja foi consumido hoje."
+        progress={
+          currentPlan.dietPlan.calories > 0
+            ? consumedCalories / currentPlan.dietPlan.calories
+            : 0
+        }
+        targetLabel={`${remainingCalories} kcal restantes`}
+        title="Execucao alimentar"
+      />
+
       <SectionTitle
         title="Agua do dia"
         description="Meta em litros definida pelo coach."
+      />
+      <ProgressLineCard
+        currentLabel={`${waterIntake.toFixed(1)} L`}
+        helper="Meta em litros definida pelo coach."
+        progress={waterTarget > 0 ? waterIntake / waterTarget : 0}
+        targetLabel={`${Math.max(0, waterTarget - waterIntake).toFixed(1)} L restantes`}
+        title="Hidratacao"
+        tone="success"
       />
       <Card>
         <View style={{ gap: theme.spacing.md }}>
@@ -57,6 +101,16 @@ export function StudentDietScreen() {
           </View>
         </View>
       </Card>
+
+      <MiniBarChart
+        description="Quantidade de itens marcados em cada refeicao do dia."
+        items={meals.map((meal) => ({
+          hint: `${meal.items.length} itens`,
+          label: meal.sequenceLabel ?? meal.title,
+          value: (consumedMealItems[meal.id] ?? []).length,
+        }))}
+        title="Marcacao por refeicao"
+      />
 
       <SectionTitle
         title="Refeicoes"

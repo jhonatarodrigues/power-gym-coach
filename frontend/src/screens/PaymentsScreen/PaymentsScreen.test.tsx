@@ -21,7 +21,8 @@ describe("PaymentsScreen", () => {
 
     renderWithProviders(<PaymentsScreen />);
 
-    expect(screen.getByText("Pagamentos")).toBeTruthy();
+    expect(screen.getByText("Controle financeiro mais claro")).toBeTruthy();
+    expect(screen.getByText("Panorama financeiro")).toBeTruthy();
     expect(screen.getByText("Plano mensal")).toBeTruthy();
     expect(screen.getAllByText("Entregas: Dieta, Treino, Avaliacao").length).toBeGreaterThan(0);
     expect(screen.getByText("Cadastrar novo plano")).toBeTruthy();
@@ -52,6 +53,8 @@ describe("PaymentsScreen", () => {
 
     renderWithProviders(<PaymentsScreen />);
 
+    expect(screen.getByText("Seus pagamentos em leitura rapida")).toBeTruthy();
+    expect(screen.getByText("Panorama da conta")).toBeTruthy();
     expect(screen.getByText("Seu plano com o coach")).toBeTruthy();
     expect(screen.getByText("Entregas inclusas: Dieta, Treino, Avaliacao")).toBeTruthy();
 
@@ -61,5 +64,22 @@ describe("PaymentsScreen", () => {
       usePaymentStore.getState().paymentRecords.find((record) => record.id === "payment-plan-apr")
         ?.status
     ).toBe("paid");
+  });
+
+  it("renders the student overview without current subscription data", () => {
+    act(() => {
+      useMockSessionStore.getState().signInAs("student");
+      usePaymentStore.setState({
+        paymentRecords: [],
+        subscriptions: [],
+        teacherPlans: [],
+      });
+    });
+
+    renderWithProviders(<PaymentsScreen />);
+
+    expect(screen.getByText("Seus pagamentos em leitura rapida")).toBeTruthy();
+    expect(screen.queryByText("Seu plano com o coach")).toBeNull();
+    expect(screen.queryByText("Situacao atual da conta")).toBeNull();
   });
 });

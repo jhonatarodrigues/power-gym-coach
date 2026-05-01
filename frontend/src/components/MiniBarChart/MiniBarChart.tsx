@@ -57,6 +57,8 @@ export function MiniBarChart({
             flexDirection: "row",
             gap: theme.spacing.md,
             height: 126,
+            marginTop: theme.spacing.sm,
+            paddingTop: theme.spacing.sm,
           }}
         >
           {items.map((item) => {
@@ -69,6 +71,7 @@ export function MiniBarChart({
                   alignItems: "center",
                   flex: 1,
                   gap: theme.spacing.sm,
+                  justifyContent: "flex-end",
                 }}
               >
                 <Text
