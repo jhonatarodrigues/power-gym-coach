@@ -110,7 +110,10 @@ export function DashboardHero({
             <Text
               style={{
                 color: theme.colors.textMuted,
+                flexShrink: 1,
                 fontSize: theme.typography.caption,
+                lineHeight: 16,
+                maxWidth: 120,
                 textTransform: "uppercase",
               }}
             >

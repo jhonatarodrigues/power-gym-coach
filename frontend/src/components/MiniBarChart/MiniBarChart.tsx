@@ -53,42 +53,64 @@ export function MiniBarChart({
 
         <View
           style={{
-            alignItems: "flex-end",
-            flexDirection: "row",
             gap: theme.spacing.md,
-            height: 126,
             marginTop: theme.spacing.sm,
             paddingTop: theme.spacing.sm,
           }}
         >
           {items.map((item) => {
-            const height = Math.max(24, (item.value / maxValue) * 96);
+            const width = Math.max(10, (item.value / maxValue) * 100);
 
             return (
               <View
                 key={item.label}
                 style={{
-                  alignItems: "center",
-                  flex: 1,
                   gap: theme.spacing.sm,
-                  justifyContent: "flex-end",
                 }}
               >
-                <Text
+                <View
                   style={{
-                    color: theme.colors.text,
-                    fontSize: theme.typography.caption,
-                    fontWeight: "700",
+                    alignItems: "center",
+                    flexDirection: "row",
+                    gap: theme.spacing.md,
                   }}
                 >
-                  {item.value}
-                </Text>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text
+                      style={{
+                        color: theme.colors.text,
+                        fontSize: theme.typography.caption,
+                        fontWeight: "700",
+                      }}
+                    >
+                      {item.label}
+                    </Text>
+                    {item.hint ? (
+                      <Text
+                        style={{
+                          color: theme.colors.textMuted,
+                          fontSize: 11,
+                        }}
+                      >
+                        {item.hint}
+                      </Text>
+                    ) : null}
+                  </View>
+                  <Text
+                    style={{
+                      color: theme.colors.text,
+                      fontSize: theme.typography.caption,
+                      fontWeight: "700",
+                    }}
+                  >
+                    {item.value}
+                  </Text>
+                </View>
                 <View
                   style={{
                     backgroundColor: theme.colors.background,
                     borderRadius: theme.radius.pill,
-                    height: 96,
-                    justifyContent: "flex-end",
+                    height: 10,
                     overflow: "hidden",
                     width: "100%",
                   }}
@@ -97,32 +119,11 @@ export function MiniBarChart({
                     style={{
                       backgroundColor: barColor,
                       borderRadius: theme.radius.pill,
-                      height,
+                      height: "100%",
                       opacity: item.value === 0 ? 0.3 : 1,
-                      width: "100%",
+                      width: `${width}%`,
                     }}
                   />
-                </View>
-                <View style={{ alignItems: "center", gap: 2 }}>
-                  <Text
-                    style={{
-                      color: theme.colors.textMuted,
-                      fontSize: theme.typography.caption,
-                      fontWeight: "700",
-                    }}
-                  >
-                    {item.label}
-                  </Text>
-                  {item.hint ? (
-                    <Text
-                      style={{
-                        color: theme.colors.textMuted,
-                        fontSize: 11,
-                      }}
-                    >
-                      {item.hint}
-                    </Text>
-                  ) : null}
                 </View>
               </View>
             );
