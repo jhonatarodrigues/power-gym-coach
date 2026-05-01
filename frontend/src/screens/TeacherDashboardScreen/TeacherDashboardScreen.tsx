@@ -149,18 +149,21 @@ export function TeacherDashboardScreen() {
         title="Carteira de alunos"
         description="A stack principal continua sendo aluno, plano, dieta, treino e feedback."
       />
-      <View style={{ gap: theme.spacing.sm }}>
-        <AthleteListItem
-          name="Marina Costa"
-          focus="Hipertrofia com revisao de dieta, treino atual e exames pendentes."
-          status="Prioridade alta"
-        />
-        <AthleteListItem
-          name="Lucas Andrade"
-          focus="Plano em acompanhamento com rotina mais estavel e menor risco no dia."
-          status="Operacao estavel"
-        />
-      </View>
+      <Card>
+        <View style={{ gap: theme.spacing.lg }}>
+          <AthleteListItem
+            name="Marina Costa"
+            focus="Hipertrofia com revisao de dieta, treino atual e exames pendentes."
+            status="Prioridade alta"
+            withDivider
+          />
+          <AthleteListItem
+            name="Lucas Andrade"
+            focus="Plano em acompanhamento com rotina mais estavel e menor risco no dia."
+            status="Operacao estavel"
+          />
+        </View>
+      </Card>
 
       {firstInvitation ? (
         <Card>

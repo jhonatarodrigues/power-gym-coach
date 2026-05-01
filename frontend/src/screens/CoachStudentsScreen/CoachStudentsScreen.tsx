@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
@@ -6,7 +6,7 @@ import { Search, UsersRound } from "lucide-react-native";
 
 import {
   AthleteListItem,
-  Button,
+  Card,
   DashboardHero,
   Header,
   MiniBarChart,
@@ -71,7 +71,8 @@ export function CoachStudentsScreen() {
         description="Cada aluno abre sua propria trilha de planos e acompanhamento."
       />
 
-      <View style={{ gap: theme.spacing.sm }}>
+      <Card>
+        <View style={{ gap: theme.spacing.lg }}>
         {students.map(({ profile, user }) => {
           const plans = getPlansByStudent(user.id);
           const activePlan = plans.find((plan) => plan.status === "active" || plan.status === "draft");
@@ -80,34 +81,44 @@ export function CoachStudentsScreen() {
             <View
               key={user.id}
               style={{
-                backgroundColor: theme.colors.surface,
-                borderColor: theme.colors.border,
-                borderRadius: theme.radius.lg,
-                borderWidth: 1,
                 gap: theme.spacing.md,
-                padding: theme.spacing.lg,
               }}
             >
               <AthleteListItem
                 name={user.name}
                 focus={profile.goal}
                 status={activePlan?.title ?? "Sem plano ativo"}
+                withDivider
               />
-              <View style={{ alignItems: "center", flexDirection: "row", gap: theme.spacing.sm }}>
-                <UsersRound color={theme.colors.primary} size={16} />
-                <Search color={theme.colors.textMuted} size={16} />
-              </View>
-              <Button
-                label={`Abrir planos de ${user.name.split(" ")[0]}`}
+              <Pressable
                 onPress={() => {
                   selectStudent(user.id);
                   navigation.navigate("CoachStudentPlans");
                 }}
-              />
+                style={{
+                  alignItems: "center",
+                  alignSelf: "flex-start",
+                  flexDirection: "row",
+                  gap: theme.spacing.sm,
+                }}
+              >
+                <UsersRound color={theme.colors.primary} size={16} />
+                <Search color={theme.colors.textMuted} size={16} />
+                <Text
+                  style={{
+                    color: theme.colors.primary,
+                    fontSize: theme.typography.caption,
+                    fontWeight: "700",
+                  }}
+                >
+                  Abrir planos de {user.name.split(" ")[0]}
+                </Text>
+              </Pressable>
             </View>
           );
         })}
-      </View>
+        </View>
+      </Card>
     </Screen>
   );
 }

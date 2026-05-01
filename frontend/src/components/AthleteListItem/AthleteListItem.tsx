@@ -2,23 +2,29 @@ import { Text, View } from "react-native";
 
 import { useAppTheme } from "@/theme";
 
-import { Card } from "@/components/Card";
-
 interface AthleteListItemProps {
   name: string;
   focus: string;
   status: string;
+  withDivider?: boolean;
 }
 
 export function AthleteListItem({
   name,
   focus,
   status,
+  withDivider = false,
 }: AthleteListItemProps) {
   const { theme } = useAppTheme();
 
   return (
-    <Card>
+    <View
+      style={{
+        borderBottomColor: withDivider ? theme.colors.border : "transparent",
+        borderBottomWidth: withDivider ? 1 : 0,
+        paddingBottom: theme.spacing.md,
+      }}
+    >
       <View
         style={{
           alignItems: "center",
@@ -55,10 +61,11 @@ export function AthleteListItem({
             style={{
               color: theme.colors.textMuted,
               fontSize: theme.typography.caption,
+              lineHeight: 18,
             }}
           >
-              {focus}
-            </Text>
+            {focus}
+          </Text>
           <View
             style={{
               alignSelf: "flex-start",
@@ -81,6 +88,6 @@ export function AthleteListItem({
           </View>
         </View>
       </View>
-    </Card>
+    </View>
   );
 }
