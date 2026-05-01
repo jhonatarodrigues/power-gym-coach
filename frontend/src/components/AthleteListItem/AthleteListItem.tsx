@@ -24,7 +24,6 @@ export function AthleteListItem({
           alignItems: "center",
           flexDirection: "row",
           gap: theme.spacing.md,
-          justifyContent: "space-between",
         }}
       >
         <View
@@ -58,19 +57,29 @@ export function AthleteListItem({
               fontSize: theme.typography.caption,
             }}
           >
-            {focus}
-          </Text>
+              {focus}
+            </Text>
+          <View
+            style={{
+              alignSelf: "flex-start",
+              backgroundColor: theme.colors.primaryMuted,
+              borderRadius: theme.radius.pill,
+              marginTop: theme.spacing.xs,
+              paddingHorizontal: theme.spacing.sm,
+              paddingVertical: 6,
+            }}
+          >
+            <Text
+              style={{
+                color: theme.colors.primary,
+                fontSize: theme.typography.caption,
+                fontWeight: "700",
+              }}
+            >
+              {status}
+            </Text>
+          </View>
         </View>
-
-        <Text
-          style={{
-            color: theme.colors.primary,
-            fontSize: theme.typography.caption,
-            fontWeight: "700",
-          }}
-        >
-          {status}
-        </Text>
       </View>
     </Card>
   );
