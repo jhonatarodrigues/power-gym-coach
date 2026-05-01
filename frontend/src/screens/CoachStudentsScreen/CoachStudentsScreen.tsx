@@ -1,11 +1,10 @@
-import { Pressable, Text, View } from "react-native";
+import { View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { Search, UsersRound } from "lucide-react-native";
-
 import {
   AthleteListItem,
+  Button,
   Card,
   DashboardHero,
   Header,
@@ -90,30 +89,22 @@ export function CoachStudentsScreen() {
                 status={activePlan?.title ?? "Sem plano ativo"}
                 withDivider
               />
-              <Pressable
-                onPress={() => {
-                  selectStudent(user.id);
-                  navigation.navigate("CoachStudentPlans");
-                }}
+              <View
                 style={{
-                  alignItems: "center",
                   alignSelf: "flex-start",
-                  flexDirection: "row",
-                  gap: theme.spacing.sm,
+                  marginTop: -theme.spacing.xs,
                 }}
               >
-                <UsersRound color={theme.colors.primary} size={16} />
-                <Search color={theme.colors.textMuted} size={16} />
-                <Text
-                  style={{
-                    color: theme.colors.primary,
-                    fontSize: theme.typography.caption,
-                    fontWeight: "700",
+                <Button
+                  label={`Abrir planos de ${user.name.split(" ")[0]}`}
+                  fullWidth={false}
+                  onPress={() => {
+                    selectStudent(user.id);
+                    navigation.navigate("CoachStudentPlans");
                   }}
-                >
-                  Abrir planos de {user.name.split(" ")[0]}
-                </Text>
-              </Pressable>
+                  variant="ghost"
+                />
+              </View>
             </View>
           );
         })}
