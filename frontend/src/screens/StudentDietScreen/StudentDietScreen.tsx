@@ -91,12 +91,19 @@ export function StudentDietScreen() {
               {waterIntake.toFixed(1)}L de {waterTarget.toFixed(1)}L
             </Text>
           </View>
-          <View style={{ gap: theme.spacing.sm }}>
-            <Button label="Adicionar 250 ml" onPress={() => addWater(todayKey, 0.25)} />
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: theme.spacing.sm }}>
             <Button
+              fullWidth={false}
+              label="Adicionar 250 ml"
+              onPress={() => addWater(todayKey, 0.25)}
+              size="sm"
+            />
+            <Button
+              fullWidth={false}
               label="Adicionar 500 ml"
               onPress={() => addWater(todayKey, 0.5)}
-              variant="ghost"
+              size="sm"
+              variant="soft"
             />
           </View>
         </View>

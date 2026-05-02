@@ -245,10 +245,17 @@ export function AssessmentScreen() {
         ))}
       </View>
 
-      <View style={{ gap: theme.spacing.md }}>
+      <View
+        style={{
+          flexDirection: "row",
+          flexWrap: "wrap",
+          gap: theme.spacing.sm,
+        }}
+      >
         {isTeacher ? (
           <>
             <Button
+              fullWidth={false}
               label="Aplicar sugestoes ao plano atual"
               onPress={() => {
                 if (!review) {
@@ -261,8 +268,10 @@ export function AssessmentScreen() {
                 );
                 navigation.navigate("CoachPlanHub");
               }}
+              size="sm"
             />
             <Button
+              fullWidth={false}
               label="Solicitar follow-up laboratorial"
               onPress={() => {
                 if (!canRequestFollowUpExam || !submission) {
@@ -277,36 +286,47 @@ export function AssessmentScreen() {
                 });
                 navigation.navigate("Exams");
               }}
-              variant="ghost"
+              size="sm"
+              variant="soft"
             />
             <Button
+              fullWidth={false}
               label="Solicitar novas fotos"
               onPress={() => navigation.navigate("Exams")}
-              variant="ghost"
+              size="sm"
+              variant="soft"
             />
             <Button
+              fullWidth={false}
               label="Abrir exames"
               onPress={() => navigation.navigate("Exams")}
-              variant="ghost"
+              size="sm"
+              variant="soft"
             />
           </>
         ) : (
           <>
             <Button
+              fullWidth={false}
               label="Abrir formulario de avaliacao"
               onPress={() => setStudentFormVisible((current) => !current)}
+              size="sm"
             />
             <Button
+              fullWidth={false}
               label="Ver plano atualizado"
               onPress={() =>
                 navigation.navigate("StudentTabs", { screen: "StudentPlan" })
               }
-              variant="ghost"
+              size="sm"
+              variant="soft"
             />
             <Button
+              fullWidth={false}
               label="Abrir exames"
               onPress={() => navigation.navigate("Exams")}
-              variant="ghost"
+              size="sm"
+              variant="soft"
             />
           </>
         )}

@@ -343,19 +343,30 @@ export function ExamsScreen() {
         ))}
       </View>
 
-      <View style={{ gap: theme.spacing.md }}>
+      <View
+        style={{
+          flexDirection: "row",
+          flexWrap: "wrap",
+          gap: theme.spacing.sm,
+        }}
+      >
         {isTeacher ? (
           <>
             <Button
+              fullWidth={false}
               label="Abrir formulario de solicitacao"
               onPress={() => setRequestFormVisible((current) => !current)}
+              size="sm"
             />
             <Button
+              fullWidth={false}
               label="Abrir revisao do ultimo exame enviado"
               onPress={() => setReviewFormVisible((current) => !current)}
-              variant="ghost"
+              size="sm"
+              variant="soft"
             />
             <Button
+              fullWidth={false}
               label="Marcar ultimo exame enviado como revisado"
               onPress={() => {
                 if (!latestSentRequest) {
@@ -364,35 +375,47 @@ export function ExamsScreen() {
 
                 examRepository.updateRequestStatus(latestSentRequest.id, "reviewed");
               }}
-              variant="ghost"
-            />
-            <PendingAlertCard
-              count={reviewedRequests.length}
-              description="Solicitacoes ja revisadas e fechadas pelo coach."
-              title="Exames revisados"
+              size="sm"
+              variant="soft"
             />
             <Button
+              fullWidth={false}
               label="Voltar ao plano atual"
               onPress={() => navigation.navigate("CoachPlanHub")}
-              variant="ghost"
+              size="sm"
+              variant="soft"
             />
           </>
         ) : (
           <>
             <Button
+              fullWidth={false}
               label="Abrir formulario de upload"
               onPress={() => setUploadFormVisible((current) => !current)}
+              size="sm"
             />
             <Button
+              fullWidth={false}
               label="Ver plano atual"
               onPress={() =>
                 navigation.navigate("StudentTabs", { screen: "StudentPlan" })
               }
-              variant="ghost"
+              size="sm"
+              variant="soft"
             />
           </>
         )}
       </View>
+
+      {isTeacher ? (
+        <View style={{ marginTop: theme.spacing.md }}>
+          <PendingAlertCard
+            count={reviewedRequests.length}
+            description="Solicitacoes ja revisadas e fechadas pelo coach."
+            title="Exames revisados"
+          />
+        </View>
+      ) : null}
     </Screen>
   );
 }

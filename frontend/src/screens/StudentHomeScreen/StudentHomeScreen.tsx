@@ -98,7 +98,14 @@ export function StudentHomeScreen() {
             Sua conta esta em status "{getPaymentStatusLabel(paymentStatus)}". Voce tem 3 dias
             para regularizar antes da inativacao.
           </Text>
-          <Button label="Regularizar agora" onPress={() => navigation.navigate("Payments")} />
+          <View style={{ alignSelf: "flex-start" }}>
+            <Button
+              fullWidth={false}
+              label="Regularizar agora"
+              onPress={() => navigation.navigate("Payments")}
+              size="sm"
+            />
+          </View>
         </View>
       ) : null}
 
@@ -158,10 +165,14 @@ export function StudentHomeScreen() {
             </View>
             <TrainingDayCard day={todayTraining} />
           </View>
-          <Button
-            label="Abrir treino do dia"
-            onPress={() => navigation.navigate("StudentWorkout")}
-          />
+          <View style={{ alignSelf: "flex-start" }}>
+            <Button
+              fullWidth={false}
+              label="Abrir treino do dia"
+              onPress={() => navigation.navigate("StudentWorkout")}
+              size="sm"
+            />
+          </View>
         </>
       ) : null}
 
@@ -261,12 +272,21 @@ export function StudentHomeScreen() {
           <Text style={{ color: theme.colors.textMuted }}>
             Abra as areas mais usadas sem perder a leitura da home.
           </Text>
-          <Button label="Abrir dieta de hoje" onPress={() => navigation.navigate("StudentDiet")} />
-          <Button
-            label="Ver pagamentos"
-            onPress={() => navigation.navigate("Payments")}
-            variant="ghost"
-          />
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: theme.spacing.sm }}>
+            <Button
+              fullWidth={false}
+              label="Abrir dieta de hoje"
+              onPress={() => navigation.navigate("StudentDiet")}
+              size="sm"
+            />
+            <Button
+              fullWidth={false}
+              label="Ver pagamentos"
+              onPress={() => navigation.navigate("Payments")}
+              size="sm"
+              variant="soft"
+            />
+          </View>
         </View>
       </Card>
     </Screen>

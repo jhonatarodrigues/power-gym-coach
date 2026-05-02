@@ -145,10 +145,14 @@ export function PaymentsScreen() {
           description="Defina os planos que voce oferece e o que o aluno recebe em cada um."
         />
         <View style={{ gap: theme.spacing.md }}>
-          <Button
-            label={planFormVisible ? "Fechar cadastro de plano" : "Cadastrar novo plano"}
-            onPress={() => setPlanFormVisible((current) => !current)}
-          />
+          <View style={{ alignSelf: "flex-start" }}>
+            <Button
+              fullWidth={false}
+              label={planFormVisible ? "Fechar cadastro de plano" : "Cadastrar novo plano"}
+              onPress={() => setPlanFormVisible((current) => !current)}
+              size="sm"
+            />
+          </View>
           {planFormVisible ? (
             <Card>
               <View style={{ gap: theme.spacing.md }}>
@@ -200,47 +204,59 @@ export function PaymentsScreen() {
                   <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
                     Ciclo de cobranca
                   </Text>
-                  <Button
-                    label="Mensal"
-                    onPress={() => setSelectedBillingCycle("monthly")}
-                    variant={selectedBillingCycle === "monthly" ? "primary" : "ghost"}
-                  />
-                  <Button
-                    label="Trimestral"
-                    onPress={() => setSelectedBillingCycle("quarterly")}
-                    variant={selectedBillingCycle === "quarterly" ? "primary" : "ghost"}
-                  />
-                  <Button
-                    label="Anual"
-                    onPress={() => setSelectedBillingCycle("yearly")}
-                    variant={selectedBillingCycle === "yearly" ? "primary" : "ghost"}
-                  />
+                  <View style={{ flexDirection: "row", flexWrap: "wrap", gap: theme.spacing.sm }}>
+                    <Button
+                      fullWidth={false}
+                      label="Mensal"
+                      onPress={() => setSelectedBillingCycle("monthly")}
+                      size="sm"
+                      variant={selectedBillingCycle === "monthly" ? "primary" : "soft"}
+                    />
+                    <Button
+                      fullWidth={false}
+                      label="Trimestral"
+                      onPress={() => setSelectedBillingCycle("quarterly")}
+                      size="sm"
+                      variant={selectedBillingCycle === "quarterly" ? "primary" : "soft"}
+                    />
+                    <Button
+                      fullWidth={false}
+                      label="Anual"
+                      onPress={() => setSelectedBillingCycle("yearly")}
+                      size="sm"
+                      variant={selectedBillingCycle === "yearly" ? "primary" : "soft"}
+                    />
+                  </View>
                 </View>
 
                 <View style={{ gap: theme.spacing.sm }}>
                   <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
                     O aluno recebe neste plano
                   </Text>
-                  {(["diet", "training", "assessment"] as TeacherPlanFeature[]).map(
-                    (feature) => {
-                      const active = selectedFeatures.includes(feature);
+                  <View style={{ flexDirection: "row", flexWrap: "wrap", gap: theme.spacing.sm }}>
+                    {(["diet", "training", "assessment"] as TeacherPlanFeature[]).map(
+                      (feature) => {
+                        const active = selectedFeatures.includes(feature);
 
-                      return (
-                        <Button
-                          key={feature}
-                          label={getFeatureLabel(feature)}
-                          onPress={() =>
-                            setSelectedFeatures((current) =>
-                              active
-                                ? current.filter((item) => item !== feature)
-                                : [...current, feature]
-                            )
-                          }
-                          variant={active ? "primary" : "ghost"}
-                        />
-                      );
-                    }
-                  )}
+                        return (
+                          <Button
+                            fullWidth={false}
+                            key={feature}
+                            label={getFeatureLabel(feature)}
+                            onPress={() =>
+                              setSelectedFeatures((current) =>
+                                active
+                                  ? current.filter((item) => item !== feature)
+                                  : [...current, feature]
+                              )
+                            }
+                            size="sm"
+                            variant={active ? "primary" : "soft"}
+                          />
+                        );
+                      }
+                    )}
+                  </View>
                 </View>
 
                 <Button
@@ -451,12 +467,19 @@ export function PaymentsScreen() {
               <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
                 {formatCurrency(record.amount)}
               </Text>
-              <View style={{ gap: theme.spacing.sm }}>
-                <Button label="Pagar com Pix" onPress={() => payRecord(record.id, "pix")} />
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: theme.spacing.sm }}>
                 <Button
+                  fullWidth={false}
+                  label="Pagar com Pix"
+                  onPress={() => payRecord(record.id, "pix")}
+                  size="sm"
+                />
+                <Button
+                  fullWidth={false}
                   label="Pagar com cartao"
                   onPress={() => payRecord(record.id, "card")}
-                  variant="ghost"
+                  size="sm"
+                  variant="soft"
                 />
               </View>
             </View>

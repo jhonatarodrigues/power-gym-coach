@@ -94,16 +94,20 @@ export function CurrentPlanScreen() {
                 ? "Revise as secoes alteradas e o impacto nutricional antes de salvar."
                 : "Nenhuma diferenca entre a versao ativa e a ultima salva."}
             </Text>
-            <View style={{ gap: theme.spacing.sm }}>
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: theme.spacing.sm }}>
               <Button
+                fullWidth={false}
                 label="Salvar alteracoes do plano"
                 onPress={saveCurrentPlan}
+                size="sm"
               />
               <Button
                 disabled={!hasUnsavedChanges}
+                fullWidth={false}
                 label="Descartar alteracoes"
                 onPress={discardCurrentPlanChanges}
-                variant="ghost"
+                size="sm"
+                variant="soft"
               />
             </View>
           </View>
@@ -244,30 +248,46 @@ export function CurrentPlanScreen() {
       />
 
       {isTeacher ? (
-        <View style={{ gap: theme.spacing.md }}>
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: theme.spacing.sm,
+          }}
+        >
           <Button
+            fullWidth={false}
             label="Editar treino atual"
             onPress={() => navigation.navigate("TrainingEditor")}
+            size="sm"
           />
           <Button
+            fullWidth={false}
             label="Editar dieta atual"
             onPress={() => navigation.navigate("MealEditor")}
-            variant="ghost"
+            size="sm"
+            variant="soft"
           />
           <Button
+            fullWidth={false}
             label="Editar suplementacao"
             onPress={() => navigation.navigate("SupplementEditor")}
-            variant="ghost"
+            size="sm"
+            variant="soft"
           />
           <Button
+            fullWidth={false}
             label="Revisar avaliacao atual"
             onPress={() => navigation.navigate("Assessment")}
-            variant="ghost"
+            size="sm"
+            variant="soft"
           />
           <Button
+            fullWidth={false}
             label="Abrir historico do aluno"
             onPress={() => navigation.navigate("CoachStudentPlans")}
-            variant="ghost"
+            size="sm"
+            variant="soft"
           />
         </View>
       ) : null}
