@@ -8,6 +8,8 @@ import { StudentWorkoutScreen } from "./StudentWorkoutScreen";
 
 describe("StudentWorkoutScreen", () => {
   beforeEach(() => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-04-16T12:00:00.000Z"));
+
     act(() => {
       useMockSessionStore.getState().signInAs("student");
       useStudentWorkoutStore.getState().reset();
@@ -18,6 +20,8 @@ describe("StudentWorkoutScreen", () => {
     act(() => {
       useMockSessionStore.getState().signOut();
     });
+
+    jest.useRealTimers();
   });
 
   it("renders the today workout and allows marking exercises", () => {

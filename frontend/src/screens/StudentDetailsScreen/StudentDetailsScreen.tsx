@@ -156,36 +156,54 @@ export function StudentDetailsScreen() {
       <Text style={{ color: theme.colors.textMuted }}>
         Filtro atual: {activeFilter === "all" ? "Tudo" : activeFilter}
       </Text>
-      <View style={{ gap: theme.spacing.sm }}>
+      <View
+        style={{
+          flexDirection: "row",
+          flexWrap: "wrap",
+          gap: theme.spacing.sm,
+        }}
+      >
         <Button
           label={`Tudo (${latestEvents.length})`}
+          fullWidth={false}
           onPress={() => setActiveFilter("all")}
-          variant={activeFilter === "all" ? "primary" : "ghost"}
+          size="sm"
+          variant={activeFilter === "all" ? "primary" : "soft"}
         />
         <Button
           label={`Avaliacao (${countsByDomain.assessment ?? 0})`}
+          fullWidth={false}
           onPress={() => setActiveFilter("assessment")}
-          variant={activeFilter === "assessment" ? "primary" : "ghost"}
+          size="sm"
+          variant={activeFilter === "assessment" ? "primary" : "soft"}
         />
         <Button
           label={`Exames (${countsByDomain.exam ?? 0})`}
+          fullWidth={false}
           onPress={() => setActiveFilter("exam")}
-          variant={activeFilter === "exam" ? "primary" : "ghost"}
+          size="sm"
+          variant={activeFilter === "exam" ? "primary" : "soft"}
         />
         <Button
           label={`Progresso (${countsByDomain.progress ?? 0})`}
+          fullWidth={false}
           onPress={() => setActiveFilter("progress")}
-          variant={activeFilter === "progress" ? "primary" : "ghost"}
+          size="sm"
+          variant={activeFilter === "progress" ? "primary" : "soft"}
         />
         <Button
           label={`Historico (${countsByDomain.history ?? 0})`}
+          fullWidth={false}
           onPress={() => setActiveFilter("history")}
-          variant={activeFilter === "history" ? "primary" : "ghost"}
+          size="sm"
+          variant={activeFilter === "history" ? "primary" : "soft"}
         />
         <Button
           label={`Plano (${countsByDomain.plan ?? 0})`}
+          fullWidth={false}
           onPress={() => setActiveFilter("plan")}
-          variant={activeFilter === "plan" ? "primary" : "ghost"}
+          size="sm"
+          variant={activeFilter === "plan" ? "primary" : "soft"}
         />
       </View>
       <View style={{ gap: theme.spacing.md }}>
@@ -198,35 +216,53 @@ export function StudentDetailsScreen() {
         title="Acoes rapidas"
         description="Centro operacional do coach para agir a partir do contexto do aluno."
       />
-      <View style={{ gap: theme.spacing.md }}>
+      <View
+        style={{
+          flexDirection: "row",
+          flexWrap: "wrap",
+          gap: theme.spacing.sm,
+        }}
+      >
         <Button
+          fullWidth={false}
           label="Ajustar plano atual"
           onPress={() => navigation.navigate("CoachPlanHub")}
+          size="sm"
         />
         <Button
+          fullWidth={false}
           label="Editar dieta"
           onPress={() => navigation.navigate("MealEditor")}
-          variant="ghost"
+          size="sm"
+          variant="soft"
         />
         <Button
+          fullWidth={false}
           label="Revisar progresso"
           onPress={() => navigation.navigate("CoachStudentPlans")}
-          variant="ghost"
+          size="sm"
+          variant="soft"
         />
         <Button
+          fullWidth={false}
           label="Abrir avaliacao"
           onPress={() => navigation.navigate("Assessment")}
-          variant="ghost"
+          size="sm"
+          variant="soft"
         />
         <Button
+          fullWidth={false}
           label="Abrir exames"
           onPress={() => navigation.navigate("Exams")}
-          variant="ghost"
+          size="sm"
+          variant="soft"
         />
         <Button
+          fullWidth={false}
           label="Abrir historico"
           onPress={() => navigation.navigate("CoachStudentPlans")}
-          variant="ghost"
+          size="sm"
+          variant="soft"
         />
       </View>
     </Screen>

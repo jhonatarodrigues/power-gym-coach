@@ -30,6 +30,8 @@ describe("useStudentTodayWorkout", () => {
   });
 
   it("falls back to the nearest configured training day when today has no exercises", () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-04-16T12:00:00.000Z"));
+
     const { result } = renderHook(() => useStudentTodayWorkout(), {
       wrapper: Providers,
     });
@@ -39,6 +41,8 @@ describe("useStudentTodayWorkout", () => {
   });
 
   it("calculates completion after marking an exercise", () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-04-16T12:00:00.000Z"));
+
     act(() => {
       useStudentWorkoutStore
         .getState()

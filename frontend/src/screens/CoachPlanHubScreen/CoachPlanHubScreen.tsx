@@ -1,6 +1,7 @@
 import { View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ArrowUpRight } from "lucide-react-native";
 
 import {
   Button,
@@ -73,25 +74,43 @@ export function CoachPlanHubScreen() {
         title="Composicao do plano"
       />
 
-      <View style={{ gap: theme.spacing.sm }}>
+      <View
+        style={{
+          flexDirection: "row",
+          flexWrap: "wrap",
+          gap: theme.spacing.sm,
+        }}
+      >
         <Button
           label={`Dieta (${currentPlan.dietPlan.meals.length} refeicoes)`}
+          fullWidth={false}
           onPress={() => navigation.navigate("MealEditor")}
+          rightIcon={<ArrowUpRight color="#0B0B0B" size={14} />}
+          size="sm"
         />
         <Button
           label={`Treino (${currentPlan.trainingPlan.days.length} dias)`}
+          fullWidth={false}
           onPress={() => navigation.navigate("TrainingEditor")}
-          variant="ghost"
+          rightIcon={<ArrowUpRight color={theme.colors.primary} size={14} />}
+          size="sm"
+          variant="soft"
         />
         <Button
           label={`Feedbacks (${feedbackCount})`}
+          fullWidth={false}
           onPress={() => navigation.navigate("CoachFeedbacks")}
-          variant="ghost"
+          rightIcon={<ArrowUpRight color={theme.colors.primary} size={14} />}
+          size="sm"
+          variant="soft"
         />
         <Button
           label="Mensagens com o aluno"
+          fullWidth={false}
           onPress={() => navigation.navigate("Messages")}
-          variant="ghost"
+          rightIcon={<ArrowUpRight color={theme.colors.primary} size={14} />}
+          size="sm"
+          variant="soft"
         />
       </View>
 
