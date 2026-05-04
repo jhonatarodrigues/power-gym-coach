@@ -18,7 +18,7 @@ export function Card({ children, padded = true }: CardProps) {
           backgroundColor: theme.colors.surface,
           borderColor: theme.colors.border,
           borderRadius: theme.radius.lg,
-          padding: padded ? theme.spacing.lg : 0,
+          padding: padded ? theme.spacing.xl : 0,
         },
       ]}
     >
@@ -30,6 +30,7 @@ export function Card({ children, padded = true }: CardProps) {
 const styles = StyleSheet.create({
   base: {
     borderWidth: 1,
+    overflow: "hidden",
     width: "100%",
   },
 });

@@ -24,7 +24,7 @@ export function Header({
   const shouldRenderMenu = !shouldRenderBack;
 
   return (
-    <View style={{ gap: theme.spacing.sm }}>
+    <View style={{ gap: theme.spacing.md }}>
       {shouldRenderBack || shouldRenderMenu ? (
         <Pressable
           accessibilityLabel={shouldRenderBack ? "Voltar" : "Abrir menu"}
@@ -39,8 +39,14 @@ export function Header({
           style={{
             alignItems: "center",
             alignSelf: "flex-start",
+            backgroundColor: theme.colors.surfaceAlt,
+            borderColor: theme.colors.border,
+            borderRadius: theme.radius.pill,
+            borderWidth: 1,
             flexDirection: "row",
             gap: theme.spacing.xs,
+            paddingHorizontal: theme.spacing.sm,
+            paddingVertical: 6,
           }}
         >
           {shouldRenderBack ? (
@@ -66,15 +72,18 @@ export function Header({
           size="md"
         />
       ) : (
-        <Text
-          style={{
-            color: theme.colors.text,
-            fontSize: theme.typography.title,
-            fontWeight: "800",
-          }}
-        >
-          {title}
-        </Text>
+        <View style={{ gap: theme.spacing.xs }}>
+          <Text
+            style={{
+              color: theme.colors.text,
+              fontSize: theme.typography.title,
+              fontWeight: "800",
+              lineHeight: 32,
+            }}
+          >
+            {title}
+          </Text>
+        </View>
       )}
 
       {subtitle ? (
@@ -82,6 +91,8 @@ export function Header({
           style={{
             color: theme.colors.textMuted,
             fontSize: theme.typography.body,
+            lineHeight: 22,
+            maxWidth: 560,
           }}
         >
           {subtitle}

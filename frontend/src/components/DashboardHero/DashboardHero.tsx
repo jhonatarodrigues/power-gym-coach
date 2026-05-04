@@ -31,7 +31,7 @@ export function DashboardHero({
         borderColor: theme.colors.border,
         borderRadius: theme.radius.lg,
         borderWidth: 1,
-        gap: theme.spacing.lg,
+        gap: theme.spacing.xl,
         overflow: "hidden",
         padding: theme.spacing.xl,
       }}
@@ -66,9 +66,10 @@ export function DashboardHero({
         <Text
           style={{
             color: theme.colors.text,
-            fontSize: 30,
+            fontSize: 32,
             fontWeight: "800",
-            lineHeight: 34,
+            letterSpacing: -0.6,
+            lineHeight: 36,
           }}
         >
           {title}
@@ -97,14 +98,14 @@ export function DashboardHero({
           <View
             key={stat.label}
             style={{
-              backgroundColor: theme.colors.background,
+              backgroundColor: theme.colors.surface,
               borderColor: theme.colors.border,
               borderRadius: theme.radius.md,
               borderWidth: 1,
               gap: theme.spacing.xs,
               minWidth: 128,
               paddingHorizontal: theme.spacing.md,
-              paddingVertical: theme.spacing.sm,
+              paddingVertical: theme.spacing.md,
             }}
           >
             <Text
@@ -124,6 +125,7 @@ export function DashboardHero({
                 color: theme.colors.text,
                 fontSize: 22,
                 fontWeight: "800",
+                letterSpacing: -0.3,
               }}
             >
               {stat.value}

@@ -18,9 +18,7 @@ export function SectionTitle({
   return (
     <View
       style={{
-        alignItems: "center",
-        flexDirection: "row",
-        justifyContent: "space-between",
+        gap: theme.spacing.sm,
         width: "100%",
       }}
     >
@@ -30,6 +28,7 @@ export function SectionTitle({
             color: theme.colors.text,
             fontSize: theme.typography.subtitle,
             fontWeight: "700",
+            lineHeight: 26,
           }}
         >
           {title}
@@ -39,6 +38,7 @@ export function SectionTitle({
             style={{
               color: theme.colors.textMuted,
               fontSize: theme.typography.caption,
+              lineHeight: 19,
             }}
           >
             {description}
@@ -47,15 +47,25 @@ export function SectionTitle({
       </View>
 
       {actionLabel ? (
-        <Text
+        <View
           style={{
-            color: theme.colors.primary,
-            fontSize: theme.typography.caption,
-            fontWeight: "700",
+            alignSelf: "flex-start",
+            backgroundColor: theme.colors.primaryMuted,
+            borderRadius: theme.radius.pill,
+            paddingHorizontal: theme.spacing.sm,
+            paddingVertical: 6,
           }}
         >
-          {actionLabel}
-        </Text>
+          <Text
+            style={{
+              color: theme.colors.primary,
+              fontSize: theme.typography.caption,
+              fontWeight: "700",
+            }}
+          >
+            {actionLabel}
+          </Text>
+        </View>
       ) : null}
     </View>
   );

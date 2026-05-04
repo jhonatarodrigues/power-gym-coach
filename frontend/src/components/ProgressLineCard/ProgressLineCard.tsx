@@ -38,6 +38,7 @@ export function ProgressLineCard({
             alignItems: "flex-start",
             flexDirection: "row",
             justifyContent: "space-between",
+            gap: theme.spacing.md,
           }}
         >
           <View style={{ flex: 1, gap: theme.spacing.xs }}>
@@ -46,6 +47,7 @@ export function ProgressLineCard({
                 color: theme.colors.text,
                 fontSize: theme.typography.body,
                 fontWeight: "700",
+                lineHeight: 22,
               }}
             >
               {title}
@@ -55,6 +57,7 @@ export function ProgressLineCard({
                 style={{
                   color: theme.colors.textMuted,
                   fontSize: theme.typography.caption,
+                  lineHeight: 18,
                 }}
               >
                 {helper}
@@ -65,8 +68,9 @@ export function ProgressLineCard({
             <Text
               style={{
                 color: theme.colors.text,
-                fontSize: 22,
+                fontSize: 24,
                 fontWeight: "800",
+                letterSpacing: -0.3,
               }}
             >
               {currentLabel}
@@ -76,6 +80,7 @@ export function ProgressLineCard({
                 style={{
                   color: theme.colors.textMuted,
                   fontSize: theme.typography.caption,
+                  textAlign: "right",
                 }}
               >
                 {targetLabel}
@@ -86,9 +91,9 @@ export function ProgressLineCard({
 
         <View
           style={{
-            backgroundColor: theme.colors.background,
+            backgroundColor: theme.colors.surfaceAlt,
             borderRadius: theme.radius.pill,
-            height: 10,
+            height: 12,
             overflow: "hidden",
           }}
         >
