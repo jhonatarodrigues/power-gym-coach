@@ -82,7 +82,7 @@ describe("AppNavigator", () => {
       </AppThemeProvider>
     );
 
-    expect(screen.getByText("Painel mais limpo para decidir rapido")).toBeTruthy();
+    expect(screen.getByText("Dashboard do coach")).toBeTruthy();
   });
 
   it("renders the student app shell when authenticated as student", () => {

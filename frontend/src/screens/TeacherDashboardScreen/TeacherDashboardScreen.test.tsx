@@ -21,10 +21,11 @@ describe("TeacherDashboardScreen", () => {
   it("renders dashboard highlights and navigation actions", () => {
     renderWithProviders(<TeacherDashboardScreen />);
 
-    expect(screen.getByText("Painel mais limpo para decidir rapido")).toBeTruthy();
-    expect(screen.getByText("Panorama da operacao")).toBeTruthy();
-    expect(screen.getByText("Acoes prioritarias")).toBeTruthy();
-    expect(screen.getByText("Carteira de alunos")).toBeTruthy();
+    expect(screen.getByText("Dashboard do coach")).toBeTruthy();
+    expect(screen.getByText("Visao geral")).toBeTruthy();
+    expect(screen.getByText("Engajamento semanal")).toBeTruthy();
+    expect(screen.getByText("Progresso medio dos alunos")).toBeTruthy();
+    expect(screen.getByText("Alunos em destaque")).toBeTruthy();
     expect(screen.queryByText("Abrir pagamentos")).toBeNull();
   });
 });
