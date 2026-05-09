@@ -2,7 +2,7 @@ import { Image, Text, View } from "react-native";
 
 import { useAppTheme } from "@/theme";
 
-const brandIcon = require("../../../assets/icon.png");
+const brandIcon = require("../../../assets/brand-symbol.png");
 
 interface BrandLogoProps {
   size?: "sm" | "md" | "lg";
