@@ -635,71 +635,80 @@ function FeaturedStudentItem({
         borderBottomColor: withDivider ? "rgba(255,255,255,0.06)" : "transparent",
         borderBottomWidth: withDivider ? 1 : 0,
         paddingHorizontal: 18,
-        paddingVertical: 14,
+        paddingVertical: 13,
       }}
     >
       <View
         style={{
           alignItems: "center",
           flexDirection: "row",
-          gap: 14,
+          gap: 12,
         }}
       >
         <Image
           source={{ uri: avatarUrl }}
           style={{
             borderColor: "rgba(255,255,255,0.08)",
-            borderRadius: 23,
+            borderRadius: 22,
             borderWidth: 1,
-            height: 46,
-            width: 46,
+            height: 44,
+            width: 44,
           }}
         />
 
-        <View style={{ flex: 1, gap: 3 }}>
+        <View style={{ flex: 1, gap: 2, minWidth: 0, paddingRight: 6 }}>
           <Text
+            numberOfLines={1}
             style={{
               color: theme.colors.text,
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: "600",
             }}
           >
             {name}
           </Text>
-          <Text style={{ color: theme.colors.textMuted, fontSize: 14 }}>
+          <Text numberOfLines={1} style={{ color: theme.colors.textMuted, fontSize: 13.5 }}>
             Objetivo: <Text style={{ color: theme.colors.primary }}>{goal}</Text>
           </Text>
         </View>
 
-        <View style={{ minWidth: 92 }}>
-          <Text style={{ color: theme.colors.textMuted, fontSize: 14 }}>Plano atual</Text>
-          <Text style={{ color: theme.colors.text, fontSize: 14, marginTop: 3 }}>{planDate}</Text>
-        </View>
-
-        <Pressable
-          accessibilityRole="button"
+        <View
           style={{
-            alignItems: "center",
-            borderColor: theme.colors.primary,
-            borderRadius: 999,
-            borderWidth: 1,
-            flexDirection: "row",
+            alignItems: "flex-end",
             gap: 8,
-            paddingHorizontal: 16,
-            paddingVertical: 10,
+            minWidth: 118,
           }}
         >
-          <Text
+          <View style={{ alignItems: "flex-end", gap: 2 }}>
+            <Text style={{ color: theme.colors.textMuted, fontSize: 12.5 }}>Plano atual</Text>
+            <Text style={{ color: theme.colors.text, fontSize: 13.5 }}>{planDate}</Text>
+          </View>
+
+          <Pressable
+            accessibilityRole="button"
             style={{
-              color: theme.colors.primary,
-              fontSize: 15,
-              fontWeight: "600",
+              alignItems: "center",
+              borderColor: theme.colors.primary,
+              borderRadius: 999,
+              borderWidth: 1,
+              flexDirection: "row",
+              gap: 6,
+              paddingHorizontal: 12,
+              paddingVertical: 7,
             }}
           >
-            Abrir planos
-          </Text>
-          <ChevronRight color={theme.colors.primary} size={16} />
-        </Pressable>
+            <Text
+              style={{
+                color: theme.colors.primary,
+                fontSize: 13.5,
+                fontWeight: "600",
+              }}
+            >
+              Abrir planos
+            </Text>
+            <ChevronRight color={theme.colors.primary} size={14} />
+          </Pressable>
+        </View>
       </View>
     </View>
   );
