@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ArrowUpRight } from "lucide-react-native";
@@ -9,8 +9,6 @@ import {
   Card,
   DashboardHero,
   Header,
-  MiniBarChart,
-  ProgressLineCard,
   Screen,
   SectionTitle,
 } from "@/components";
@@ -29,6 +27,12 @@ export function CoachStudentsScreen() {
   ).length;
   const studentsWithoutPlan = students.length - studentsWithActivePlan;
 
+  const summaryItems = [
+    { label: "Alunos", value: String(students.length) },
+    { label: "Com plano", value: String(studentsWithActivePlan) },
+    { label: "Sem plano", value: String(studentsWithoutPlan) },
+  ];
+
   return (
     <Screen>
       <Header
@@ -39,32 +43,43 @@ export function CoachStudentsScreen() {
       <DashboardHero
         accentLabel="Entrada principal do acompanhamento"
         eyebrow="Carteira"
-        stats={[
-          { label: "Alunos", value: String(students.length) },
-          { label: "Com plano", value: String(studentsWithActivePlan) },
-          { label: "Sem plano", value: String(studentsWithoutPlan) },
-        ]}
+        stats={summaryItems}
         subtitle="A tela de alunos deve facilitar a escolha rapida de quem voce quer abrir, sem misturar plano, dieta e treino aqui."
         title="Carteira organizada por aluno"
       />
 
-      <ProgressLineCard
-        currentLabel={`${studentsWithActivePlan}/${students.length}`}
-        helper="Mostra quantos alunos ja estao com plano ativo dentro da carteira."
-        progress={students.length > 0 ? studentsWithActivePlan / students.length : 0}
-        targetLabel="alunos com plano ativo"
-        title="Cobertura da carteira"
-      />
-
-      <MiniBarChart
-        description="Leitura compacta para entender rapidamente quantos alunos ja estao operacionais."
-        items={[
-          { label: "Ativos", value: studentsWithActivePlan, hint: "plano" },
-          { label: "Sem plano", value: studentsWithoutPlan, hint: "acao" },
-          { label: "Total", value: students.length, hint: "base" },
-        ]}
-        title="Visao rapida da carteira"
-      />
+      <View style={{ flexDirection: "row", gap: theme.spacing.sm }}>
+        {summaryItems.map((item) => (
+          <Card key={item.label}>
+            <View
+              style={{
+                alignItems: "center",
+                gap: theme.spacing.xs,
+              }}
+            >
+              <Text
+                style={{
+                  color: theme.colors.text,
+                  fontSize: 22,
+                  fontWeight: "700",
+                  textAlign: "center",
+                }}
+              >
+                {item.value}
+              </Text>
+              <Text
+                style={{
+                  color: theme.colors.textMuted,
+                  fontSize: theme.typography.caption,
+                  textAlign: "center",
+                }}
+              >
+                {item.label}
+              </Text>
+            </View>
+          </Card>
+        ))}
+      </View>
 
       <SectionTitle
         title="Carteira ativa"

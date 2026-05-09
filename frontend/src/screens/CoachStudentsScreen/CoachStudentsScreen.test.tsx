@@ -10,7 +10,7 @@ describe("CoachStudentsScreen", () => {
     renderWithProviders(<CoachStudentsScreen />);
 
     expect(screen.getByText("Carteira organizada por aluno")).toBeTruthy();
-    expect(screen.getByText("Visao rapida da carteira")).toBeTruthy();
+    expect(screen.getByText("Carteira ativa")).toBeTruthy();
     expect(screen.getByText("Marina Costa")).toBeTruthy();
     expect(screen.getByText("Lucas Andrade")).toBeTruthy();
   });

@@ -21,7 +21,7 @@ describe("CoachPlanHubScreen", () => {
     renderWithProviders(<CoachPlanHubScreen />);
 
     expect(screen.getByText("Hub do plano do aluno")).toBeTruthy();
-    expect(screen.getByText("Composicao do plano")).toBeTruthy();
+    expect(screen.getByText("Resumo rapido")).toBeTruthy();
     expect(screen.getByText("Dieta (4 refeicoes)")).toBeTruthy();
     expect(screen.getByText("Treino (5 dias)")).toBeTruthy();
     expect(screen.getByText("Feedbacks (2)")).toBeTruthy();

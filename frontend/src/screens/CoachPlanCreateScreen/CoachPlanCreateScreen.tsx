@@ -3,7 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { Button, Header, Screen, TextField } from "@/components";
+import { Button, Card, DashboardHero, Header, Screen, TextField } from "@/components";
 import { useCurrentPlan } from "@/hooks/useCurrentPlan";
 import type { RootStackParamList } from "@/navigation/types";
 import { useCoachContextStore } from "@/store/useCoachContextStore";
@@ -41,56 +41,70 @@ export function CoachPlanCreateScreen() {
         subtitle={`Novo ciclo para ${selectedStudent.user.name}.`}
       />
 
-      <View style={{ gap: theme.spacing.md }}>
-        <Controller
-          control={control}
-          name="title"
-          render={({ field: { onChange, value } }) => (
-            <TextField
-              label="Nome do plano"
-              onChangeText={onChange}
-              value={value}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="startDate"
-          render={({ field: { onChange, value } }) => (
-            <TextField
-              label="Data inicial"
-              onChangeText={onChange}
-              placeholder="dd/mm/aaaa"
-              value={value}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="endDate"
-          render={({ field: { onChange, value } }) => (
-            <TextField
-              label="Data final"
-              onChangeText={onChange}
-              placeholder="dd/mm/aaaa"
-              value={value}
-            />
-          )}
-        />
-        <Button
-          label="Criar plano e abrir estrutura"
-          onPress={handleSubmit((values) => {
-            const plan = createPlan({
-              studentId: selectedStudent.user.id,
-              title: values.title,
-              startDate: normalizeDateInputToISO(values.startDate),
-              endDate: normalizeDateInputToISO(values.endDate),
-            });
-            loadCurrentPlan(plan);
-            navigation.navigate("CoachPlanHub");
-          })}
-        />
-      </View>
+      <DashboardHero
+        accentLabel="Novo ciclo"
+        eyebrow="Criação"
+        stats={[
+          { label: "Aluno", value: "1" },
+          { label: "Etapas", value: "3" },
+          { label: "Próximo passo", value: "Plano" },
+        ]}
+        subtitle="Defina o ciclo e depois siga para dieta, treino e feedback do mesmo plano."
+        title="Estruture um novo plano"
+      />
+
+      <Card>
+        <View style={{ gap: theme.spacing.md }}>
+          <Controller
+            control={control}
+            name="title"
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                label="Nome do plano"
+                onChangeText={onChange}
+                value={value}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="startDate"
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                label="Data inicial"
+                onChangeText={onChange}
+                placeholder="dd/mm/aaaa"
+                value={value}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="endDate"
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                label="Data final"
+                onChangeText={onChange}
+                placeholder="dd/mm/aaaa"
+                value={value}
+              />
+            )}
+          />
+          <Button
+            label="Criar plano e abrir estrutura"
+            onPress={handleSubmit((values) => {
+              const plan = createPlan({
+                studentId: selectedStudent.user.id,
+                title: values.title,
+                startDate: normalizeDateInputToISO(values.startDate),
+                endDate: normalizeDateInputToISO(values.endDate),
+              });
+              loadCurrentPlan(plan);
+              navigation.navigate("CoachPlanHub");
+            })}
+          />
+        </View>
+      </Card>
     </Screen>
   );
 }

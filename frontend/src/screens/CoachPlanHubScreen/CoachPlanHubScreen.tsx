@@ -1,14 +1,13 @@
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ArrowUpRight } from "lucide-react-native";
 
 import {
   Button,
+  Card,
   DashboardHero,
   Header,
-  MiniBarChart,
-  ProgressLineCard,
   Screen,
   SectionTitle,
 } from "@/components";
@@ -52,27 +51,42 @@ export function CoachPlanHubScreen() {
         title="Hub do plano do aluno"
       />
 
-      <ProgressLineCard
-        currentLabel={`${currentPlan.trainingPlan.days.length + currentPlan.dietPlan.meals.length}`}
-        helper="Soma dos pontos operacionais principais deste plano para orientar a proxima acao."
-        progress={Math.min(
-          1,
-          (currentPlan.trainingPlan.days.length + currentPlan.dietPlan.meals.length + feedbackCount) /
-            12
-        )}
-        targetLabel="blocos monitorados"
-        title="Complexidade do ciclo"
-      />
-
-      <MiniBarChart
-        description="Panorama resumido do que compoe o plano atual do aluno."
-        items={[
-          { label: "Dieta", value: currentPlan.dietPlan.meals.length, hint: "ref." },
-          { label: "Treino", value: currentPlan.trainingPlan.days.length, hint: "dias" },
-          { label: "Feedb.", value: feedbackCount, hint: "hist." },
-        ]}
-        title="Composicao do plano"
-      />
+      <View style={{ flexDirection: "row", gap: theme.spacing.sm }}>
+        {[
+          { label: "Refeições", value: String(currentPlan.dietPlan.meals.length) },
+          { label: "Dias treino", value: String(currentPlan.trainingPlan.days.length) },
+          { label: "Feedbacks", value: String(feedbackCount) },
+        ].map((item) => (
+          <Card key={item.label}>
+            <View
+              style={{
+                alignItems: "center",
+                gap: theme.spacing.xs,
+              }}
+            >
+              <Text
+                style={{
+                  color: theme.colors.text,
+                  fontSize: 22,
+                  fontWeight: "700",
+                  textAlign: "center",
+                }}
+              >
+                {item.value}
+              </Text>
+              <Text
+                style={{
+                  color: theme.colors.textMuted,
+                  fontSize: theme.typography.caption,
+                  textAlign: "center",
+                }}
+              >
+                {item.label}
+              </Text>
+            </View>
+          </Card>
+        ))}
+      </View>
 
       <View
         style={{
@@ -120,29 +134,39 @@ export function CoachPlanHubScreen() {
       />
 
       <View style={{ gap: theme.spacing.md }}>
-        <ProgressLineCard
-          currentLabel={`${currentPlan.dietPlan.calories} kcal`}
-          helper={`${currentPlan.dietPlan.waterLitersTarget.toFixed(1)} L de agua alvo neste ciclo.`}
-          progress={Math.min(1, currentPlan.dietPlan.calories / 2500)}
-          targetLabel="carga nutricional"
-          title="Dieta"
-        />
-        <ProgressLineCard
-          currentLabel={`${currentPlan.trainingPlan.days.length} dias`}
-          helper="Dias ja configurados no plano ativo."
-          progress={Math.min(1, currentPlan.trainingPlan.days.length / 7)}
-          targetLabel="semana coberta"
-          title="Treino"
-          tone="warning"
-        />
-        <ProgressLineCard
-          currentLabel={`${feedbackCount} retorno(s)`}
-          helper="Quantidade de devolutivas registradas neste plano."
-          progress={Math.min(1, feedbackCount / 4)}
-          targetLabel="feedbacks no ciclo"
-          title="Feedback"
-          tone="success"
-        />
+        <Card>
+          <View style={{ alignItems: "center", gap: theme.spacing.xs }}>
+            <Text style={{ color: theme.colors.text, fontWeight: "700" }}>Dieta</Text>
+            <Text style={{ color: theme.colors.text, fontSize: 22, fontWeight: "700" }}>
+              {currentPlan.dietPlan.calories} kcal
+            </Text>
+            <Text style={{ color: theme.colors.textMuted, textAlign: "center" }}>
+              {currentPlan.dietPlan.waterLitersTarget.toFixed(1)} L de água alvo neste ciclo.
+            </Text>
+          </View>
+        </Card>
+        <Card>
+          <View style={{ alignItems: "center", gap: theme.spacing.xs }}>
+            <Text style={{ color: theme.colors.text, fontWeight: "700" }}>Treino</Text>
+            <Text style={{ color: theme.colors.text, fontSize: 22, fontWeight: "700" }}>
+              {currentPlan.trainingPlan.days.length} dias
+            </Text>
+            <Text style={{ color: theme.colors.textMuted, textAlign: "center" }}>
+              Dias já configurados no plano ativo.
+            </Text>
+          </View>
+        </Card>
+        <Card>
+          <View style={{ alignItems: "center", gap: theme.spacing.xs }}>
+            <Text style={{ color: theme.colors.text, fontWeight: "700" }}>Feedback</Text>
+            <Text style={{ color: theme.colors.text, fontSize: 22, fontWeight: "700" }}>
+              {feedbackCount} retorno(s)
+            </Text>
+            <Text style={{ color: theme.colors.textMuted, textAlign: "center" }}>
+              Quantidade de devolutivas registradas neste plano.
+            </Text>
+          </View>
+        </Card>
       </View>
     </Screen>
   );

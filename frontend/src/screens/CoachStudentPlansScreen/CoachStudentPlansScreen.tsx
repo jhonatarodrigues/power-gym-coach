@@ -4,7 +4,15 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ArrowUpRight, CalendarRange } from "lucide-react-native";
 
-import { Button, Card, Header, Screen, SectionTitle, StatusBadge } from "@/components";
+import {
+  Button,
+  Card,
+  DashboardHero,
+  Header,
+  Screen,
+  SectionTitle,
+  StatusBadge,
+} from "@/components";
 import { useCurrentPlan } from "@/hooks/useCurrentPlan";
 import type { RootStackParamList } from "@/navigation/types";
 import { useCoachContextStore } from "@/store/useCoachContextStore";
@@ -50,6 +58,9 @@ export function CoachStudentPlansScreen() {
         .sort((left, right) => right.startDate.localeCompare(left.startDate)),
     [allPlans, selectedStudentId]
   );
+  const activeCount = plans.filter((plan) => plan.status === "active").length;
+  const draftCount = plans.filter((plan) => plan.status === "draft").length;
+  const historyCount = plans.filter((plan) => plan.status === "archived").length;
 
   if (!selectedStudent) {
     return null;
@@ -60,6 +71,18 @@ export function CoachStudentPlansScreen() {
       <Header
         title={`Planos de ${selectedStudent.user.name}`}
         subtitle="Fluxo do coach: aluno > plano > dieta, treino e feedback."
+      />
+
+      <DashboardHero
+        accentLabel={activeCount > 0 ? "Plano ativo em acompanhamento" : "Organize o proximo ciclo"}
+        eyebrow="Planos"
+        stats={[
+          { label: "Ativos", value: String(activeCount) },
+          { label: "Rascunhos", value: String(draftCount) },
+          { label: "Histórico", value: String(historyCount) },
+        ]}
+        subtitle="Cada plano vira uma unidade de trabalho do coach, com dieta, treino e feedbacks dentro do mesmo ciclo."
+        title="Ciclos do aluno organizados"
       />
 
       <SectionTitle
@@ -80,8 +103,13 @@ export function CoachStudentPlansScreen() {
       <View style={{ gap: theme.spacing.md }}>
         {plans.map((plan) => (
           <Card key={plan.id}>
-            <View style={{ gap: theme.spacing.md }}>
-              <View style={{ gap: theme.spacing.sm }}>
+            <View style={{ gap: theme.spacing.lg }}>
+              <View
+                style={{
+                  alignItems: "center",
+                  gap: theme.spacing.sm,
+                }}
+              >
                 <StatusBadge
                   label={getPlanStatusLabel(plan.status)}
                   tone={getPlanStatusTone(plan.status)}
@@ -91,6 +119,7 @@ export function CoachStudentPlansScreen() {
                     color: theme.colors.text,
                     fontSize: theme.typography.body,
                     fontWeight: "700",
+                    textAlign: "center",
                   }}
                 >
                   {plan.title}
@@ -102,18 +131,19 @@ export function CoachStudentPlansScreen() {
                     gap: theme.spacing.sm,
                   }}
                 >
-                  <CalendarRange color={theme.colors.textMuted} size={16} />
+                  <CalendarRange color={theme.colors.textMuted} size={15} />
                   <Text
                     style={{
                       color: theme.colors.textMuted,
                       fontSize: theme.typography.caption,
+                      textAlign: "center",
                     }}
                   >
-                    {formatDateBR(plan.startDate)} ate {formatDateBR(plan.endDate)}
+                    {formatDateBR(plan.startDate)} até {formatDateBR(plan.endDate)}
                   </Text>
                 </View>
               </View>
-              <View style={{ alignSelf: "flex-start" }}>
+              <View style={{ alignItems: "center" }}>
                 <Button
                   fullWidth={false}
                   label="Abrir plano"
