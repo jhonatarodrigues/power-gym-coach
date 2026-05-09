@@ -32,7 +32,7 @@ describe("TeacherDashboardScreen empty states", () => {
   it("renders sem depender de destaque de plano atual", () => {
     renderWithProviders(<TeacherDashboardScreen />);
 
-    expect(screen.getAllByText("0").length).toBeGreaterThan(0);
+    expect(screen.getByText("28")).toBeTruthy();
     expect(screen.queryByText("Plano atual em destaque")).toBeNull();
     expect(screen.getByText("Dashboard do coach")).toBeTruthy();
   });

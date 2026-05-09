@@ -22,9 +22,9 @@ describe("TeacherDashboardScreen", () => {
     renderWithProviders(<TeacherDashboardScreen />);
 
     expect(screen.getByText("Dashboard do coach")).toBeTruthy();
-    expect(screen.getByText("Visao geral")).toBeTruthy();
+    expect(screen.getByText("Visão geral")).toBeTruthy();
     expect(screen.getByText("Engajamento semanal")).toBeTruthy();
-    expect(screen.getByText("Progresso medio dos alunos")).toBeTruthy();
+    expect(screen.getByText("Progresso médio dos alunos")).toBeTruthy();
     expect(screen.getByText("Alunos em destaque")).toBeTruthy();
     expect(screen.queryByText("Abrir pagamentos")).toBeNull();
   });
