@@ -1,4 +1,5 @@
 import { Image, Pressable, Text, useWindowDimensions, View } from "react-native";
+import { DrawerActions, useNavigation } from "@react-navigation/native";
 import {
   Apple,
   BarChart3,
@@ -6,6 +7,7 @@ import {
   BriefcaseBusiness,
   ChevronDown,
   ChevronRight,
+  Menu,
   TriangleAlert,
   Users,
   Wallet,
@@ -746,6 +748,7 @@ function FeaturedStudentItem({
 
 export function TeacherDashboardScreen() {
   const { theme } = useAppTheme();
+  const navigation = useNavigation();
   const { currentUser } = useMockAuth();
   const { getTeacherExpectedRevenue, subscriptions } = usePayments();
   const teacher = currentUser();
@@ -764,26 +767,60 @@ export function TeacherDashboardScreen() {
       <View style={{ gap: 22 }}>
         <View
           style={{
-            alignItems: "center",
+            alignItems: "flex-start",
             flexDirection: "row",
             justifyContent: "space-between",
           }}
         >
           <View
             style={{
-              alignItems: "center",
-              flexDirection: "row",
-              gap: 14,
+              flex: 1,
+              gap: 12,
             }}
           >
-            <Image
-              source={brandSymbol}
+            <Pressable
+              accessibilityLabel="Abrir menu"
+              onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
               style={{
-                height: 62,
-                width: 62,
+                alignItems: "center",
+                alignSelf: "flex-start",
+                backgroundColor: theme.colors.surfaceAlt,
+                borderColor: theme.colors.border,
+                borderRadius: theme.radius.pill,
+                borderWidth: 1,
+                flexDirection: "row",
+                gap: theme.spacing.xs,
+                paddingHorizontal: theme.spacing.sm,
+                paddingVertical: 6,
               }}
-            />
-            <View style={{ gap: 2 }}>
+            >
+              <Menu color={theme.colors.primary} size={18} />
+              <Text
+                style={{
+                  color: theme.colors.primary,
+                  fontSize: theme.typography.caption,
+                  fontWeight: "700",
+                }}
+              >
+                Menu
+              </Text>
+            </Pressable>
+
+            <View
+              style={{
+                alignItems: "center",
+                flexDirection: "row",
+                gap: 14,
+              }}
+            >
+              <Image
+                source={brandSymbol}
+                style={{
+                  height: 62,
+                  width: 62,
+                }}
+              />
+              <View style={{ flex: 1, gap: 2 }}>
               <Text
                 style={{
                   color: "rgba(243,244,246,0.75)",
@@ -796,13 +833,14 @@ export function TeacherDashboardScreen() {
               <Text
                 style={{
                   color: theme.colors.text,
-                  fontSize: 30,
+                  fontSize: 27,
                   fontWeight: "700",
                   letterSpacing: -0.8,
                 }}
               >
                 Dashboard do coach
               </Text>
+              </View>
             </View>
           </View>
 
