@@ -185,14 +185,13 @@ function OverviewCard({
         borderWidth: 1,
         flex: 1,
         minHeight: 136,
-        paddingHorizontal: 12,
-        paddingVertical: 13,
+        paddingHorizontal: 14,
+        paddingVertical: 14,
       }}
     >
       <View
         style={{
           alignItems: "flex-start",
-          flexDirection: "row",
           gap: 10,
         }}
       >
@@ -200,11 +199,10 @@ function OverviewCard({
           style={{
             alignItems: "center",
             backgroundColor: "rgba(255,255,255,0.04)",
-            borderRadius: 23,
-            height: 36,
+            borderRadius: 20,
+            height: 40,
             justifyContent: "center",
-            marginTop: 1,
-            width: 36,
+            width: 40,
           }}
         >
           {icon}
@@ -212,10 +210,8 @@ function OverviewCard({
 
         <View
           style={{
-            flex: 1,
             gap: 4,
             minWidth: 0,
-            paddingTop: 1,
           }}
         >
           <Text
@@ -229,7 +225,7 @@ function OverviewCard({
           >
             {value}
           </Text>
-          <View style={{ minHeight: 32 }}>
+          <View style={{ minHeight: 32, justifyContent: "flex-start" }}>
             {labelLines.map((line) => (
               <Text
                 key={line}
@@ -247,7 +243,7 @@ function OverviewCard({
         </View>
       </View>
 
-      <View style={{ gap: 2, marginTop: "auto", paddingLeft: 46 }}>
+      <View style={{ gap: 2, marginTop: "auto" }}>
         <Text
           style={{
             color: "#4ADE80",
@@ -849,13 +845,13 @@ export function TeacherDashboardScreen() {
           />
           <OverviewCard
             icon={<BriefcaseBusiness color={theme.colors.primary} size={16} />}
-            label={"Planos em\nandamento"}
+            label={"Planos em andamento"}
             trend="▲ 8%"
             value="32"
           />
           <OverviewCard
             icon={<Wallet color={theme.colors.primary} size={16} />}
-            label={"Pagamentos\ndo mês"}
+            label={"Pagamentos do mês"}
             trend="▲ 15%"
             value={formatCurrency(monthlyRevenue)}
           />
