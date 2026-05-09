@@ -191,7 +191,7 @@ function OverviewCard({
     >
       <View
         style={{
-          alignItems: "flex-start",
+          alignItems: "center",
           gap: 10,
         }}
       >
@@ -212,6 +212,7 @@ function OverviewCard({
           style={{
             gap: 4,
             minWidth: 0,
+            width: "100%",
           }}
         >
           <Text
@@ -221,6 +222,7 @@ function OverviewCard({
               fontSize: 20,
               fontWeight: "700",
               letterSpacing: -0.4,
+              textAlign: "center",
             }}
           >
             {value}
@@ -234,6 +236,7 @@ function OverviewCard({
                   color: theme.colors.textMuted,
                   fontSize: 12.5,
                   lineHeight: 16,
+                  textAlign: "center",
                 }}
               >
                 {line}
@@ -243,17 +246,26 @@ function OverviewCard({
         </View>
       </View>
 
-      <View style={{ gap: 2, marginTop: "auto" }}>
+      <View style={{ gap: 2, marginTop: "auto", width: "100%" }}>
         <Text
           style={{
             color: "#4ADE80",
             fontSize: 13,
             fontWeight: "700",
+            textAlign: "center",
           }}
         >
           {trend}
         </Text>
-        <Text style={{ color: theme.colors.textMuted, fontSize: 11.5 }}>vs mês anterior</Text>
+        <Text
+          style={{
+            color: theme.colors.textMuted,
+            fontSize: 11.5,
+            textAlign: "center",
+          }}
+        >
+          vs mês anterior
+        </Text>
       </View>
     </View>
   );
