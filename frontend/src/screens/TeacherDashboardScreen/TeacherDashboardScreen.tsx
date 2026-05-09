@@ -167,15 +167,14 @@ function OverviewCard({
   label,
   trend,
   value,
-  valueSize = 21,
 }: {
   icon: React.ReactNode;
   label: string;
   trend: string;
   value: string;
-  valueSize?: number;
 }) {
   const { theme } = useAppTheme();
+  const labelLines = label.split("\n");
 
   return (
     <View
@@ -185,12 +184,18 @@ function OverviewCard({
         borderRadius: 22,
         borderWidth: 1,
         flex: 1,
-        minHeight: 132,
+        minHeight: 136,
         paddingHorizontal: 12,
         paddingVertical: 13,
       }}
     >
-      <View style={{ alignItems: "flex-start", gap: 10 }}>
+      <View
+        style={{
+          alignItems: "flex-start",
+          flexDirection: "row",
+          gap: 10,
+        }}
+      >
         <View
           style={{
             alignItems: "center",
@@ -198,37 +203,51 @@ function OverviewCard({
             borderRadius: 23,
             height: 36,
             justifyContent: "center",
+            marginTop: 1,
             width: 36,
           }}
         >
           {icon}
         </View>
 
-        <View style={{ gap: 3, minWidth: 0 }}>
+        <View
+          style={{
+            flex: 1,
+            gap: 4,
+            minWidth: 0,
+            paddingTop: 1,
+          }}
+        >
           <Text
             numberOfLines={1}
             style={{
               color: theme.colors.text,
-              fontSize: valueSize,
+              fontSize: 20,
               fontWeight: "700",
               letterSpacing: -0.4,
             }}
           >
             {value}
           </Text>
-          <Text
-            style={{
-              color: theme.colors.textMuted,
-              fontSize: 12.5,
-              lineHeight: 16,
-            }}
-          >
-            {label}
-          </Text>
+          <View style={{ minHeight: 32 }}>
+            {labelLines.map((line) => (
+              <Text
+                key={line}
+                numberOfLines={1}
+                style={{
+                  color: theme.colors.textMuted,
+                  fontSize: 12.5,
+                  lineHeight: 16,
+                }}
+              >
+                {line}
+              </Text>
+            ))}
+          </View>
         </View>
       </View>
 
-      <View style={{ gap: 4, marginTop: "auto" }}>
+      <View style={{ gap: 2, marginTop: "auto", paddingLeft: 46 }}>
         <Text
           style={{
             color: "#4ADE80",
@@ -827,21 +846,18 @@ export function TeacherDashboardScreen() {
             label="Alunos ativos"
             trend="▲ 12%"
             value="28"
-            valueSize={20}
           />
           <OverviewCard
             icon={<BriefcaseBusiness color={theme.colors.primary} size={16} />}
             label={"Planos em\nandamento"}
             trend="▲ 8%"
             value="32"
-            valueSize={20}
           />
           <OverviewCard
             icon={<Wallet color={theme.colors.primary} size={16} />}
             label={"Pagamentos\ndo mês"}
             trend="▲ 15%"
             value={formatCurrency(monthlyRevenue)}
-            valueSize={18}
           />
         </View>
 
