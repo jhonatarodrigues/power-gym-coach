@@ -140,7 +140,7 @@ function SectionLabel({ title, action }: { title: string; action?: string }) {
       <Text
         style={{
           color: theme.colors.text,
-          fontSize: 19,
+          fontSize: 18,
           fontWeight: "600",
           letterSpacing: -0.2,
         }}
@@ -183,30 +183,30 @@ function OverviewCard({
         borderRadius: 22,
         borderWidth: 1,
         flex: 1,
-        minHeight: 154,
-        paddingHorizontal: 16,
-        paddingVertical: 18,
+        minHeight: 142,
+        paddingHorizontal: 14,
+        paddingVertical: 15,
       }}
     >
-      <View style={{ alignItems: "flex-start", gap: 14 }}>
+      <View style={{ alignItems: "flex-start", gap: 12 }}>
         <View
           style={{
             alignItems: "center",
             backgroundColor: "rgba(255,255,255,0.04)",
             borderRadius: 23,
-            height: 46,
+            height: 40,
             justifyContent: "center",
-            width: 46,
+            width: 40,
           }}
         >
           {icon}
         </View>
 
-        <View style={{ gap: 6 }}>
+        <View style={{ gap: 4 }}>
           <Text
             style={{
               color: theme.colors.text,
-              fontSize: 24,
+              fontSize: 21,
               fontWeight: "700",
               letterSpacing: -0.4,
             }}
@@ -216,8 +216,8 @@ function OverviewCard({
           <Text
             style={{
               color: theme.colors.textMuted,
-              fontSize: 15,
-              lineHeight: 21,
+              fontSize: 13.5,
+              lineHeight: 18,
             }}
           >
             {label}
@@ -229,13 +229,13 @@ function OverviewCard({
         <Text
           style={{
             color: "#4ADE80",
-            fontSize: 15,
+            fontSize: 14,
             fontWeight: "700",
           }}
         >
           {trend}
         </Text>
-        <Text style={{ color: theme.colors.textMuted, fontSize: 14 }}>vs mês anterior</Text>
+        <Text style={{ color: theme.colors.textMuted, fontSize: 12.5 }}>vs mês anterior</Text>
       </View>
     </View>
   );
@@ -818,21 +818,21 @@ export function TeacherDashboardScreen() {
 
         <SectionLabel title="Visão geral" />
 
-        <View style={{ flexDirection: "row", gap: 14 }}>
+        <View style={{ flexDirection: "row", gap: 12 }}>
           <OverviewCard
-            icon={<Users color={theme.colors.primary} size={20} />}
+            icon={<Users color={theme.colors.primary} size={18} />}
             label="Alunos ativos"
             trend="▲ 12%"
             value="28"
           />
           <OverviewCard
-            icon={<BriefcaseBusiness color={theme.colors.primary} size={20} />}
+            icon={<BriefcaseBusiness color={theme.colors.primary} size={18} />}
             label={"Planos em\nandamento"}
             trend="▲ 8%"
             value="32"
           />
           <OverviewCard
-            icon={<Wallet color={theme.colors.primary} size={20} />}
+            icon={<Wallet color={theme.colors.primary} size={18} />}
             label={"Pagamentos\ndo mês"}
             trend="▲ 15%"
             value={formatCurrency(monthlyRevenue)}
