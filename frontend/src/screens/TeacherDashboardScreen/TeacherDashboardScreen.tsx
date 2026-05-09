@@ -11,7 +11,7 @@ import {
   Wallet,
 } from "lucide-react-native";
 
-import { Button, Card, Screen, SectionTitle } from "@/components";
+import { BrandLogo, Button, Card, Screen } from "@/components";
 import {
   assessmentReviewsMock,
   examRequestsMock,
@@ -467,11 +467,13 @@ function FeaturedStudentRow({
   name,
   goal,
   planDate,
+  onPress,
   withDivider = false,
 }: {
   name: string;
   goal: string;
   planDate: string;
+  onPress?: () => void;
   withDivider?: boolean;
 }) {
   const { theme } = useAppTheme();
@@ -523,6 +525,15 @@ function FeaturedStudentRow({
             {planDate}
           </Text>
         </View>
+
+        <Button
+          fullWidth={false}
+          label="Abrir planos"
+          onPress={onPress}
+          rightIcon={<ChevronRight color={theme.colors.primary} size={14} />}
+          size="sm"
+          variant="soft"
+        />
       </View>
     </View>
   );
@@ -578,22 +589,7 @@ export function TeacherDashboardScreen() {
               gap: theme.spacing.md,
             }}
           >
-            <View
-              style={{
-                alignItems: "center",
-                backgroundColor: theme.colors.surface,
-                borderColor: theme.colors.border,
-                borderRadius: theme.radius.pill,
-                borderWidth: 1,
-                height: 52,
-                justifyContent: "center",
-                width: 52,
-              }}
-            >
-              <Text style={{ color: theme.colors.primary, fontSize: 28, fontWeight: "800" }}>
-                P
-              </Text>
-            </View>
+            <BrandLogo showWordmark={false} size="lg" />
             <View style={{ flex: 1, gap: 2 }}>
               <Text style={{ color: theme.colors.textMuted, fontSize: theme.typography.body }}>
                 Ola, Coach!
@@ -684,8 +680,8 @@ export function TeacherDashboardScreen() {
           <View
             style={{
               alignItems: "center",
-              backgroundColor: `${theme.colors.primary}14`,
-              borderColor: `${theme.colors.primary}33`,
+              backgroundColor: "#3A271C",
+              borderColor: "#7C4B26",
               borderRadius: theme.radius.md,
               borderWidth: 1,
               flexDirection: "row",
@@ -709,33 +705,44 @@ export function TeacherDashboardScreen() {
           </View>
         </Card>
 
-        <SectionTitle
-          actionLabel="Ver todos"
-          description="Selecione o aluno para abrir planos, dieta, treino e feedback."
-          title="Alunos em destaque"
-        />
+        <View
+          style={{
+            alignItems: "center",
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text
+            style={{
+              color: theme.colors.text,
+              fontSize: theme.typography.subtitle,
+              fontWeight: "700",
+            }}
+          >
+            Alunos em destaque
+          </Text>
+          <Text
+            style={{
+              color: theme.colors.primary,
+              fontSize: theme.typography.body,
+              fontWeight: "700",
+            }}
+          >
+            Ver todos
+          </Text>
+        </View>
 
         <Card>
           <View style={{ gap: theme.spacing.md }}>
             {highlightedStudents.map((student, index) => (
-              <View key={student.name} style={{ gap: theme.spacing.md }}>
-                <FeaturedStudentRow
-                  goal={student.goal}
-                  name={student.name}
-                  planDate={student.planDate}
-                  withDivider={index < highlightedStudents.length - 1}
-                />
-                <View style={{ alignSelf: "flex-end" }}>
-                  <Button
-                    fullWidth={false}
-                    label="Abrir planos"
-                    onPress={() => {}}
-                    rightIcon={<ChevronRight color={theme.colors.primary} size={14} />}
-                    size="sm"
-                    variant="soft"
-                  />
-                </View>
-              </View>
+              <FeaturedStudentRow
+                goal={student.goal}
+                key={student.name}
+                name={student.name}
+                onPress={() => {}}
+                planDate={student.planDate}
+                withDivider={index < highlightedStudents.length - 1}
+              />
             ))}
           </View>
         </Card>
