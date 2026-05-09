@@ -6,10 +6,14 @@ import { Controller, useForm } from "react-hook-form";
 
 import {
   Button,
+  Card,
+  DashboardHero,
   DecisionCard,
   Header,
   JourneyTimelineCard,
+  MiniBarChart,
   PendingAlertCard,
+  ProgressLineCard,
   Screen,
   SectionTitle,
   TextField,
@@ -68,6 +72,9 @@ export function AssessmentScreen() {
   const pendingSubmissions = submissions.filter((item) => item.status === "pending").length;
   const hasReview = Boolean(review);
   const canRequestFollowUpExam = isTeacher && Boolean(submission);
+  const completedCycles = hasReview ? 1 : 0;
+  const reviewProgress = submissions.length > 0 ? completedCycles / submissions.length : 0;
+  const latestSubmissionImages = submission.images.length;
 
   return (
     <Screen>
@@ -76,33 +83,76 @@ export function AssessmentScreen() {
         subtitle="Fluxo mockado de envio de imagens pelo aluno e devolutiva do coach."
       />
 
+      <DashboardHero
+        accentLabel={isTeacher ? "Leitura do coach" : "Sua avaliacao"}
+        eyebrow="Assessment"
+        stats={[
+          { label: "Envios", value: String(submissions.length) },
+          { label: "Pendentes", value: String(pendingSubmissions) },
+          { label: "Revisoes", value: String(completedCycles) },
+        ]}
+        subtitle={
+          isTeacher
+            ? "Visual limpo para entender o que o aluno enviou, o que ainda exige retorno e qual ajuste precisa virar plano."
+            : "Acompanhe seu envio mais recente, o feedback do coach e o que ainda falta para fechar este ciclo."
+        }
+        title={isTeacher ? "Leitura da avaliacao do aluno" : "Seu ciclo de avaliacao"}
+      />
+
+      <ProgressLineCard
+        currentLabel={`${completedCycles}/${submissions.length || 1}`}
+        helper={
+          isTeacher
+            ? "Mostra quantos ciclos ja receberam devolutiva do coach dentro da jornada atual."
+            : "Mostra se o seu envio atual ja recebeu uma devolutiva completa."
+        }
+        progress={reviewProgress}
+        targetLabel="ciclos com devolutiva"
+        title="Andamento da avaliacao"
+        tone={pendingSubmissions > 0 ? "warning" : "success"}
+      />
+
+      <MiniBarChart
+        description="Leitura compacta do ciclo atual de avaliacao."
+        items={[
+          { label: "Fotos", value: latestSubmissionImages, hint: "anexadas" },
+          { label: "Pend.", value: pendingSubmissions, hint: "acoes" },
+          { label: "Rev.", value: completedCycles, hint: "coach" },
+        ]}
+        title="Panorama rapido"
+      />
+
       <SectionTitle
         title={isTeacher ? "Material enviado pelo aluno" : "Seu envio atual"}
         description="Base para avaliacao corporal, ajuste de treino e dieta."
       />
-      <DecisionCard
-        badgeLabel={submission.status === "pending" ? "Pendente" : "Revisado"}
-        description={`Imagens enviadas: ${submission.images.length}`}
-        highlight={submission.description}
-        title={isTeacher ? "Ultimo envio do aluno" : "Seu envio atual"}
-      />
+      <Card>
+        <DecisionCard
+          badgeLabel={submission.status === "pending" ? "Pendente" : "Revisado"}
+          description={`Imagens enviadas: ${submission.images.length}`}
+          highlight={submission.description}
+          title={isTeacher ? "Ultimo envio do aluno" : "Seu envio atual"}
+        />
+      </Card>
 
       <SectionTitle
         title={isTeacher ? "Devolutiva do coach" : "Feedback recebido"}
         description="Resumo e observacoes da ultima avaliacao."
       />
-      <DecisionCard
-        badgeLabel={hasReview ? "Com devolutiva" : "Aguardando"}
-        description={
-          hasReview
-            ? review.observations
-            : "O aluno ja enviou novo material e o proximo ajuste de plano ainda nao foi consolidado."
-        }
-        highlight={
-          hasReview ? review.suggestedChanges : "Aguardando devolutiva do coach"
-        }
-        title={hasReview ? review.summary : "Feedback pendente"}
-      />
+      <Card>
+        <DecisionCard
+          badgeLabel={hasReview ? "Com devolutiva" : "Aguardando"}
+          description={
+            hasReview
+              ? review.observations
+              : "O aluno ja enviou novo material e o proximo ajuste de plano ainda nao foi consolidado."
+          }
+          highlight={
+            hasReview ? review.suggestedChanges : "Aguardando devolutiva do coach"
+          }
+          title={hasReview ? review.summary : "Feedback pendente"}
+        />
+      </Card>
 
       <PendingAlertCard
         actionLabel={isTeacher ? "Abrir formulario de revisao" : "Abrir formulario de envio"}
@@ -121,7 +171,8 @@ export function AssessmentScreen() {
       />
 
       {teacherFormVisible && isTeacher ? (
-        <View style={{ gap: theme.spacing.md }}>
+        <Card>
+          <View style={{ gap: theme.spacing.md }}>
           <SectionTitle
             title="Revisao rapida"
             description="Use este formulario para registrar a devolutiva do coach."
@@ -183,11 +234,13 @@ export function AssessmentScreen() {
               setTeacherFormVisible(false);
             })}
           />
-        </View>
+          </View>
+        </Card>
       ) : null}
 
       {studentFormVisible && !isTeacher ? (
-        <View style={{ gap: theme.spacing.md }}>
+        <Card>
+          <View style={{ gap: theme.spacing.md }}>
           <SectionTitle
             title="Novo envio"
             description="Descreva como foi a resposta ao plano atual antes de enviar."
@@ -223,7 +276,8 @@ export function AssessmentScreen() {
               setStudentFormVisible(false);
             })}
           />
-        </View>
+          </View>
+        </Card>
       ) : null}
 
       <SectionTitle
@@ -245,13 +299,14 @@ export function AssessmentScreen() {
         ))}
       </View>
 
-      <View
-        style={{
-          flexDirection: "row",
-          flexWrap: "wrap",
-          gap: theme.spacing.sm,
-        }}
-      >
+      <Card>
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: theme.spacing.sm,
+          }}
+        >
         {isTeacher ? (
           <>
             <Button
@@ -330,7 +385,8 @@ export function AssessmentScreen() {
             />
           </>
         )}
-      </View>
+        </View>
+      </Card>
     </Screen>
   );
 }

@@ -315,41 +315,56 @@ export function PaymentsScreen() {
           title="Alunos e pagamentos"
           description="Visao rapida de quem ja pagou e quem ainda exige acao."
         />
-        <View style={{ gap: theme.spacing.md }}>
-          {subscriptions.map((subscription) => (
-            (() => {
+        <Card>
+          <View style={{ gap: theme.spacing.md }}>
+            {subscriptions.map((subscription, index) => {
               const relatedPlan = teacherOwnedPlans.find(
                 (plan) => plan.id === subscription.teacherPlanId
               );
 
               return (
-                <Card key={subscription.id}>
-                  <View style={{ gap: theme.spacing.sm }}>
-                    <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
+                <View
+                  key={subscription.id}
+                  style={{
+                    borderBottomColor: index === subscriptions.length - 1 ? "transparent" : theme.colors.border,
+                    borderBottomWidth: index === subscriptions.length - 1 ? 0 : 1,
+                    gap: theme.spacing.sm,
+                    paddingBottom: index === subscriptions.length - 1 ? 0 : theme.spacing.md,
+                  }}
+                >
+                  <View
+                    style={{
+                      alignItems: "center",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      gap: theme.spacing.md,
+                    }}
+                  >
+                    <Text style={{ color: theme.colors.text, flex: 1, fontWeight: "700" }}>
                       Aluna em foco do mock
                     </Text>
                     <StatusBadge
                       label={getPaymentStatusLabel(subscription.status)}
                       tone={getPaymentStatusTone(subscription.status)}
                     />
-                    <Text style={{ color: theme.colors.textMuted }}>
-                      Plano contratado: {relatedPlan?.name ?? "Plano nao encontrado"}
-                    </Text>
-                    <Text style={{ color: theme.colors.textMuted }}>
-                      Entregas: {relatedPlan ? formatIncludedFeatures(relatedPlan) : "--"}
-                    </Text>
-                    <Text style={{ color: theme.colors.textMuted }}>
-                      Proximo vencimento: {formatDateBR(subscription.nextDueDate)}
-                    </Text>
-                    <Text style={{ color: theme.colors.textMuted }}>
-                      Tolerancia ate: {formatDateBR(subscription.graceUntilDate)}
-                    </Text>
                   </View>
-                </Card>
+                  <Text style={{ color: theme.colors.textMuted }}>
+                    Plano contratado: {relatedPlan?.name ?? "Plano nao encontrado"}
+                  </Text>
+                  <Text style={{ color: theme.colors.textMuted }}>
+                    Entregas: {relatedPlan ? formatIncludedFeatures(relatedPlan) : "--"}
+                  </Text>
+                  <Text style={{ color: theme.colors.textMuted }}>
+                    Proximo vencimento: {formatDateBR(subscription.nextDueDate)}
+                  </Text>
+                  <Text style={{ color: theme.colors.textMuted }}>
+                    Tolerancia ate: {formatDateBR(subscription.graceUntilDate)}
+                  </Text>
+                </View>
               );
-            })()
-          ))}
-        </View>
+            })}
+          </View>
+        </Card>
       </Screen>
     );
   }
@@ -452,10 +467,18 @@ export function PaymentsScreen() {
         title="Pendencias abertas"
         description="Escolha Pix ou cartao para regularizar seus pagamentos."
       />
-      <View style={{ gap: theme.spacing.md }}>
-        {openRecords.map((record) => (
-          <Card key={record.id}>
-            <View style={{ gap: theme.spacing.sm }}>
+      <Card>
+        <View style={{ gap: theme.spacing.md }}>
+          {openRecords.map((record, index) => (
+            <View
+              key={record.id}
+              style={{
+                borderBottomColor: index === openRecords.length - 1 ? "transparent" : theme.colors.border,
+                borderBottomWidth: index === openRecords.length - 1 ? 0 : 1,
+                gap: theme.spacing.sm,
+                paddingBottom: index === openRecords.length - 1 ? 0 : theme.spacing.md,
+              }}
+            >
               <Text style={{ color: theme.colors.text, fontWeight: "700" }}>{record.title}</Text>
               <Text style={{ color: theme.colors.textMuted }}>{record.description}</Text>
               <Text style={{ color: theme.colors.textMuted }}>
@@ -483,9 +506,9 @@ export function PaymentsScreen() {
                 />
               </View>
             </View>
-          </Card>
-        ))}
-      </View>
+          ))}
+        </View>
+      </Card>
 
       <SectionTitle
         title="Historico"

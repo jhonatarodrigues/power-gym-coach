@@ -6,9 +6,13 @@ import { Controller, useForm } from "react-hook-form";
 
 import {
   Button,
+  Card,
+  DashboardHero,
   Header,
   JourneyTimelineCard,
+  MiniBarChart,
   PendingAlertCard,
+  ProgressLineCard,
   Screen,
   SectionTitle,
   StatusBadge,
@@ -87,12 +91,48 @@ export function ExamsScreen() {
     },
   });
   const nextUploadTarget = requests.find((request) => request.status !== "reviewed");
+  const completionProgress = requests.length > 0 ? reviewedRequests.length / requests.length : 0;
 
   return (
     <Screen>
       <Header
         title="Exames"
         subtitle="Area mockada para acompanhar solicitacoes, envios e revisoes de exames."
+      />
+
+      <DashboardHero
+        accentLabel={isTeacher ? "Fluxo do coach" : "Seus exames"}
+        eyebrow="Exames"
+        stats={[
+          { label: "Pedidos", value: String(requests.length) },
+          { label: "Pendentes", value: String(pendingRequests.length) },
+          { label: "Revisados", value: String(reviewedRequests.length) },
+        ]}
+        subtitle={
+          isTeacher
+            ? "Acompanhe o que foi solicitado, o que o aluno ja enviou e o que ainda depende de revisao."
+            : "Veja o que ainda precisa ser enviado, o que ja foi anexado e quais exames foram encerrados."
+        }
+        title={isTeacher ? "Leitura dos exames do aluno" : "Seus exames em andamento"}
+      />
+
+      <ProgressLineCard
+        currentLabel={`${reviewedRequests.length}/${requests.length || 1}`}
+        helper="Mostra quantas solicitacoes ja foram fechadas com revisao dentro da jornada atual."
+        progress={completionProgress}
+        targetLabel="solicitacoes revisadas"
+        title="Fechamento do ciclo"
+        tone={pendingRequests.length > 0 || sentRequests.length > 0 ? "warning" : "success"}
+      />
+
+      <MiniBarChart
+        description="Resumo rapido das frentes que ainda exigem acao."
+        items={[
+          { label: "Pend.", value: pendingRequests.length, hint: "coach" },
+          { label: "Enviados", value: sentRequests.length, hint: "aguardando" },
+          { label: "Uploads", value: uploads.length, hint: "arquivos" },
+        ]}
+        title="Panorama dos exames"
       />
 
       <SectionTitle
@@ -116,7 +156,8 @@ export function ExamsScreen() {
       />
 
       {reviewFormVisible && isTeacher && latestSentRequest ? (
-        <View style={{ gap: theme.spacing.md }}>
+        <Card>
+          <View style={{ gap: theme.spacing.md }}>
           <SectionTitle
             title="Revisar exame enviado"
             description="Registre o feedback do coach e feche a solicitacao."
@@ -147,11 +188,13 @@ export function ExamsScreen() {
               setReviewFormVisible(false);
             })}
           />
-        </View>
+          </View>
+        </Card>
       ) : null}
 
       {requestFormVisible && isTeacher ? (
-        <View style={{ gap: theme.spacing.md }}>
+        <Card>
+          <View style={{ gap: theme.spacing.md }}>
           <SectionTitle
             title="Nova solicitacao"
             description="Defina o exame e a orientacao que o aluno deve seguir."
@@ -201,11 +244,13 @@ export function ExamsScreen() {
               setRequestFormVisible(false);
             })}
           />
-        </View>
+          </View>
+        </Card>
       ) : null}
 
       {uploadFormVisible && !isTeacher ? (
-        <View style={{ gap: theme.spacing.md }}>
+        <Card>
+          <View style={{ gap: theme.spacing.md }}>
           <SectionTitle
             title="Novo upload"
             description="Escolha um nome de arquivo mockado para anexar o exame."
@@ -240,7 +285,8 @@ export function ExamsScreen() {
               setUploadFormVisible(false);
             })}
           />
-        </View>
+          </View>
+        </Card>
       ) : null}
 
       <View style={{ gap: theme.spacing.md }}>
@@ -279,53 +325,45 @@ export function ExamsScreen() {
           );
 
           return (
-            <View
-              key={`status-${request.id}`}
-              style={{
-                backgroundColor: theme.colors.surface,
-                borderColor: theme.colors.border,
-                borderRadius: theme.radius.md,
-                borderWidth: 1,
-                gap: theme.spacing.sm,
-                padding: theme.spacing.lg,
-              }}
-            >
-              <StatusBadge
-                label={getStatusLabel(request.status)}
-                tone={
-                  request.status === "pending"
-                    ? "warning"
-                    : request.status === "sent"
-                      ? "info"
-                      : "success"
-                }
-              />
+            <Card key={`status-${request.id}`}>
               <View style={{ gap: theme.spacing.sm }}>
-                <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
-                  {request.title}
-                </Text>
-                <Text style={{ color: theme.colors.textMuted }}>
-                  Solicitado em: {formatDateBR(request.requestedAt)}
-                </Text>
-                <Text style={{ color: theme.colors.textMuted }}>
-                  Uploads vinculados: {requestUploads.length}
-                </Text>
-                {request.reviewNote ? (
-                  <Text style={{ color: theme.colors.primary }}>
-                    Feedback: {request.reviewNote}
+                <StatusBadge
+                  label={getStatusLabel(request.status)}
+                  tone={
+                    request.status === "pending"
+                      ? "warning"
+                      : request.status === "sent"
+                        ? "info"
+                        : "success"
+                  }
+                />
+                <View style={{ gap: theme.spacing.sm }}>
+                  <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
+                    {request.title}
                   </Text>
-                ) : null}
-                {requestUploads.length > 0 ? (
-                  <View style={{ gap: theme.spacing.xs }}>
-                    {requestUploads.map((upload) => (
-                      <Text key={upload.id} style={{ color: theme.colors.primary }}>
-                        {upload.fileName}
-                      </Text>
-                    ))}
-                  </View>
-                ) : null}
+                  <Text style={{ color: theme.colors.textMuted }}>
+                    Solicitado em: {formatDateBR(request.requestedAt)}
+                  </Text>
+                  <Text style={{ color: theme.colors.textMuted }}>
+                    Uploads vinculados: {requestUploads.length}
+                  </Text>
+                  {request.reviewNote ? (
+                    <Text style={{ color: theme.colors.primary }}>
+                      Feedback: {request.reviewNote}
+                    </Text>
+                  ) : null}
+                  {requestUploads.length > 0 ? (
+                    <View style={{ gap: theme.spacing.xs }}>
+                      {requestUploads.map((upload) => (
+                        <Text key={upload.id} style={{ color: theme.colors.primary }}>
+                          {upload.fileName}
+                        </Text>
+                      ))}
+                    </View>
+                  ) : null}
+                </View>
               </View>
-            </View>
+            </Card>
           );
         })}
       </View>
@@ -343,13 +381,14 @@ export function ExamsScreen() {
         ))}
       </View>
 
-      <View
-        style={{
-          flexDirection: "row",
-          flexWrap: "wrap",
-          gap: theme.spacing.sm,
-        }}
-      >
+      <Card>
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: theme.spacing.sm,
+          }}
+        >
         {isTeacher ? (
           <>
             <Button
@@ -405,7 +444,8 @@ export function ExamsScreen() {
             />
           </>
         )}
-      </View>
+        </View>
+      </Card>
 
       {isTeacher ? (
         <View style={{ marginTop: theme.spacing.md }}>
