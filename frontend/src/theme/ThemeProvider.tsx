@@ -4,7 +4,7 @@ import {
   useContext,
   useMemo,
 } from "react";
-import { useColorScheme } from "react-native";
+import { useColorScheme, useWindowDimensions } from "react-native";
 
 import { useThemeStore } from "@/store/useThemeStore";
 import type { AppTheme, ResolvedThemeMode } from "@/types";
@@ -22,12 +22,16 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function AppThemeProvider({ children }: PropsWithChildren) {
   const systemMode = useColorScheme();
+  const { width } = useWindowDimensions();
   const { mode, setMode } = useThemeStore();
 
   const resolvedMode: ResolvedThemeMode =
     mode === "system" ? (systemMode ?? "dark") : mode;
 
-  const theme = useMemo(() => createAppTheme(resolvedMode), [resolvedMode]);
+  const theme = useMemo(
+    () => createAppTheme(resolvedMode, width || 390),
+    [resolvedMode, width]
+  );
 
   const value = useMemo(
     () => ({

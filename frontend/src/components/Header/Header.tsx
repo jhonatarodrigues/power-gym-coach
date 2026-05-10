@@ -78,7 +78,7 @@ export function Header({
               color: theme.colors.text,
               fontSize: theme.typography.title,
               fontWeight: "800",
-              lineHeight: 32,
+              lineHeight: theme.typography.title + 4,
             }}
           >
             {title}
@@ -90,9 +90,9 @@ export function Header({
         <Text
           style={{
             color: theme.colors.textMuted,
-            fontSize: theme.typography.body,
-            lineHeight: 22,
-            maxWidth: 560,
+            fontSize: theme.typography.caption + 1,
+            lineHeight: theme.typography.body + 4,
+            maxWidth: 460,
           }}
         >
           {subtitle}

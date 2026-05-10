@@ -56,8 +56,8 @@ export function Button({
 
   const sizeStyle: ViewStyle = {
     borderRadius: theme.radius.pill,
-    paddingHorizontal: size === "sm" ? theme.spacing.lg : theme.spacing.xl,
-    paddingVertical: size === "sm" ? theme.spacing.sm : theme.spacing.md,
+    paddingHorizontal: size === "sm" ? theme.spacing.md : theme.spacing.lg,
+    paddingVertical: size === "sm" ? 7 : theme.spacing.sm + 2,
   };
 
   const labelStyle: TextStyle = {

@@ -17,10 +17,10 @@ export function Screen({ children, scrollable = true }: ScreenProps) {
         styles.content,
         {
           backgroundColor: theme.colors.background,
-          paddingHorizontal: theme.spacing.lg,
-          paddingTop: theme.spacing.md,
-          paddingBottom: theme.spacing.xxl,
-          gap: theme.spacing.xl,
+          paddingHorizontal: theme.spacing.md,
+          paddingTop: theme.spacing.sm,
+          paddingBottom: theme.spacing.xl + theme.spacing.lg,
+          gap: theme.spacing.lg,
         },
       ]}
     >

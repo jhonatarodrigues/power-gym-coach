@@ -77,7 +77,7 @@ function formatCurrency(value: number) {
   }).format(value);
 }
 
-function createSmoothPath(points: Array<{ x: number; y: number }>) {
+export function createSmoothPath(points: Array<{ x: number; y: number }>) {
   if (points.length === 0) {
     return "";
   }
@@ -113,7 +113,7 @@ function createSmoothPath(points: Array<{ x: number; y: number }>) {
   return path;
 }
 
-function buildAreaPath(points: Array<{ x: number; y: number }>, bottomY: number) {
+export function buildAreaPath(points: Array<{ x: number; y: number }>, bottomY: number) {
   if (points.length === 0) {
     return "";
   }
@@ -176,6 +176,9 @@ function OverviewCard({
   value: string;
 }) {
   const { theme } = useAppTheme();
+  const { width } = useWindowDimensions();
+  const isCompact = width <= 375;
+  const compactIndex = Number(isCompact);
   const labelLines = label.split("\n");
 
   return (
@@ -186,15 +189,15 @@ function OverviewCard({
         borderRadius: 22,
         borderWidth: 1,
         flex: 1,
-        minHeight: 136,
-        paddingHorizontal: 14,
-        paddingVertical: 14,
+        minHeight: [136, 124][compactIndex],
+        paddingHorizontal: [14, 10][compactIndex],
+        paddingVertical: [14, 12][compactIndex],
       }}
     >
       <View
         style={{
           alignItems: "center",
-          gap: 10,
+          gap: [10, 8][compactIndex],
         }}
       >
         <View
@@ -202,9 +205,9 @@ function OverviewCard({
             alignItems: "center",
             backgroundColor: "rgba(255,255,255,0.04)",
             borderRadius: 20,
-            height: 40,
+            height: [40, 34][compactIndex],
             justifyContent: "center",
-            width: 40,
+            width: [40, 34][compactIndex],
           }}
         >
           {icon}
@@ -221,7 +224,7 @@ function OverviewCard({
             numberOfLines={1}
             style={{
               color: theme.colors.text,
-              fontSize: 20,
+              fontSize: [20, 18][compactIndex],
               fontWeight: "700",
               letterSpacing: -0.4,
               textAlign: "center",
@@ -236,8 +239,8 @@ function OverviewCard({
                 numberOfLines={1}
                 style={{
                   color: theme.colors.textMuted,
-                  fontSize: 12.5,
-                  lineHeight: 16,
+                  fontSize: [12.5, 11.5][compactIndex],
+                  lineHeight: [16, 15][compactIndex],
                   textAlign: "center",
                 }}
               >
@@ -252,7 +255,7 @@ function OverviewCard({
         <Text
           style={{
             color: "#4ADE80",
-            fontSize: 13,
+            fontSize: [13, 12][compactIndex],
             fontWeight: "700",
             textAlign: "center",
           }}
@@ -262,7 +265,7 @@ function OverviewCard({
         <Text
           style={{
             color: theme.colors.textMuted,
-            fontSize: 11.5,
+            fontSize: [11.5, 10.5][compactIndex],
             textAlign: "center",
           }}
         >
@@ -276,13 +279,15 @@ function OverviewCard({
 function WeeklyEngagementChart() {
   const { theme } = useAppTheme();
   const { width } = useWindowDimensions();
-  const cardWidth = width - 36;
-  const svgWidth = cardWidth - 32;
-  const svgHeight = 268;
-  const leftAxisWidth = 36;
-  const topPadding = 20;
-  const rightPadding = 10;
-  const bottomPadding = 40;
+  const isCompact = width <= 375;
+  const compactIndex = Number(isCompact);
+  const cardWidth = width - [36, 28][compactIndex];
+  const svgWidth = cardWidth - [32, 24][compactIndex];
+  const svgHeight = [268, 228][compactIndex];
+  const leftAxisWidth = [36, 30][compactIndex];
+  const topPadding = [20, 16][compactIndex];
+  const rightPadding = [10, 8][compactIndex];
+  const bottomPadding = [40, 34][compactIndex];
   const chartWidth = svgWidth - leftAxisWidth - rightPadding;
   const chartHeight = svgHeight - topPadding - bottomPadding;
   const chartBottomY = topPadding + chartHeight;
@@ -297,7 +302,7 @@ function WeeklyEngagementChart() {
   const gridValues = [100, 75, 50, 25, 0];
 
   return (
-    <View style={{ gap: 16 }}>
+    <View style={{ gap: [16, 12][compactIndex] }}>
       <View
         style={{
           alignItems: "center",
@@ -315,20 +320,20 @@ function WeeklyEngagementChart() {
             borderWidth: 1,
             flexDirection: "row",
             gap: 8,
-            paddingHorizontal: 16,
-            paddingVertical: 10,
+            paddingHorizontal: [16, 12][compactIndex],
+            paddingVertical: [10, 8][compactIndex],
           }}
         >
           <Text
             style={{
               color: theme.colors.text,
-              fontSize: 15,
+              fontSize: [15, 13][compactIndex],
               fontWeight: "500",
             }}
           >
             Últimos 7 dias
           </Text>
-          <ChevronDown color={theme.colors.textMuted} size={16} />
+          <ChevronDown color={theme.colors.textMuted} size={[16, 14][compactIndex]} />
         </View>
       </View>
 
@@ -339,8 +344,8 @@ function WeeklyEngagementChart() {
           borderRadius: 24,
           borderWidth: 1,
           overflow: "hidden",
-          paddingHorizontal: 12,
-          paddingVertical: 18,
+          paddingHorizontal: [12, 10][compactIndex],
+          paddingVertical: [18, 14][compactIndex],
         }}
       >
         <Svg height={svgHeight} width={svgWidth}>
@@ -367,7 +372,7 @@ function WeeklyEngagementChart() {
                 />
                 <SvgText
                   fill={theme.colors.textMuted}
-                  fontSize="11"
+                  fontSize={["11", "10"][compactIndex]}
                   x="8"
                   y={y + 4}
                 >
@@ -384,7 +389,7 @@ function WeeklyEngagementChart() {
             stroke={theme.colors.primary}
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth="4"
+            strokeWidth={["4", "3.5"][compactIndex]}
           />
 
           {points.map((point) => (
@@ -393,39 +398,46 @@ function WeeklyEngagementChart() {
               cy={point.y}
               fill={theme.colors.primary}
               key={point.label}
-              r={point.label === selectedPoint?.label ? 6 : 5}
+              r={
+                point.label === selectedPoint?.label
+                  ? [6, 5][compactIndex]
+                  : [5, 4][compactIndex]
+              }
               stroke={theme.colors.surface}
               strokeWidth="3"
             />
           ))}
 
           {selectedPoint ? (
-            <G x={selectedPoint.x - 34} y={selectedPoint.y - 76}>
+            <G
+              x={selectedPoint.x - [34, 28][compactIndex]}
+              y={selectedPoint.y - [76, 68][compactIndex]}
+            >
               <Rect
                 fill="rgba(21,24,27,0.98)"
-                height="52"
+                height={["52", "46"][compactIndex]}
                 rx="10"
                 stroke="rgba(255,255,255,0.08)"
-                width="68"
+                width={["68", "56"][compactIndex]}
                 x="0"
                 y="0"
               />
               <SvgText
                 fill={theme.colors.text}
-                fontSize="16"
+                fontSize={["16", "13"][compactIndex]}
                 fontWeight="700"
                 textAnchor="middle"
-                x="34"
-                y="21"
+                x={["34", "28"][compactIndex]}
+                y={["21", "18"][compactIndex]}
               >
                 {selectedPoint.value}%
               </SvgText>
               <SvgText
                 fill={theme.colors.textMuted}
-                fontSize="12"
+                fontSize={["12", "10"][compactIndex]}
                 textAnchor="middle"
-                x="34"
-                y="38"
+                x={["34", "28"][compactIndex]}
+                y={["38", "33"][compactIndex]}
               >
                 {selectedPoint.label}
               </SvgText>
@@ -435,7 +447,7 @@ function WeeklyEngagementChart() {
           {points.map((point) => (
             <SvgText
               fill={theme.colors.textMuted}
-              fontSize="11"
+              fontSize={["11", "10"][compactIndex]}
               key={`label-${point.label}`}
               textAnchor="middle"
               x={point.x}
@@ -452,9 +464,13 @@ function WeeklyEngagementChart() {
 
 function AverageProgressPanel() {
   const { theme } = useAppTheme();
+  const { width } = useWindowDimensions();
+  const isCompact = width <= 375;
+  const compactIndex = Number(isCompact);
   const progress = 64;
-  const radius = 54;
-  const strokeWidth = 12;
+  const radius = [54, 48][compactIndex];
+  const strokeWidth = [12, 10][compactIndex];
+  const panelDirection = ["row", "column"] as const;
   const normalizedRadius = radius - strokeWidth / 2;
   const circumference = 2 * Math.PI * normalizedRadius;
   const dashOffset = circumference - (progress / 100) * circumference;
@@ -465,7 +481,7 @@ function AverageProgressPanel() {
   ];
 
   return (
-    <View style={{ gap: 16 }}>
+    <View style={{ gap: [16, 12][compactIndex] }}>
       <SectionLabel title="Progresso médio dos alunos" />
       <View
         style={{
@@ -473,32 +489,35 @@ function AverageProgressPanel() {
           borderColor: "rgba(255,255,255,0.06)",
           borderRadius: 24,
           borderWidth: 1,
-          flexDirection: "row",
-          gap: 20,
-          paddingHorizontal: 20,
-          paddingVertical: 20,
+          flexDirection: panelDirection[compactIndex],
+          gap: [20, 14][compactIndex],
+          paddingHorizontal: [20, 14][compactIndex],
+          paddingVertical: [20, 14][compactIndex],
         }}
       >
         <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <Svg height={120} width={120}>
+          <Svg height={[120, 108][compactIndex]} width={[120, 108][compactIndex]}>
             <Defs>
               <LinearGradient id="ringGradient" x1="0" x2="1" y1="0" y2="1">
                 <Stop offset="0%" stopColor="#FF9A3D" />
                 <Stop offset="100%" stopColor="#D27A35" />
               </LinearGradient>
             </Defs>
-            <G rotation="-90" origin="60,60">
+            <G
+              rotation="-90"
+              origin={[`60,60`, `54,54`][compactIndex]}
+            >
               <Circle
-                cx="60"
-                cy="60"
+                cx={["60", "54"][compactIndex]}
+                cy={["60", "54"][compactIndex]}
                 fill="none"
                 r={normalizedRadius}
                 stroke="rgba(255,255,255,0.08)"
                 strokeWidth={strokeWidth}
               />
               <Circle
-                cx="60"
-                cy="60"
+                cx={["60", "54"][compactIndex]}
+                cy={["60", "54"][compactIndex]}
                 fill="none"
                 r={normalizedRadius}
                 stroke="url(#ringGradient)"
@@ -520,17 +539,19 @@ function AverageProgressPanel() {
             <Text
               style={{
                 color: theme.colors.text,
-                fontSize: 24,
+                fontSize: [24, 22][compactIndex],
                 fontWeight: "700",
               }}
             >
               {progress}%
             </Text>
-            <Text style={{ color: theme.colors.textMuted, fontSize: 14 }}>Média geral</Text>
+            <Text style={{ color: theme.colors.textMuted, fontSize: [14, 12][compactIndex] }}>
+              Média geral
+            </Text>
           </View>
         </View>
 
-        <View style={{ flex: 1, gap: 18, justifyContent: "center" }}>
+        <View style={{ flex: 1, gap: [18, 14][compactIndex], justifyContent: "center" }}>
           {metrics.map(({ color, label, value, Icon }) => (
             <View key={label} style={{ gap: 8 }}>
               <View
@@ -545,18 +566,18 @@ function AverageProgressPanel() {
                     alignItems: "center",
                     backgroundColor: "rgba(255,255,255,0.04)",
                     borderRadius: 16,
-                    height: 32,
+                    height: [32, 28][compactIndex],
                     justifyContent: "center",
-                    width: 32,
+                    width: [32, 28][compactIndex],
                   }}
                 >
-                  <Icon color={color} size={16} />
+                  <Icon color={color} size={[16, 14][compactIndex]} />
                 </View>
                 <Text
                   style={{
                     color: theme.colors.text,
                     flex: 1,
-                    fontSize: 15,
+                    fontSize: [15, 14][compactIndex],
                     fontWeight: "500",
                   }}
                 >
@@ -565,7 +586,7 @@ function AverageProgressPanel() {
                 <Text
                   style={{
                     color: theme.colors.text,
-                    fontSize: 15,
+                    fontSize: [15, 14][compactIndex],
                     fontWeight: "600",
                   }}
                 >
@@ -578,7 +599,7 @@ function AverageProgressPanel() {
                   backgroundColor: "rgba(255,255,255,0.08)",
                   borderRadius: 999,
                   height: 7,
-                  marginLeft: 44,
+                  marginLeft: [44, 38][compactIndex],
                   overflow: "hidden",
                 }}
               >
@@ -601,6 +622,9 @@ function AverageProgressPanel() {
 
 function PendingPaymentsBanner({ count }: { count: number }) {
   const { theme } = useAppTheme();
+  const { width } = useWindowDimensions();
+  const isCompact = width <= 375;
+  const compactIndex = Number(isCompact);
 
   return (
     <View
@@ -610,9 +634,9 @@ function PendingPaymentsBanner({ count }: { count: number }) {
         borderRadius: 22,
         borderWidth: 1,
         flexDirection: "row",
-        gap: 16,
-        paddingHorizontal: 20,
-        paddingVertical: 18,
+        gap: [16, 12][compactIndex],
+        paddingHorizontal: [20, 14][compactIndex],
+        paddingVertical: [18, 14][compactIndex],
       }}
     >
       <View
@@ -621,26 +645,26 @@ function PendingPaymentsBanner({ count }: { count: number }) {
           justifyContent: "center",
         }}
       >
-        <TriangleAlert color={theme.colors.primary} size={28} />
+        <TriangleAlert color={theme.colors.primary} size={[28, 24][compactIndex]} />
       </View>
 
       <View style={{ flex: 1, gap: 2 }}>
         <Text
           style={{
             color: theme.colors.text,
-            fontSize: 17,
+            fontSize: [17, 15][compactIndex],
             fontWeight: "600",
           }}
         >
           {count} aluno{count > 1 ? "s" : ""} com pagamento pendente
         </Text>
-        <Text style={{ color: "rgba(243,244,246,0.72)", fontSize: 15 }}>
+        <Text style={{ color: "rgba(243,244,246,0.72)", fontSize: [15, 13][compactIndex] }}>
           Acesse para ver os detalhes
         </Text>
       </View>
 
       <View style={{ justifyContent: "center" }}>
-        <ChevronRight color={theme.colors.primary} size={24} />
+        <ChevronRight color={theme.colors.primary} size={[24, 20][compactIndex]} />
       </View>
     </View>
   );
@@ -660,21 +684,24 @@ function FeaturedStudentItem({
   withDivider: boolean;
 }) {
   const { theme } = useAppTheme();
+  const { width } = useWindowDimensions();
+  const isCompact = width <= 375;
+  const compactIndex = Number(isCompact);
 
   return (
     <View
       style={{
         borderBottomColor: withDivider ? "rgba(255,255,255,0.06)" : "transparent",
         borderBottomWidth: withDivider ? 1 : 0,
-        paddingHorizontal: 18,
-        paddingVertical: 13,
+        paddingHorizontal: [18, 14][compactIndex],
+        paddingVertical: [13, 11][compactIndex],
       }}
     >
       <View
         style={{
           alignItems: "center",
           flexDirection: "row",
-          gap: 12,
+          gap: [12, 10][compactIndex],
         }}
       >
         <Image
@@ -683,23 +710,23 @@ function FeaturedStudentItem({
             borderColor: "rgba(255,255,255,0.08)",
             borderRadius: 22,
             borderWidth: 1,
-            height: 44,
-            width: 44,
+            height: [44, 40][compactIndex],
+            width: [44, 40][compactIndex],
           }}
         />
 
-        <View style={{ flex: 1, gap: 2, minWidth: 0, paddingRight: 6 }}>
+        <View style={{ flex: 1, gap: 2, minWidth: 0, paddingRight: [6, 4][compactIndex] }}>
           <Text
             numberOfLines={1}
             style={{
               color: theme.colors.text,
-              fontSize: 15,
+              fontSize: [15, 14][compactIndex],
               fontWeight: "600",
             }}
           >
             {name}
           </Text>
-          <Text numberOfLines={1} style={{ color: theme.colors.textMuted, fontSize: 13.5 }}>
+          <Text numberOfLines={1} style={{ color: theme.colors.textMuted, fontSize: [13.5, 12.5][compactIndex] }}>
             Objetivo: <Text style={{ color: theme.colors.primary }}>{goal}</Text>
           </Text>
         </View>
@@ -707,13 +734,17 @@ function FeaturedStudentItem({
         <View
           style={{
             alignItems: "flex-end",
-            gap: 8,
-            minWidth: 118,
+            gap: [8, 6][compactIndex],
+            minWidth: [118, 104][compactIndex],
           }}
         >
           <View style={{ alignItems: "flex-end", gap: 2 }}>
-            <Text style={{ color: theme.colors.textMuted, fontSize: 12.5 }}>Plano atual</Text>
-            <Text style={{ color: theme.colors.text, fontSize: 13.5 }}>{planDate}</Text>
+            <Text style={{ color: theme.colors.textMuted, fontSize: [12.5, 11.5][compactIndex] }}>
+              Plano atual
+            </Text>
+            <Text style={{ color: theme.colors.text, fontSize: [13.5, 12.5][compactIndex] }}>
+              {planDate}
+            </Text>
           </View>
 
           <Pressable
@@ -725,20 +756,20 @@ function FeaturedStudentItem({
               borderWidth: 1,
               flexDirection: "row",
               gap: 6,
-              paddingHorizontal: 12,
-              paddingVertical: 7,
+              paddingHorizontal: [12, 10][compactIndex],
+              paddingVertical: [7, 6][compactIndex],
             }}
           >
             <Text
               style={{
                 color: theme.colors.primary,
-                fontSize: 13.5,
+                fontSize: [13.5, 12.5][compactIndex],
                 fontWeight: "600",
               }}
             >
               Abrir planos
             </Text>
-            <ChevronRight color={theme.colors.primary} size={14} />
+            <ChevronRight color={theme.colors.primary} size={[14, 13][compactIndex]} />
           </Pressable>
         </View>
       </View>
@@ -748,9 +779,12 @@ function FeaturedStudentItem({
 
 export function TeacherDashboardScreen() {
   const { theme } = useAppTheme();
+  const { width } = useWindowDimensions();
   const navigation = useNavigation();
   const { currentUser } = useMockAuth();
   const { getTeacherExpectedRevenue, subscriptions } = usePayments();
+  const isCompact = width <= 375;
+  const compactIndex = Number(isCompact);
   const teacher = currentUser();
   const coachName = teacher?.name.split(" ")[0] ?? "Coach";
   const pendingPayments = Math.max(
@@ -764,12 +798,13 @@ export function TeacherDashboardScreen() {
 
   return (
     <Screen>
-      <View style={{ gap: 22 }}>
+      <View style={{ gap: [22, 18][compactIndex] }}>
         <View
           style={{
             alignItems: "flex-start",
             flexDirection: "row",
             justifyContent: "space-between",
+            gap: [16, 10][compactIndex],
           }}
         >
           <View
@@ -810,21 +845,21 @@ export function TeacherDashboardScreen() {
               style={{
                 alignItems: "center",
                 flexDirection: "row",
-                gap: 14,
+                gap: [14, 10][compactIndex],
               }}
             >
               <Image
                 source={brandSymbol}
                 style={{
-                  height: 62,
-                  width: 62,
+                  height: [62, 50][compactIndex],
+                  width: [62, 50][compactIndex],
                 }}
               />
               <View style={{ flex: 1, gap: 2 }}>
               <Text
                 style={{
                   color: "rgba(243,244,246,0.75)",
-                  fontSize: 17,
+                  fontSize: [17, 15][compactIndex],
                   fontWeight: "400",
                 }}
               >
@@ -833,7 +868,7 @@ export function TeacherDashboardScreen() {
               <Text
                 style={{
                   color: theme.colors.text,
-                  fontSize: 27,
+                  fontSize: [27, 22][compactIndex],
                   fontWeight: "700",
                   letterSpacing: -0.8,
                 }}
@@ -844,27 +879,27 @@ export function TeacherDashboardScreen() {
             </View>
           </View>
 
-          <View style={{ alignItems: "center", flexDirection: "row", gap: 16 }}>
+          <View style={{ alignItems: "center", flexDirection: "row", gap: [16, 10][compactIndex] }}>
             <View
               style={{
                 alignItems: "center",
-                height: 46,
+                height: [46, 40][compactIndex],
                 justifyContent: "center",
-                width: 34,
+                width: [34, 30][compactIndex],
               }}
             >
-              <Bell color="rgba(243,244,246,0.82)" size={28} />
+              <Bell color="rgba(243,244,246,0.82)" size={[28, 22][compactIndex]} />
               <View
                 style={{
-                  backgroundColor: theme.colors.primary,
-                  borderRadius: 999,
-                  height: 8,
-                  position: "absolute",
-                  right: 4,
-                  top: 7,
-                  width: 8,
-                }}
-              />
+                backgroundColor: theme.colors.primary,
+                borderRadius: 999,
+                height: 7,
+                position: "absolute",
+                right: [4, 3][compactIndex],
+                top: [7, 6][compactIndex],
+                width: 7,
+              }}
+            />
             </View>
 
             <Image
@@ -877,8 +912,8 @@ export function TeacherDashboardScreen() {
                 borderColor: "rgba(255,255,255,0.08)",
                 borderRadius: 28,
                 borderWidth: 1,
-                height: 56,
-                width: 56,
+                height: [56, 48][compactIndex],
+                width: [56, 48][compactIndex],
               }}
             />
           </View>
@@ -886,7 +921,7 @@ export function TeacherDashboardScreen() {
 
         <SectionLabel title="Visão geral" />
 
-        <View style={{ flexDirection: "row", gap: 10 }}>
+        <View style={{ flexDirection: "row", gap: [10, 8][compactIndex] }}>
           <OverviewCard
             icon={<Users color={theme.colors.primary} size={16} />}
             label="Alunos ativos"
