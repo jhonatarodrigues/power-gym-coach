@@ -1,42 +1,38 @@
 import { useState } from "react";
 import { Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { Controller, useForm } from "react-hook-form";
+import {
+  Apple,
+  CreditCard,
+  DollarSign,
+  House,
+  Menu,
+  MessageSquare,
+  Wallet,
+  Users,
+  ClipboardList,
+} from "lucide-react-native";
 
 import {
+  AppBottomNav,
+  AppChrome,
+  AppTopBar,
   Button,
-  Card,
-  DashboardHero,
-  Header,
-  MiniBarChart,
-  ProgressLineCard,
-  Screen,
-  SectionTitle,
-  StatusBadge,
+  PaymentSummaryCard,
   TextField,
 } from "@/components";
 import { useMockAuth } from "@/hooks/useMockAuth";
 import { usePayments } from "@/hooks/usePayments";
 import { useAppTheme } from "@/theme";
-import type { BillingCycle, TeacherPlanDefinition, TeacherPlanFeature } from "@/types";
+import type { BillingCycle, TeacherPlanFeature } from "@/types";
 import { formatDateBR } from "@/utils/dates";
-import { formatCurrency, getPaymentStatusLabel, getPaymentStatusTone } from "@/utils/payments";
+import { formatCurrency } from "@/utils/payments";
 
 interface TeacherPlanFormValues {
   name: string;
   monthlyAmount: string;
   description: string;
-}
-
-function getBillingCycleLabel(cycle: BillingCycle) {
-  if (cycle === "monthly") {
-    return "Mensal";
-  }
-
-  if (cycle === "quarterly") {
-    return "Trimestral";
-  }
-
-  return "Anual";
 }
 
 function getFeatureLabel(feature: TeacherPlanFeature) {
@@ -51,35 +47,41 @@ function getFeatureLabel(feature: TeacherPlanFeature) {
   return "Avaliacao";
 }
 
-function formatIncludedFeatures(plan: TeacherPlanDefinition) {
-  return plan.includedFeatures.map(getFeatureLabel).join(", ");
+function getCycleLabel(cycle: BillingCycle) {
+  if (cycle === "monthly") {
+    return "Mensal";
+  }
+
+  if (cycle === "quarterly") {
+    return "Trimestral";
+  }
+
+  return "Anual";
 }
 
 export function PaymentsScreen() {
   const { theme } = useAppTheme();
+  const navigation = useNavigation();
   const { session } = useMockAuth();
   const {
     addTeacherPlan,
     getOpenRecordsByUser,
-    getPaymentStatusByStudent,
-    getTeacherPlansByTeacher,
     getTeacherExpectedRevenue,
+    getTeacherPlansByTeacher,
     payRecord,
     paymentRecords,
     subscriptions,
-    teacherPlans,
   } = usePayments();
-
-  const currentUser = session.currentUser;
   const isTeacher = session.accessLevel === "teacher";
+  const currentUser = session.currentUser;
   const [planFormVisible, setPlanFormVisible] = useState(false);
-  const [selectedBillingCycle, setSelectedBillingCycle] =
-    useState<BillingCycle>("monthly");
+  const [selectedBillingCycle, setSelectedBillingCycle] = useState<BillingCycle>("monthly");
   const [selectedFeatures, setSelectedFeatures] = useState<TeacherPlanFeature[]>([
     "diet",
     "training",
+    "assessment",
   ]);
-  const planForm = useForm<TeacherPlanFormValues>({
+  const form = useForm<TeacherPlanFormValues>({
     defaultValues: {
       name: "",
       monthlyAmount: "",
@@ -91,443 +93,399 @@ export function PaymentsScreen() {
     return null;
   }
 
-  const openRecords = getOpenRecordsByUser(currentUser.id);
-
   if (isTeacher) {
     const expectedRevenue = getTeacherExpectedRevenue(currentUser.id);
-    const teacherOwnedPlans = getTeacherPlansByTeacher(currentUser.id);
-    const teacherRecords = paymentRecords.filter(
-      (record) => record.teacherId === currentUser.id && record.kind === "studentPlan"
+    const teacherPlans = getTeacherPlansByTeacher(currentUser.id);
+    const openCharges = paymentRecords.filter(
+      (record) => record.teacherId === currentUser.id && record.status !== "paid"
     );
-    const paidStudents = teacherRecords.filter((record) => record.status === "paid").length;
-    const lateStudents = subscriptions.filter((subscription) => subscription.status === "gracePeriod")
-      .length;
 
     return (
-      <Screen>
-        <Header
+      <AppChrome
+        footer={
+          <AppBottomNav
+            items={[
+              {
+                key: "dashboard",
+                label: "Dashboard",
+                icon: <House color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+                onPress: () => navigation.navigate("TeacherHome" as never),
+              },
+              {
+                key: "students",
+                label: "Alunos",
+                icon: <Users color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+                onPress: () => navigation.navigate("TeacherStudent" as never),
+              },
+              {
+                key: "plans",
+                label: "Planos",
+                icon: <ClipboardList color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+                onPress: () => navigation.navigate("CoachStudentPlans" as never),
+              },
+              {
+                key: "payments",
+                label: "Pagamentos",
+                active: true,
+                icon: <CreditCard color={theme.colors.primary} size={21} strokeWidth={2.1} />,
+              },
+              {
+                key: "more",
+                label: "Mais",
+                icon: <Menu color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+                onPress: () => navigation.navigate("TeacherProfile" as never),
+              },
+            ]}
+          />
+        }
+      >
+        <AppTopBar
+          onBackPress={() => navigation.goBack()}
+          showAvatar={false}
+          showBack
+          showBell={false}
           title="Pagamentos"
-          subtitle="Acompanhe previsao de recebimento, alunos pagantes e os planos cadastrados pelo coach."
         />
 
-        <DashboardHero
-          accentLabel="Financeiro do coach"
-          eyebrow="Pagamentos"
-          stats={[
-            { label: "Previsto", value: formatCurrency(expectedRevenue) },
-            { label: "Pagos", value: String(paidStudents) },
-            { label: "Planos", value: String(teacherOwnedPlans.length) },
-          ]}
-          subtitle="Financeiro mais limpo para entender previsao, alunos adimplentes e os planos comerciais ativos."
-          title="Controle financeiro mais claro"
-        />
+        <View style={{ flexDirection: "row", gap: 10 }}>
+          <PaymentSummaryCard
+            icon={<Wallet color="#69C15D" size={17} strokeWidth={2.2} />}
+            label="Receita no mês"
+            value={formatCurrency(expectedRevenue)}
+          />
+          <PaymentSummaryCard
+            icon={<DollarSign color={theme.colors.primary} size={17} strokeWidth={2.2} />}
+            label="Pendentes"
+            value={formatCurrency(1240)}
+          />
+          <PaymentSummaryCard
+            icon={<CreditCard color="#4A91F3" size={17} strokeWidth={2.2} />}
+            label="Pagos este mês"
+            value="26"
+          />
+        </View>
 
-        <ProgressLineCard
-          currentLabel={`${paidStudents}/${teacherRecords.length || 0}`}
-          helper="Relacao entre pagamentos confirmados e cobrancas do plano do coach."
-          progress={teacherRecords.length > 0 ? paidStudents / teacherRecords.length : 0}
-          targetLabel="parcelas liquidadas"
-          title="Saude do recebimento"
-        />
-
-        <MiniBarChart
-          description="Mini grafico para leitura imediata das frentes mais relevantes do financeiro."
-          items={[
-            { label: "Planos", value: teacherOwnedPlans.length, hint: "ativos" },
-            { label: "Pagos", value: paidStudents, hint: "ok" },
-            { label: "Atraso", value: lateStudents, hint: "alerta" },
-          ]}
-          title="Panorama financeiro"
-        />
-
-        <SectionTitle
-          title="Cadastro de planos"
-          description="Defina os planos que voce oferece e o que o aluno recebe em cada um."
-        />
-        <View style={{ gap: theme.spacing.md }}>
-          <View style={{ alignSelf: "flex-start" }}>
-            <Button
-              fullWidth={false}
-              label={planFormVisible ? "Fechar cadastro de plano" : "Cadastrar novo plano"}
-              onPress={() => setPlanFormVisible((current) => !current)}
-              size="sm"
-            />
+        <View
+          style={{
+            backgroundColor: theme.colors.surface,
+            borderColor: "rgba(255,255,255,0.06)",
+            borderRadius: 22,
+            borderWidth: 1,
+            gap: 14,
+            padding: 16,
+          }}
+        >
+          <View style={{ alignItems: "center", flexDirection: "row", justifyContent: "space-between" }}>
+            <Text style={{ color: theme.colors.text, fontSize: 16, fontWeight: "600" }}>
+              Cobranças em aberto
+            </Text>
+            <Text style={{ color: theme.colors.primary, fontSize: 12.5, fontWeight: "600" }}>
+              Ver todos
+            </Text>
           </View>
-          {planFormVisible ? (
-            <Card>
-              <View style={{ gap: theme.spacing.md }}>
-                <Controller
-                  control={planForm.control}
-                  name="name"
-                  rules={{ required: true }}
-                  render={({ field: { onBlur, onChange, value } }) => (
-                    <TextField
-                      label="Nome do plano"
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      placeholder="Ex.: Plano premium"
-                      value={value}
-                    />
-                  )}
-                />
-                <Controller
-                  control={planForm.control}
-                  name="monthlyAmount"
-                  rules={{ required: true }}
-                  render={({ field: { onBlur, onChange, value } }) => (
-                    <TextField
-                      keyboardType="decimal-pad"
-                      label="Valor mensal"
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      placeholder="199.90"
-                      value={value}
-                    />
-                  )}
-                />
-                <Controller
-                  control={planForm.control}
-                  name="description"
-                  render={({ field: { onBlur, onChange, value } }) => (
-                    <TextField
-                      label="Descricao"
-                      multiline
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      placeholder="Explique a proposta comercial deste plano."
-                      value={value}
-                    />
-                  )}
-                />
-
-                <View style={{ gap: theme.spacing.sm }}>
-                  <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
-                    Ciclo de cobranca
-                  </Text>
-                  <View style={{ flexDirection: "row", flexWrap: "wrap", gap: theme.spacing.sm }}>
-                    <Button
-                      fullWidth={false}
-                      label="Mensal"
-                      onPress={() => setSelectedBillingCycle("monthly")}
-                      size="sm"
-                      variant={selectedBillingCycle === "monthly" ? "primary" : "soft"}
-                    />
-                    <Button
-                      fullWidth={false}
-                      label="Trimestral"
-                      onPress={() => setSelectedBillingCycle("quarterly")}
-                      size="sm"
-                      variant={selectedBillingCycle === "quarterly" ? "primary" : "soft"}
-                    />
-                    <Button
-                      fullWidth={false}
-                      label="Anual"
-                      onPress={() => setSelectedBillingCycle("yearly")}
-                      size="sm"
-                      variant={selectedBillingCycle === "yearly" ? "primary" : "soft"}
-                    />
-                  </View>
-                </View>
-
-                <View style={{ gap: theme.spacing.sm }}>
-                  <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
-                    O aluno recebe neste plano
-                  </Text>
-                  <View style={{ flexDirection: "row", flexWrap: "wrap", gap: theme.spacing.sm }}>
-                    {(["diet", "training", "assessment"] as TeacherPlanFeature[]).map(
-                      (feature) => {
-                        const active = selectedFeatures.includes(feature);
-
-                        return (
-                          <Button
-                            fullWidth={false}
-                            key={feature}
-                            label={getFeatureLabel(feature)}
-                            onPress={() =>
-                              setSelectedFeatures((current) =>
-                                active
-                                  ? current.filter((item) => item !== feature)
-                                  : [...current, feature]
-                              )
-                            }
-                            size="sm"
-                            variant={active ? "primary" : "soft"}
-                          />
-                        );
-                      }
-                    )}
-                  </View>
-                </View>
-
-                <Button
-                  label="Salvar plano comercial"
-                  onPress={planForm.handleSubmit((values) => {
-                    const parsedAmount = Number(values.monthlyAmount.replace(",", "."));
-
-                    if (!parsedAmount || selectedFeatures.length === 0) {
-                      return;
-                    }
-
-                    addTeacherPlan({
-                      teacherId: currentUser.id,
-                      name: values.name,
-                      billingCycle: selectedBillingCycle,
-                      monthlyAmount: parsedAmount,
-                      description: values.description,
-                      includedFeatures: selectedFeatures,
-                    });
-                    planForm.reset();
-                    setSelectedBillingCycle("monthly");
-                    setSelectedFeatures(["diet", "training"]);
-                    setPlanFormVisible(false);
-                  })}
-                />
-              </View>
-            </Card>
-          ) : null}
-        </View>
-
-        <SectionTitle
-          title="Planos do coach"
-          description="Mensal, trimestral e anual sempre cobrados mes a mes, com entregas definidas por plano."
-        />
-        <View style={{ gap: theme.spacing.md }}>
-          {teacherOwnedPlans.map((plan) => (
-            <Card key={plan.id}>
-              <View style={{ gap: theme.spacing.sm }}>
-                <Text style={{ color: theme.colors.text, fontWeight: "700" }}>{plan.name}</Text>
-                <Text style={{ color: theme.colors.textMuted }}>
-                  Ciclo: {getBillingCycleLabel(plan.billingCycle)}
-                </Text>
-                <Text style={{ color: theme.colors.textMuted }}>{plan.description}</Text>
-                <Text style={{ color: theme.colors.textMuted }}>
-                  Entregas: {formatIncludedFeatures(plan)}
-                </Text>
-                <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
-                  {formatCurrency(plan.monthlyAmount)}/mes
-                </Text>
-              </View>
-            </Card>
-          ))}
-        </View>
-
-        <SectionTitle
-          title="Alunos e pagamentos"
-          description="Visao rapida de quem ja pagou e quem ainda exige acao."
-        />
-        <Card>
-          <View style={{ gap: theme.spacing.md }}>
-            {subscriptions.map((subscription, index) => {
-              const relatedPlan = teacherOwnedPlans.find(
-                (plan) => plan.id === subscription.teacherPlanId
-              );
-
-              return (
+          <View style={{ gap: 12 }}>
+            {openCharges.slice(0, 2).map((record) => (
+              <View
+                key={record.id}
+                style={{
+                  alignItems: "center",
+                  flexDirection: "row",
+                  gap: 10,
+                }}
+              >
                 <View
-                  key={subscription.id}
                   style={{
-                    borderBottomColor: index === subscriptions.length - 1 ? "transparent" : theme.colors.border,
-                    borderBottomWidth: index === subscriptions.length - 1 ? 0 : 1,
-                    gap: theme.spacing.sm,
-                    paddingBottom: index === subscriptions.length - 1 ? 0 : theme.spacing.md,
+                    alignItems: "center",
+                    backgroundColor: "rgba(255,255,255,0.04)",
+                    borderRadius: theme.radius.pill,
+                    height: 38,
+                    justifyContent: "center",
+                    width: 38,
                   }}
                 >
-                  <View
-                    style={{
-                      alignItems: "center",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      gap: theme.spacing.md,
-                    }}
-                  >
-                    <Text style={{ color: theme.colors.text, flex: 1, fontWeight: "700" }}>
-                      Aluna em foco do mock
-                    </Text>
-                    <StatusBadge
-                      label={getPaymentStatusLabel(subscription.status)}
-                      tone={getPaymentStatusTone(subscription.status)}
-                    />
-                  </View>
-                  <Text style={{ color: theme.colors.textMuted }}>
-                    Plano contratado: {relatedPlan?.name ?? "Plano nao encontrado"}
+                  <CreditCard color={theme.colors.primary} size={16} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: theme.colors.text, fontSize: 13.5, fontWeight: "600" }}>
+                    {record.userId === "user-student-1" ? "Juliana Mendes" : "Rafael Souza"}
                   </Text>
-                  <Text style={{ color: theme.colors.textMuted }}>
-                    Entregas: {relatedPlan ? formatIncludedFeatures(relatedPlan) : "--"}
-                  </Text>
-                  <Text style={{ color: theme.colors.textMuted }}>
-                    Proximo vencimento: {formatDateBR(subscription.nextDueDate)}
-                  </Text>
-                  <Text style={{ color: theme.colors.textMuted }}>
-                    Tolerancia ate: {formatDateBR(subscription.graceUntilDate)}
+                  <Text style={{ color: theme.colors.textMuted, fontSize: 11.5 }}>
+                    Vencimento: {formatDateBR(record.dueDate)}
                   </Text>
                 </View>
-              );
-            })}
-          </View>
-        </Card>
-      </Screen>
-    );
-  }
-
-  const currentStatus = getPaymentStatusByStudent(currentUser.id);
-  const currentSubscription = subscriptions.find(
-    (subscription) => subscription.studentId === currentUser.id
-  );
-  const currentTeacherPlan = teacherPlans.find(
-    (plan) => plan.id === currentSubscription?.teacherPlanId
-  );
-
-  return (
-    <Screen>
-      <Header
-        title="Seus pagamentos"
-        subtitle="Acompanhe a mensalidade da plataforma e a cobranca do seu plano com o coach."
-      />
-
-      <DashboardHero
-        accentLabel="Financeiro do aluno"
-        eyebrow="Conta"
-        stats={[
-          { label: "Pendencias", value: String(openRecords.length) },
-          { label: "Plano", value: currentTeacherPlan ? formatCurrency(currentTeacherPlan.monthlyAmount) : "--" },
-          { label: "Plataforma", value: "R$ 10,00" },
-        ]}
-        subtitle="Visao simples para entender sua situacao atual, o plano contratado e o que ainda precisa ser pago."
-        title="Seus pagamentos em leitura rapida"
-      />
-
-      {currentStatus ? (
-        <Card>
-          <View style={{ gap: theme.spacing.sm }}>
-            <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
-              Situacao atual da conta
-            </Text>
-            <StatusBadge
-              label={getPaymentStatusLabel(currentStatus)}
-              tone={getPaymentStatusTone(currentStatus)}
-            />
-            <Text style={{ color: theme.colors.textMuted }}>
-              Em caso de atraso, voce tem 3 dias para regularizar antes da inativacao.
-            </Text>
-          </View>
-        </Card>
-      ) : null}
-
-      <ProgressLineCard
-        currentLabel={`${openRecords.length}`}
-        helper="Quantidade de cobrancas abertas no momento para regularizar sua conta."
-        progress={Math.max(0, 1 - openRecords.length / 3)}
-        targetLabel="nivel de regularizacao"
-        title="Situacao da conta"
-        tone={openRecords.length > 0 ? "warning" : "success"}
-      />
-
-      {currentTeacherPlan ? (
-        <Card>
-          <View style={{ gap: theme.spacing.sm }}>
-            <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
-              Seu plano com o coach
-            </Text>
-            <Text style={{ color: theme.colors.textMuted }}>{currentTeacherPlan.name}</Text>
-            <Text style={{ color: theme.colors.textMuted }}>
-              Entregas inclusas: {formatIncludedFeatures(currentTeacherPlan)}
-            </Text>
-            <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
-              {formatCurrency(currentTeacherPlan.monthlyAmount)}/mes
-            </Text>
-          </View>
-        </Card>
-      ) : null}
-
-      <MiniBarChart
-        description="Leitura compacta dos registros pagos e do que ainda esta aberto."
-        items={[
-          {
-            label: "Abertos",
-            value: openRecords.length,
-            hint: "agora",
-          },
-          {
-            label: "Pagos",
-            value: paymentRecords.filter(
-              (record) => record.userId === currentUser.id && record.status === "paid"
-            ).length,
-            hint: "hist.",
-          },
-          {
-            label: "Plano",
-            value: currentTeacherPlan ? Math.round(currentTeacherPlan.monthlyAmount) : 0,
-            hint: "R$",
-          },
-        ]}
-        title="Panorama da conta"
-      />
-
-      <SectionTitle
-        title="Pendencias abertas"
-        description="Escolha Pix ou cartao para regularizar seus pagamentos."
-      />
-      <Card>
-        <View style={{ gap: theme.spacing.md }}>
-          {openRecords.map((record, index) => (
-            <View
-              key={record.id}
-              style={{
-                borderBottomColor: index === openRecords.length - 1 ? "transparent" : theme.colors.border,
-                borderBottomWidth: index === openRecords.length - 1 ? 0 : 1,
-                gap: theme.spacing.sm,
-                paddingBottom: index === openRecords.length - 1 ? 0 : theme.spacing.md,
-              }}
-            >
-              <Text style={{ color: theme.colors.text, fontWeight: "700" }}>{record.title}</Text>
-              <Text style={{ color: theme.colors.textMuted }}>{record.description}</Text>
-              <Text style={{ color: theme.colors.textMuted }}>
-                Referencia: {record.referenceMonth}
-              </Text>
-              <Text style={{ color: theme.colors.textMuted }}>
-                Vencimento: {formatDateBR(record.dueDate)}
-              </Text>
-              <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
-                {formatCurrency(record.amount)}
-              </Text>
-              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: theme.spacing.sm }}>
+                <Text style={{ color: theme.colors.text, fontSize: 13, fontWeight: "600" }}>
+                  {formatCurrency(record.amount)}
+                </Text>
                 <Button
                   fullWidth={false}
-                  label="Pagar com Pix"
+                  label="Pagar"
                   onPress={() => payRecord(record.id, "pix")}
                   size="sm"
                 />
-                <Button
-                  fullWidth={false}
-                  label="Pagar com cartao"
-                  onPress={() => payRecord(record.id, "card")}
-                  size="sm"
-                  variant="soft"
-                />
               </View>
+            ))}
+          </View>
+        </View>
+
+        <View
+          style={{
+            backgroundColor: theme.colors.surface,
+            borderColor: "rgba(255,255,255,0.06)",
+            borderRadius: 22,
+            borderWidth: 1,
+            gap: 14,
+            padding: 16,
+          }}
+        >
+          <View style={{ alignItems: "center", flexDirection: "row", justifyContent: "space-between" }}>
+            <Text style={{ color: theme.colors.text, fontSize: 16, fontWeight: "600" }}>
+              Planos oferecidos
+            </Text>
+            <Text
+              onPress={() => setPlanFormVisible((current) => !current)}
+              style={{ color: theme.colors.primary, fontSize: 12.5, fontWeight: "600" }}
+            >
+              {planFormVisible ? "Fechar" : "Cadastrar novo plano"}
+            </Text>
+          </View>
+
+          {teacherPlans.map((plan) => (
+            <View
+              key={plan.id}
+              style={{
+                borderBottomColor: "rgba(255,255,255,0.06)",
+                borderBottomWidth: 1,
+                gap: 3,
+                paddingBottom: 12,
+              }}
+            >
+              <Text style={{ color: theme.colors.text, fontSize: 14, fontWeight: "600" }}>
+                {plan.name}
+              </Text>
+              <Text style={{ color: theme.colors.textMuted, fontSize: 12 }}>
+                {getCycleLabel(plan.billingCycle)} • {plan.includedFeatures.map(getFeatureLabel).join(" • ")}
+              </Text>
+              <Text style={{ color: theme.colors.textMuted, fontSize: 12 }}>{plan.description}</Text>
+              <Text style={{ color: theme.colors.success, fontSize: 13, fontWeight: "700" }}>
+                {formatCurrency(plan.monthlyAmount)} / mês
+              </Text>
             </View>
           ))}
-        </View>
-      </Card>
 
-      <SectionTitle
-        title="Historico"
-        description="Registros ja liquidados na conta do aluno."
-      />
-      <View style={{ gap: theme.spacing.md }}>
-        {paymentRecords
-          .filter((record) => record.userId === currentUser.id)
-          .map((record) => (
-            <Card key={record.id}>
-              <View style={{ gap: theme.spacing.xs }}>
-                <Text style={{ color: theme.colors.text, fontWeight: "700" }}>{record.title}</Text>
-                <Text style={{ color: theme.colors.textMuted }}>
-                  {formatCurrency(record.amount)} · {getPaymentStatusLabel(record.status)}
-                </Text>
+          {planFormVisible ? (
+            <View style={{ gap: 12, paddingTop: 6 }}>
+              <Controller
+                control={form.control}
+                name="name"
+                rules={{ required: true }}
+                render={({ field: { onBlur, onChange, value } }) => (
+                  <TextField
+                    label="Nome do plano"
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    placeholder="Plano mensal"
+                    value={value}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="monthlyAmount"
+                rules={{ required: true }}
+                render={({ field: { onBlur, onChange, value } }) => (
+                  <TextField
+                    label="Valor mensal"
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    placeholder="120.00"
+                    value={value}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="description"
+                render={({ field: { onBlur, onChange, value } }) => (
+                  <TextField
+                    label="Descricao"
+                    multiline
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    placeholder="Explique a proposta comercial."
+                    value={value}
+                  />
+                )}
+              />
+              <Text style={{ color: theme.colors.text, fontSize: 13, fontWeight: "600" }}>
+                O aluno recebe neste plano
+              </Text>
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+                {(["diet", "training", "assessment"] as TeacherPlanFeature[]).map((feature) => {
+                  const active = selectedFeatures.includes(feature);
+
+                  return (
+                    <Button
+                      fullWidth={false}
+                      key={feature}
+                      label={getFeatureLabel(feature)}
+                      onPress={() =>
+                        setSelectedFeatures((current) =>
+                          active
+                            ? current.filter((item) => item !== feature)
+                            : [...current, feature]
+                        )
+                      }
+                      size="sm"
+                      variant={active ? "primary" : "soft"}
+                    />
+                  );
+                })}
               </View>
-            </Card>
-          ))}
+              <View style={{ flexDirection: "row", gap: 8 }}>
+                {(["monthly", "quarterly", "yearly"] as BillingCycle[]).map((cycle) => (
+                  <Button
+                    fullWidth={false}
+                    key={cycle}
+                    label={getCycleLabel(cycle)}
+                    onPress={() => setSelectedBillingCycle(cycle)}
+                    size="sm"
+                    variant={selectedBillingCycle === cycle ? "primary" : "soft"}
+                  />
+                ))}
+              </View>
+              <Button
+                label="Salvar plano comercial"
+                onPress={form.handleSubmit((values) => {
+                  const amount = Number(values.monthlyAmount.replace(",", "."));
+                  if (!amount) {
+                    return;
+                  }
+
+                  addTeacherPlan({
+                    teacherId: currentUser.id,
+                    name: values.name,
+                    description: values.description,
+                    billingCycle: selectedBillingCycle,
+                    includedFeatures: selectedFeatures,
+                    monthlyAmount: amount,
+                  });
+                  form.reset();
+                  setPlanFormVisible(false);
+                })}
+              />
+            </View>
+          ) : null}
+        </View>
+
+        <View style={{ flexDirection: "row", gap: 10 }}>
+          <Button fullWidth={false} label="Pix" onPress={() => null} size="sm" variant="soft" />
+          <Button fullWidth={false} label="Cartão" onPress={() => null} size="sm" variant="soft" />
+        </View>
+      </AppChrome>
+    );
+  }
+
+  const subscription = subscriptions.find((item) => item.studentId === currentUser.id);
+  const openRecords = getOpenRecordsByUser(currentUser.id);
+
+  return (
+    <AppChrome
+      footer={
+        <AppBottomNav
+          items={[
+            {
+              key: "dashboard",
+              label: "Dashboard",
+              icon: <House color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("StudentHome" as never),
+            },
+            {
+              key: "workout",
+              label: "Treino",
+              icon: <Users color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("StudentWorkout" as never),
+            },
+            {
+              key: "plans",
+              label: "Dieta",
+              icon: <Apple color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("StudentDiet" as never),
+            },
+            {
+              key: "payments",
+              label: "Pagamentos",
+              active: true,
+              icon: <CreditCard color={theme.colors.primary} size={21} strokeWidth={2.1} />,
+            },
+            {
+              key: "more",
+              label: "Mais",
+              icon: <Menu color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("StudentProfile" as never),
+            },
+          ]}
+        />
+      }
+    >
+      <AppTopBar
+        onBackPress={() => navigation.goBack()}
+        showAvatar={false}
+        showBack
+        showBell={false}
+        title="Pagamentos"
+      />
+
+      <View style={{ flexDirection: "row", gap: 10 }}>
+        <PaymentSummaryCard
+          icon={<Wallet color={theme.colors.primary} size={17} strokeWidth={2.2} />}
+          label="Seu plano"
+          value={subscription?.teacherPlanId ? "Ativo" : "Sem plano"}
+        />
+        <PaymentSummaryCard
+          icon={<DollarSign color={theme.colors.success} size={17} strokeWidth={2.2} />}
+          label="Em aberto"
+          value={formatCurrency(openRecords[0]?.amount ?? 0)}
+        />
       </View>
-    </Screen>
+
+      {subscription ? (
+        <View
+          style={{
+            backgroundColor: theme.colors.surface,
+            borderColor: "rgba(255,255,255,0.06)",
+            borderRadius: 22,
+            borderWidth: 1,
+            gap: 14,
+            padding: 16,
+          }}
+        >
+          <Text style={{ color: theme.colors.text, fontSize: 16, fontWeight: "600" }}>
+            Seu plano com o coach
+          </Text>
+          <Text style={{ color: theme.colors.text, fontSize: 14.5, fontWeight: "600" }}>
+            Coaching premium
+          </Text>
+          <Text style={{ color: theme.colors.textMuted, fontSize: 12.5 }}>
+            Entregas inclusas: Dieta, Treino, Avaliacao
+          </Text>
+
+          <View style={{ flexDirection: "row", gap: 10 }}>
+            <Button
+              fullWidth={false}
+              label="Pagar com Pix"
+              onPress={() => openRecords[0] && payRecord(openRecords[0].id, "pix")}
+              size="sm"
+            />
+            <Button
+              fullWidth={false}
+              label="Cartão"
+              onPress={() => null}
+              size="sm"
+              variant="soft"
+            />
+          </View>
+        </View>
+      ) : null}
+    </AppChrome>
   );
 }

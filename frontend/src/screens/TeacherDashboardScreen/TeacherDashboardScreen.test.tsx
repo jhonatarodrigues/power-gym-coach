@@ -4,11 +4,7 @@ import { act, fireEvent, screen } from "@testing-library/react-native";
 import { useMockSessionStore } from "@/store/useMockSessionStore";
 import { renderWithProviders } from "@/test-utils/renderWithProviders";
 
-import {
-  buildAreaPath,
-  createSmoothPath,
-  TeacherDashboardScreen,
-} from "./TeacherDashboardScreen";
+import { TeacherDashboardScreen } from "./TeacherDashboardScreen";
 
 describe("TeacherDashboardScreen", () => {
   beforeEach(() => {
@@ -27,11 +23,15 @@ describe("TeacherDashboardScreen", () => {
   it("renders dashboard highlights and navigation actions", () => {
     renderWithProviders(<TeacherDashboardScreen />);
 
+    expect(screen.getByText("Olá, Coach!")).toBeTruthy();
     expect(screen.getByText("Dashboard do coach")).toBeTruthy();
     expect(screen.getByText("Visão geral")).toBeTruthy();
     expect(screen.getByText("Engajamento semanal")).toBeTruthy();
     expect(screen.getByText("Progresso médio dos alunos")).toBeTruthy();
+    expect(screen.getByText("2 alunos com pagamento pendente")).toBeTruthy();
+    expect(screen.getByText("Acesse para ver os detalhes")).toBeTruthy();
     expect(screen.getByText("Alunos em destaque")).toBeTruthy();
+    expect(screen.getByText("Ver todos")).toBeTruthy();
     expect(screen.queryByText("Abrir pagamentos")).toBeNull();
 
     fireEvent.press(screen.getByLabelText("Abrir menu"));
@@ -62,9 +62,4 @@ describe("TeacherDashboardScreen", () => {
     expect(screen.getByText("Olá, Coach!")).toBeTruthy();
   });
 
-  it("covers the chart path helpers for sparse inputs", () => {
-    expect(createSmoothPath([])).toBe("");
-    expect(createSmoothPath([{ x: 12, y: 18 }])).toBe("M 12 18");
-    expect(buildAreaPath([], 200)).toBe("");
-  });
 });

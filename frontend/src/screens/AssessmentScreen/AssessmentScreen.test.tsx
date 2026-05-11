@@ -28,6 +28,9 @@ describe("AssessmentScreen", () => {
 
     renderWithProviders(<AssessmentScreen />);
 
+    expect(screen.getByText("Ciclo atual")).toBeTruthy();
+    expect(screen.getByText("Último envio")).toBeTruthy();
+    expect(screen.getByText("Registrar nova avaliação")).toBeTruthy();
     expect(screen.getByText("Aplicar sugestoes ao plano atual")).toBeTruthy();
     expect(screen.getByText("Solicitar novas fotos")).toBeTruthy();
 
@@ -98,6 +101,7 @@ describe("AssessmentScreen", () => {
 
     renderWithProviders(<AssessmentScreen />);
 
+    expect(screen.getByText("Ciclo atual")).toBeTruthy();
     expect(screen.getByText("Abrir formulario de avaliacao")).toBeTruthy();
     expect(screen.getByText("Ver plano atualizado")).toBeTruthy();
 

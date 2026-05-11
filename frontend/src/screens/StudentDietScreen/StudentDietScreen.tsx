@@ -1,16 +1,14 @@
 import { Pressable, Text, View } from "react-native";
-import { Droplets } from "lucide-react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Apple, ChartColumn, Ellipsis, House, Menu, MessageSquare, Dumbbell } from "lucide-react-native";
 
 import {
-  Button,
-  Card,
-  DashboardHero,
-  Header,
-  MacroSummaryCard,
-  MiniBarChart,
-  ProgressLineCard,
-  Screen,
-  SectionTitle,
+  AppBottomNav,
+  AppChrome,
+  AppTopBar,
+  FoodCheckRow,
+  MealProgressRow,
+  WaterDropProgress,
 } from "@/components";
 import { useCurrentPlan } from "@/hooks/useCurrentPlan";
 import { useStudentDailyDiet } from "@/hooks/useStudentDailyDiet";
@@ -18,6 +16,7 @@ import { useAppTheme } from "@/theme";
 
 export function StudentDietScreen() {
   const { theme } = useAppTheme();
+  const navigation = useNavigation();
   const { currentPlan } = useCurrentPlan();
   const {
     addWater,
@@ -31,149 +30,179 @@ export function StudentDietScreen() {
     waterTarget,
   } = useStudentDailyDiet();
 
+  const lunchMeal = meals[1] ?? meals[0];
+
   return (
-    <Screen>
-      <Header
+    <AppChrome
+      footer={
+        <AppBottomNav
+          items={[
+            {
+              key: "dashboard",
+              label: "Dashboard",
+              icon: <House color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("StudentHome" as never),
+            },
+            {
+              key: "workout",
+              label: "Treino",
+              icon: <Dumbbell color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("StudentWorkout" as never),
+            },
+            {
+              key: "diet",
+              label: "Dieta",
+              active: true,
+              icon: <Apple color={theme.colors.primary} size={21} strokeWidth={2.1} />,
+            },
+            {
+              key: "progress",
+              label: "Progresso",
+              icon: <ChartColumn color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("StudentProgress" as never),
+            },
+            {
+              key: "more",
+              label: "Mais",
+              icon: <Menu color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("StudentMessages" as never),
+            },
+          ]}
+        />
+      }
+    >
+      <AppTopBar
+        onBackPress={() => navigation.goBack()}
+        onContextPress={() => null}
+        showAvatar={false}
+        showBack
+        showBell={false}
+        showContextMenu
+        subtitle="Sexta-feira, 09/05/2026"
         title="Dieta do dia"
-        subtitle="Marque o que voce ja consumiu em cada refeicao e acompanhe sua agua."
       />
 
-      <DashboardHero
-        accentLabel="Checklist alimentar"
-        eyebrow="Dieta"
-        stats={[
-          { label: "Plano", value: `${currentPlan.dietPlan.calories} kcal` },
-          { label: "Consumido", value: `${consumedCalories} kcal` },
-          { label: "Restante", value: `${remainingCalories} kcal` },
-        ]}
-        subtitle="Tela mais limpa para acompanhar refeicoes, hidratar e visualizar progresso sem excesso de caixas."
-        title="Leitura do consumo do dia"
-      />
-
-      <MacroSummaryCard
-        calories={currentPlan.dietPlan.calories}
-        carbs={currentPlan.dietPlan.carbs}
-        fat={currentPlan.dietPlan.fat}
-        note="Totais do plano alimentar atual."
-        protein={currentPlan.dietPlan.protein}
-        title="Resumo do dia"
-      />
-
-      <ProgressLineCard
-        currentLabel={`${consumedCalories} kcal`}
-        helper="Mostra quanto do plano diario ja foi consumido hoje."
-        progress={
-          currentPlan.dietPlan.calories > 0
-            ? consumedCalories / currentPlan.dietPlan.calories
-            : 0
-        }
-        targetLabel={`${remainingCalories} kcal restantes`}
-        title="Execucao alimentar"
-      />
-
-      <SectionTitle
-        title="Agua do dia"
-        description="Meta em litros definida pelo coach."
-      />
-      <ProgressLineCard
-        currentLabel={`${waterIntake.toFixed(1)} L`}
-        helper="Meta em litros definida pelo coach."
-        progress={waterTarget > 0 ? waterIntake / waterTarget : 0}
-        targetLabel={`${Math.max(0, waterTarget - waterIntake).toFixed(1)} L restantes`}
-        title="Hidratacao"
-        tone="success"
-      />
-      <Card>
-        <View style={{ gap: theme.spacing.md }}>
-          <View style={{ alignItems: "center", flexDirection: "row", gap: theme.spacing.sm }}>
-            <Droplets color={theme.colors.primary} size={20} />
-            <Text style={{ color: theme.colors.text, fontWeight: "700" }}>
-              {waterIntake.toFixed(1)}L de {waterTarget.toFixed(1)}L
-            </Text>
+      <View style={{ flexDirection: "row", gap: 10 }}>
+        {[
+          { label: "Meta", value: `${currentPlan.dietPlan.calories.toLocaleString("pt-BR")} kcal`, tone: theme.colors.text },
+          { label: "Consumidas", value: `${consumedCalories.toLocaleString("pt-BR")} kcal`, tone: theme.colors.success },
+          { label: "Restantes", value: `${remainingCalories.toLocaleString("pt-BR")} kcal`, tone: theme.colors.primary },
+        ].map((item) => (
+          <View
+            key={item.label}
+            style={{
+              backgroundColor: theme.colors.surface,
+              borderColor: "rgba(255,255,255,0.06)",
+              borderRadius: 18,
+              borderWidth: 1,
+              flex: 1,
+              gap: 10,
+              padding: 14,
+            }}
+          >
+            <Text style={{ color: theme.colors.textMuted, fontSize: 11.5 }}>{item.label}</Text>
+            <Text style={{ color: item.tone, fontSize: 18, fontWeight: "700" }}>{item.value}</Text>
           </View>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: theme.spacing.sm }}>
-            <Button
-              fullWidth={false}
-              label="Adicionar 250 ml"
-              onPress={() => addWater(todayKey, 0.25)}
-              size="sm"
-            />
-            <Button
-              fullWidth={false}
-              label="Adicionar 500 ml"
-              onPress={() => addWater(todayKey, 0.5)}
-              size="sm"
-              variant="soft"
-            />
-          </View>
-        </View>
-      </Card>
-
-      <MiniBarChart
-        description="Quantidade de itens marcados em cada refeicao do dia."
-        items={meals.map((meal) => ({
-          hint: `${meal.items.length} itens`,
-          label: meal.sequenceLabel ?? meal.title,
-          value: (consumedMealItems[meal.id] ?? []).length,
-        }))}
-        title="Marcacao por refeicao"
-      />
-
-      <SectionTitle
-        title="Refeicoes"
-        description="Separadas por refeicao para facilitar o acompanhamento do aluno."
-      />
-      <View style={{ gap: theme.spacing.md }}>
-        {meals.map((meal) => (
-          <Card key={meal.id}>
-            <View style={{ gap: theme.spacing.md }}>
-              <View style={{ gap: theme.spacing.xs }}>
-                <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>
-                  {meal.sequenceLabel ?? meal.title}
-                </Text>
-                <Text style={{ color: theme.colors.text, fontWeight: "700" }}>{meal.title}</Text>
-                <Text style={{ color: theme.colors.textMuted }}>{meal.observation}</Text>
-              </View>
-
-              <View style={{ gap: theme.spacing.sm }}>
-                {meal.items.map((item) => {
-                  const checked = (consumedMealItems[meal.id] ?? []).includes(item.id);
-
-                  return (
-                    <Pressable
-                      key={item.id}
-                      onPress={() => toggleMealItem(meal.id, item.id)}
-                      style={{
-                        backgroundColor: checked
-                          ? theme.colors.primary + "22"
-                          : theme.colors.inputBackground,
-                        borderColor: checked ? theme.colors.primary : theme.colors.border,
-                        borderRadius: theme.radius.md,
-                        borderWidth: 1,
-                        padding: theme.spacing.md,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          color: theme.colors.text,
-                          fontWeight: "700",
-                          textDecorationLine: checked ? "line-through" : "none",
-                        }}
-                      >
-                        {item.foodName}
-                      </Text>
-                      <Text style={{ color: theme.colors.textMuted }}>
-                        {item.amount}
-                        {item.unit} · {item.calories} kcal
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            </View>
-          </Card>
         ))}
       </View>
-    </Screen>
+
+      <View
+        style={{
+          backgroundColor: theme.colors.surface,
+          borderColor: "rgba(255,255,255,0.06)",
+          borderRadius: 22,
+          borderWidth: 1,
+          gap: 16,
+          padding: 16,
+        }}
+      >
+        <Text style={{ color: theme.colors.text, fontSize: 16, fontWeight: "600" }}>
+          Distribuição de refeições
+        </Text>
+        {meals.map((meal) => {
+          const consumedIds = consumedMealItems[meal.id] ?? [];
+          const mealConsumed = meal.items.reduce(
+            (total, item) => total + (consumedIds.includes(item.id) ? item.calories : 0),
+            0
+          );
+
+          return (
+            <MealProgressRow
+              consumed={mealConsumed}
+              key={meal.id}
+              label={`${meal.sequenceLabel} - ${meal.title}`}
+              total={meal.calories}
+            />
+          );
+        })}
+      </View>
+
+      {lunchMeal ? (
+        <View
+          style={{
+            backgroundColor: theme.colors.surface,
+            borderColor: "rgba(255,255,255,0.06)",
+            borderRadius: 22,
+            borderWidth: 1,
+            gap: 14,
+            padding: 16,
+          }}
+        >
+          <Text style={{ color: theme.colors.text, fontSize: 16, fontWeight: "600" }}>
+            Alimentos - {lunchMeal.title}
+          </Text>
+          <View style={{ gap: 8 }}>
+            {lunchMeal.items.map((item) => (
+              <FoodCheckRow
+                calories={item.calories}
+                checked={(consumedMealItems[lunchMeal.id] ?? []).includes(item.id)}
+                key={item.id}
+                label={`${item.foodName} (${item.amount}${item.unit})`}
+                onPress={() => toggleMealItem(lunchMeal.id, item.id)}
+              />
+            ))}
+          </View>
+        </View>
+      ) : null}
+
+      <View
+        style={{
+          backgroundColor: theme.colors.surface,
+          borderColor: "rgba(255,255,255,0.06)",
+          borderRadius: 22,
+          borderWidth: 1,
+          gap: 12,
+          padding: 16,
+        }}
+      >
+        <WaterDropProgress consumedLiters={waterIntake} targetLiters={waterTarget} />
+        <View style={{ flexDirection: "row", gap: 10 }}>
+          <Pressable
+            onPress={() => addWater(todayKey, 0.25)}
+            style={{
+              backgroundColor: theme.colors.primary,
+              borderRadius: theme.radius.pill,
+              paddingHorizontal: 14,
+              paddingVertical: 10,
+            }}
+          >
+            <Text style={{ color: "#111", fontSize: 12, fontWeight: "700" }}>+250 ml</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => addWater(todayKey, 0.5)}
+            style={{
+              backgroundColor: theme.colors.surfaceAlt,
+              borderColor: "rgba(255,255,255,0.08)",
+              borderRadius: theme.radius.pill,
+              borderWidth: 1,
+              paddingHorizontal: 14,
+              paddingVertical: 10,
+            }}
+          >
+            <Text style={{ color: theme.colors.text, fontSize: 12, fontWeight: "600" }}>+500 ml</Text>
+          </Pressable>
+        </View>
+      </View>
+    </AppChrome>
   );
 }

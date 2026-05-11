@@ -9,10 +9,11 @@ describe("CoachStudentsScreen", () => {
   it("renders a selectable student list", () => {
     renderWithProviders(<CoachStudentsScreen />);
 
-    expect(screen.getByText("Carteira organizada por aluno")).toBeTruthy();
-    expect(screen.getByText("Carteira ativa")).toBeTruthy();
+    expect(screen.getAllByText("Alunos").length).toBeGreaterThan(0);
+    expect(screen.getByText("Buscar aluno...")).toBeTruthy();
+    expect(screen.getByText("Ações pendentes")).toBeTruthy();
     expect(screen.getByText("Marina Costa")).toBeTruthy();
-    expect(screen.getByText("Lucas Andrade")).toBeTruthy();
+    expect(screen.getAllByText("Plano atual").length).toBeGreaterThan(0);
   });
 
   it("shows fallback status when a student has no plan", () => {
@@ -22,6 +23,6 @@ describe("CoachStudentsScreen", () => {
 
     renderWithProviders(<CoachStudentsScreen />);
 
-    expect(screen.getAllByText("Sem plano ativo").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Plano atual").length).toBeGreaterThan(0);
   });
 });

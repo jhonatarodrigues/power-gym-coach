@@ -20,6 +20,7 @@ export function Header({
 }: HeaderProps) {
   const { theme } = useAppTheme();
   const navigation = useNavigation();
+  const drawerParent = navigation.getParent();
   const shouldRenderBack = showBackButton && navigation.canGoBack();
   const shouldRenderMenu = !shouldRenderBack;
 
@@ -34,7 +35,7 @@ export function Header({
               return;
             }
 
-            navigation.dispatch(DrawerActions.toggleDrawer());
+            drawerParent?.dispatch(DrawerActions.toggleDrawer());
           }}
           style={{
             alignItems: "center",

@@ -12,19 +12,28 @@ import { DecisionCard } from "@/components/DecisionCard";
 import { EmptyState } from "@/components/EmptyState";
 import { ExerciseItem } from "@/components/ExerciseItem";
 import { ExerciseVideoCard } from "@/components/ExerciseVideoCard";
+import { FoodCheckRow } from "@/components/FoodCheckRow";
 import { FoodPickerItem } from "@/components/FoodPickerItem";
 import { Header } from "@/components/Header";
+import { InlineAlertBanner } from "@/components/InlineAlertBanner";
 import { JourneyTimelineCard } from "@/components/JourneyTimelineCard";
+import { MealProgressRow } from "@/components/MealProgressRow";
 import { MetricCard } from "@/components/MetricCard";
 import { MiniBarChart } from "@/components/MiniBarChart";
 import { PasswordField } from "@/components/PasswordField";
 import { PendingAlertCard } from "@/components/PendingAlertCard";
+import { PlanModuleCard } from "@/components/PlanModuleCard";
+import { PlanSummaryCard } from "@/components/PlanSummaryCard";
 import { ProgressLineCard } from "@/components/ProgressLineCard";
 import { Screen } from "@/components/Screen";
 import { Showcase } from "@/components/Showcase";
 import { StatusBadge } from "@/components/StatusBadge";
 import { TextField } from "@/components/TextField";
+import { WaterDropProgress } from "@/components/WaterDropProgress";
 import { BrandLogo } from "@/components/BrandLogo";
+import { WorkoutExerciseCheckItem } from "@/components/WorkoutExerciseCheckItem";
+import { WorkoutProgressCard } from "@/components/WorkoutProgressCard";
+import { AppBottomNav } from "@/components/AppBottomNav";
 
 const Stack = createNativeStackNavigator();
 
@@ -233,6 +242,89 @@ describe("misc components", () => {
     expect(screen.getByText("Consumo por refeicao")).toBeTruthy();
   });
 
+  it("renders new approved-layout support components", () => {
+    const onWorkoutPress = jest.fn();
+    const onFoodPress = jest.fn();
+    const onNavPress = jest.fn();
+
+    renderWithProviders(
+      <>
+        <WorkoutExerciseCheckItem
+          checked
+          hasVideo
+          instructions="Controle a execução."
+          onPress={onWorkoutPress}
+          subtitle="4 séries x 12 reps"
+          title="Supino reto"
+        />
+        <WorkoutExerciseCheckItem
+          checked={false}
+          onPress={onWorkoutPress}
+          subtitle="3 séries x 15 reps"
+          title="Crucifixo"
+        />
+        <FoodCheckRow calories={210} checked label="Arroz integral (150g)" onPress={onFoodPress} />
+        <FoodCheckRow calories={120} label="Feijão (100g)" />
+        <MealProgressRow consumed={420} label="Ref 1 - Café da manhã" total={500} />
+        <MealProgressRow consumed={0} label="Ref 2 - Ceia" total={0} />
+        <WaterDropProgress consumedLiters={1.8} targetLiters={3} />
+        <WaterDropProgress consumedLiters={4} targetLiters={3} />
+        <PlanSummaryCard
+          endDate="23/05/2026"
+          progress={140}
+          remainingDays={14}
+          startDate="23/04/2026"
+          statusLabel="Ativo"
+          title="Plano atual"
+        />
+        <PlanModuleCard
+          icon={<BrandLogo showWordmark={false} />}
+          subtitle="Plano alimentar personalizado"
+          title="Dieta"
+        />
+        <WorkoutProgressCard
+          completed={6}
+          completionPercentage={60}
+          estimatedMinutesLeft={45}
+          total={10}
+        />
+        <AppBottomNav
+          items={[
+            {
+              key: "dashboard",
+              label: "Dashboard",
+              active: true,
+              icon: <BrandLogo showWordmark={false} />,
+            },
+            {
+              key: "alunos",
+              label: "Alunos",
+              icon: <BrandLogo showWordmark={false} />,
+              onPress: onNavPress,
+            },
+          ]}
+        />
+      </>
+    );
+
+    expect(screen.getByText("Controle a execução.")).toBeTruthy();
+    expect(screen.getByText("Arroz integral (150g)")).toBeTruthy();
+    expect(screen.getByText("420 / 500 kcal")).toBeTruthy();
+    expect(screen.getByText("0%")).toBeTruthy();
+    expect(screen.getByText("1.8 / 3.0 L")).toBeTruthy();
+    expect(screen.getByText("Plano atual")).toBeTruthy();
+    expect(screen.getByText("Supino reto")).toBeTruthy();
+    expect(screen.getByText("6/10")).toBeTruthy();
+
+    fireEvent.press(screen.getByText("Supino reto"));
+    fireEvent.press(screen.getByText("Arroz integral (150g)"));
+    fireEvent.press(screen.getByLabelText("Alunos"));
+
+    expect(onWorkoutPress).toHaveBeenCalled();
+    expect(onFoodPress).toHaveBeenCalled();
+    expect(onNavPress).toHaveBeenCalled();
+  });
+
   it("renders dashboard visualization components without optional props", () => {
     renderWithProviders(
       <>
@@ -255,12 +347,19 @@ describe("misc components", () => {
           ]}
           title="Mini grafico simples"
         />
+        <PendingAlertCard count={0} description="Nada pendente." title="Tudo certo" />
+        <InlineAlertBanner
+          description="Somente leitura."
+          icon={<BrandLogo showWordmark={false} />}
+          title="Alerta discreto"
+        />
       </>
     );
 
     expect(screen.getByText("Painel compacto")).toBeTruthy();
     expect(screen.getByText("100% concluido")).toBeTruthy();
     expect(screen.getByText("Mini grafico simples")).toBeTruthy();
+    expect(screen.getByText("Alerta discreto")).toBeTruthy();
   });
 
   it("renders header with back action when there is navigation history", () => {

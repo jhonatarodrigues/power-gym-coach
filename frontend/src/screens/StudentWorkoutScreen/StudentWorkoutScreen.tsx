@@ -1,121 +1,204 @@
-import { Text, View } from "react-native";
-import { Clock3, Dumbbell, Flame } from "lucide-react-native";
+import { Pressable, Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Apple, ChartColumn, House, Menu, Dumbbell } from "lucide-react-native";
 
 import {
-  Button,
-  Card,
-  EmptyState,
-  Header,
-  MetricCard,
-  Screen,
-  SectionTitle,
-  WorkoutExerciseCheckItem,
+  AppBottomNav,
+  AppChrome,
+  AppTopBar,
+  WorkoutProgressCard,
 } from "@/components";
 import { useStudentTodayWorkout } from "@/hooks/useStudentTodayWorkout";
 import { useAppTheme } from "@/theme";
 
+const weekDays = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+
 export function StudentWorkoutScreen() {
   const { theme } = useAppTheme();
+  const navigation = useNavigation();
   const {
     completedCount,
     completionRate,
     isExerciseCompleted,
     resetDay,
-    todayLabel,
     todayTraining,
     toggleExercise,
     totalExercises,
   } = useStudentTodayWorkout();
 
   if (!todayTraining) {
-    return (
-      <Screen>
-        <Header
-          title="Treino do dia"
-          subtitle="Acompanhe aqui a leitura do treino diario e marque seus exercicios."
-        />
-        <EmptyState
-          actionLabel="Voltar depois"
-          description="Nenhum treino foi configurado para o dia atual."
-          title="Sem treino para hoje"
-        />
-      </Screen>
-    );
+    return null;
   }
 
   return (
-    <Screen>
-      <Header
-        title="Treino do dia"
-        subtitle="Acompanhe aqui a leitura do treino diario e marque seus exercicios."
+    <AppChrome
+      footer={
+        <AppBottomNav
+          items={[
+            {
+              key: "dashboard",
+              label: "Dashboard",
+              icon: <House color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("StudentHome" as never),
+            },
+            {
+              key: "workout",
+              label: "Treino",
+              active: true,
+              icon: <Dumbbell color={theme.colors.primary} size={21} strokeWidth={2.1} />,
+            },
+            {
+              key: "diet",
+              label: "Dieta",
+              icon: <Apple color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("StudentDiet" as never),
+            },
+            {
+              key: "progress",
+              label: "Progresso",
+              icon: <ChartColumn color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("StudentProgress" as never),
+            },
+            {
+              key: "more",
+              label: "Mais",
+              icon: <Menu color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("StudentMessages" as never),
+            },
+          ]}
+        />
+      }
+    >
+      <AppTopBar
+        onBackPress={() => navigation.goBack()}
+        showAvatar={false}
+        showBack
+        showBell={false}
+        subtitle="Sexta-feira, 09/05/2026"
+        title="Treino de hoje"
       />
 
-      <Card>
-        <View style={{ gap: theme.spacing.md }}>
-          <Text style={{ color: theme.colors.primary, fontWeight: "700" }}>{todayLabel}</Text>
-          <Text style={{ color: theme.colors.text, fontSize: theme.typography.subtitle, fontWeight: "700" }}>
-            {todayTraining.title}
-          </Text>
-          <Text style={{ color: theme.colors.textMuted }}>
-            {todayTraining.notes ?? "Sem observacao adicional para hoje."}
-          </Text>
-        </View>
-      </Card>
+      <View style={{ flexDirection: "row", gap: 8, justifyContent: "space-between" }}>
+        {weekDays.map((day) => {
+          const active = day === "Sex";
 
-      <View style={{ gap: theme.spacing.md }}>
-        <MetricCard
-          label="exercicios concluidos"
-          value={`${completedCount}/${totalExercises}`}
-          trend={`${completionRate}% do treino feito`}
-        />
-        <Card>
-          <View style={{ gap: theme.spacing.sm }}>
-            <View style={{ alignItems: "center", flexDirection: "row", gap: theme.spacing.sm }}>
-              <Dumbbell color={theme.colors.primary} size={18} />
-              <Text style={{ color: theme.colors.text }}>Foco do dia: {todayTraining.title}</Text>
-            </View>
-            <View style={{ alignItems: "center", flexDirection: "row", gap: theme.spacing.sm }}>
-              <Clock3 color={theme.colors.primary} size={18} />
-              <Text style={{ color: theme.colors.textMuted }}>
-                {totalExercises} exercicios para completar hoje
+          return (
+            <View
+              key={day}
+              style={{
+                alignItems: "center",
+                backgroundColor: active ? theme.colors.primary : "transparent",
+                borderRadius: theme.radius.pill,
+                paddingHorizontal: 10,
+                paddingVertical: 5,
+              }}
+            >
+              <Text
+                style={{
+                  color: active ? "#121212" : theme.colors.textMuted,
+                  fontSize: 11.5,
+                  fontWeight: active ? "700" : "500",
+                }}
+              >
+                {day}
               </Text>
             </View>
-            <View style={{ alignItems: "center", flexDirection: "row", gap: theme.spacing.sm }}>
-              <Flame color={theme.colors.primary} size={18} />
-              <Text style={{ color: theme.colors.textMuted }}>
-                Marque cada exercicio assim que finalizar a execucao.
-              </Text>
-            </View>
-          </View>
-        </Card>
+          );
+        })}
       </View>
 
-      <SectionTitle
-        title="Checklist do treino"
-        description="Toque no exercicio para marcar o que ja foi feito hoje."
+      <WorkoutProgressCard
+        completed={completedCount}
+        completionPercentage={completionRate}
+        estimatedMinutesLeft={45}
+        total={totalExercises}
       />
 
-      <View style={{ gap: theme.spacing.md }}>
-        {todayTraining.exercises.map((exercise) => (
-          <WorkoutExerciseCheckItem
-            checked={isExerciseCompleted(todayTraining.id, exercise.id)}
-            hasVideo={Boolean(exercise.demoVideoUrl)}
-            instructions={exercise.executionNotes}
-            key={exercise.id}
-            onPress={() => toggleExercise(todayTraining.id, exercise.id)}
-            subtitle={`${exercise.sets}x${exercise.reps} • ${exercise.restSeconds}s`}
-            title={exercise.exerciseName}
-          />
-        ))}
+      <View
+        style={{
+          backgroundColor: theme.colors.surface,
+          borderColor: "rgba(255,255,255,0.06)",
+          borderRadius: 22,
+          borderWidth: 1,
+          overflow: "hidden",
+          paddingHorizontal: 16,
+        }}
+      >
+        <Text
+          style={{
+            color: theme.colors.text,
+            fontSize: 15,
+            fontWeight: "600",
+            paddingBottom: 12,
+            paddingTop: 16,
+          }}
+        >
+          Exercícios
+        </Text>
+        {todayTraining.exercises.map((exercise, index) => {
+          const checked = isExerciseCompleted(todayTraining.id, exercise.id);
+
+          return (
+            <Pressable
+              key={exercise.id}
+              onPress={() => toggleExercise(todayTraining.id, exercise.id)}
+              style={{
+                alignItems: "center",
+                borderBottomColor: "rgba(255,255,255,0.06)",
+                borderBottomWidth: index === todayTraining.exercises.length - 1 ? 0 : 1,
+                flexDirection: "row",
+                gap: 10,
+                paddingVertical: 12,
+              }}
+            >
+              <View
+                style={{
+                  alignItems: "center",
+                  backgroundColor: checked ? `${theme.colors.success}22` : theme.colors.surfaceAlt,
+                  borderRadius: theme.radius.pill,
+                  height: 24,
+                  justifyContent: "center",
+                  width: 24,
+                }}
+              >
+                <Text style={{ color: checked ? theme.colors.success : theme.colors.textMuted, fontSize: 11.5 }}>
+                  {index + 1}
+                </Text>
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: theme.colors.text, fontSize: 13.5, fontWeight: "600" }}>
+                  {exercise.exerciseName}
+                </Text>
+                <Text style={{ color: theme.colors.textMuted, fontSize: 12 }}>
+                  {exercise.sets} séries × {exercise.reps}
+                </Text>
+              </View>
+              <Text
+                style={{
+                  color: checked ? theme.colors.success : theme.colors.textMuted,
+                  fontSize: 16,
+                  fontWeight: "700",
+                }}
+              >
+                {checked ? "●" : "○"}
+              </Text>
+            </Pressable>
+          );
+        })}
       </View>
 
-      <View style={{ gap: theme.spacing.md }}>
-        <Button
-          label="Reiniciar marcacoes do dia"
-          onPress={() => resetDay(todayTraining.id)}
-          variant="ghost"
-        />
-      </View>
-    </Screen>
+      <Pressable
+        onPress={() => resetDay(todayTraining.id)}
+        style={{
+          alignItems: "center",
+          alignSelf: "center",
+          paddingVertical: 8,
+        }}
+      >
+        <Text style={{ color: theme.colors.textMuted, fontSize: 12.5 }}>
+          Reiniciar marcações do dia
+        </Text>
+      </Pressable>
+    </AppChrome>
   );
 }

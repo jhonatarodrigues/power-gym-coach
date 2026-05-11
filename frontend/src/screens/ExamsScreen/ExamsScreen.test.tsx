@@ -25,6 +25,8 @@ describe("ExamsScreen", () => {
 
     renderWithProviders(<ExamsScreen />);
 
+    expect(screen.getByText("Linha do tempo")).toBeTruthy();
+    expect(screen.getByText("Solicitar novo exame")).toBeTruthy();
     expect(screen.getByText("Abrir formulario de solicitacao")).toBeTruthy();
     expect(screen.getAllByText(examRequestsMock[0].title).length).toBeGreaterThan(0);
     expect(screen.getByText(examUploadsMock[0].fileName)).toBeTruthy();

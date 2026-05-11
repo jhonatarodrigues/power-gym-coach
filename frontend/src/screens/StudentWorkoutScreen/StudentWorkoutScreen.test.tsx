@@ -27,8 +27,10 @@ describe("StudentWorkoutScreen", () => {
   it("renders the today workout and allows marking exercises", () => {
     renderWithProviders(<StudentWorkoutScreen />);
 
-    expect(screen.getByText("Treino do dia")).toBeTruthy();
-    expect(screen.getByText("Checklist do treino")).toBeTruthy();
+    expect(screen.getByText("Treino de hoje")).toBeTruthy();
+    expect(screen.getByText("Progresso do treino")).toBeTruthy();
+    expect(screen.getByText("Seg")).toBeTruthy();
+    expect(screen.getByText("Sex")).toBeTruthy();
 
     fireEvent.press(screen.getByText("Agachamento goblet"));
 
@@ -48,7 +50,7 @@ describe("StudentWorkoutScreen", () => {
 
     renderWithProviders(<StudentWorkoutScreen />);
 
-    fireEvent.press(screen.getByText("Reiniciar marcacoes do dia"));
+    fireEvent.press(screen.getByText("Reiniciar marcações do dia"));
 
     expect(useStudentWorkoutStore.getState().getCompletedCount("training-day-4")).toBe(0);
   });

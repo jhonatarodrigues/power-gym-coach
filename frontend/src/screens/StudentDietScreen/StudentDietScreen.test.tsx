@@ -19,7 +19,9 @@ describe("StudentDietScreen", () => {
     renderWithProviders(<StudentDietScreen />);
 
     expect(screen.getByText("Dieta do dia")).toBeTruthy();
-    fireEvent.press(screen.getByText("Adicionar 250 ml"));
+    expect(screen.getByText("Distribuição de refeições")).toBeTruthy();
+    expect(screen.getByText("Água")).toBeTruthy();
+    fireEvent.press(screen.getByText("+250 ml"));
 
     expect(useStudentDietStore.getState().getWaterIntake("2026-04-30")).toBe(0.25);
   });

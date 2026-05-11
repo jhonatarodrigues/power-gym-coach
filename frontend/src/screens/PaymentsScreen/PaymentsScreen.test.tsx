@@ -21,10 +21,11 @@ describe("PaymentsScreen", () => {
 
     renderWithProviders(<PaymentsScreen />);
 
-    expect(screen.getByText("Controle financeiro mais claro")).toBeTruthy();
-    expect(screen.getByText("Panorama financeiro")).toBeTruthy();
+    expect(screen.getAllByText("Pagamentos").length).toBeGreaterThan(0);
+    expect(screen.getByText("Cobranças em aberto")).toBeTruthy();
+    expect(screen.getByText("Planos oferecidos")).toBeTruthy();
     expect(screen.getByText("Plano mensal")).toBeTruthy();
-    expect(screen.getAllByText("Entregas: Dieta, Treino, Avaliacao").length).toBeGreaterThan(0);
+    expect(screen.getByText("Mensal • Dieta • Treino • Avaliacao")).toBeTruthy();
     expect(screen.getByText("Cadastrar novo plano")).toBeTruthy();
   });
 
@@ -53,8 +54,9 @@ describe("PaymentsScreen", () => {
 
     renderWithProviders(<PaymentsScreen />);
 
-    expect(screen.getByText("Seus pagamentos em leitura rapida")).toBeTruthy();
-    expect(screen.getByText("Panorama da conta")).toBeTruthy();
+    expect(screen.getAllByText("Pagamentos").length).toBeGreaterThan(0);
+    expect(screen.getByText("Pagar com Pix")).toBeTruthy();
+    expect(screen.getByText("Cartão")).toBeTruthy();
     expect(screen.getByText("Seu plano com o coach")).toBeTruthy();
     expect(screen.getByText("Entregas inclusas: Dieta, Treino, Avaliacao")).toBeTruthy();
 
@@ -78,7 +80,7 @@ describe("PaymentsScreen", () => {
 
     renderWithProviders(<PaymentsScreen />);
 
-    expect(screen.getByText("Seus pagamentos em leitura rapida")).toBeTruthy();
+    expect(screen.getAllByText("Pagamentos").length).toBeGreaterThan(0);
     expect(screen.queryByText("Seu plano com o coach")).toBeNull();
     expect(screen.queryByText("Situacao atual da conta")).toBeNull();
   });
