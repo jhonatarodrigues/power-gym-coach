@@ -8,6 +8,8 @@ export type TeacherTabParamList = {
 
 export type TeacherDrawerParamList = {
   TeacherMain: NavigatorScreenParams<TeacherTabParamList> | undefined;
+  TeacherPayments: undefined;
+  TeacherCommercialPlans: undefined;
   TeacherProfile: undefined;
   TeacherLibrary: undefined;
 };

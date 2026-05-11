@@ -6,7 +6,7 @@ export type BillingCycle = "monthly" | "quarterly" | "yearly";
 
 export type PaymentKind = "platformFee" | "studentPlan";
 
-export type TeacherPlanFeature = "diet" | "training" | "assessment";
+export type TeacherPlanFeature = "diet" | "training" | "assessment" | "exams";
 
 export type PaymentStatus =
   | "paid"

@@ -28,6 +28,7 @@ import { View } from "react-native";
 
 import { BrandLogo } from "@/components";
 import { CoachFeedbacksScreen } from "@/screens/CoachFeedbacksScreen";
+import { CoachCommercialPlansScreen } from "@/screens/CoachCommercialPlansScreen";
 import { CoachPlanCreateScreen } from "@/screens/CoachPlanCreateScreen";
 import { CoachPlanHubScreen } from "@/screens/CoachPlanHubScreen";
 import { CoachStudentPlansScreen } from "@/screens/CoachStudentPlansScreen";
@@ -118,6 +119,22 @@ function TeacherDrawerNavigator() {
         options={{
           title: "Atalhos",
           drawerIcon: ({ color, size }) => <House color={color} size={size} />,
+        }}
+      />
+      <TeacherDrawer.Screen
+        component={PaymentsScreen}
+        name="TeacherPayments"
+        options={{
+          title: "Pagamentos",
+          drawerIcon: ({ color, size }) => <CreditCard color={color} size={size} />,
+        }}
+      />
+      <TeacherDrawer.Screen
+        component={CoachCommercialPlansScreen}
+        name="TeacherCommercialPlans"
+        options={{
+          title: "Planos oferecidos",
+          drawerIcon: ({ color, size }) => <ClipboardList color={color} size={size} />,
         }}
       />
       <TeacherDrawer.Screen

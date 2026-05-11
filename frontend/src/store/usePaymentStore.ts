@@ -31,6 +31,8 @@ interface PaymentStoreState {
   getOpenRecordsByUser: (userId: string) => PaymentRecord[];
   getPaymentStatusByStudent: (studentId: string) => PaymentStatus | null;
   getTeacherExpectedRevenue: (teacherId: string) => number;
+  getTeacherCollectedRevenue: (teacherId: string) => number;
+  getTeacherStudentPlanRecords: (teacherId: string) => PaymentRecord[];
   getTeacherPlansByTeacher: (teacherId: string) => TeacherPlanDefinition[];
   reset: () => void;
 }
@@ -135,6 +137,19 @@ export const usePaymentStore = create<PaymentStoreState>((set, get) => ({
 
         return total + (plan?.monthlyAmount ?? 0);
       }, 0),
+  getTeacherCollectedRevenue: (teacherId) =>
+    get()
+      .paymentRecords.filter(
+        (record) =>
+          record.teacherId === teacherId &&
+          record.kind === "studentPlan" &&
+          record.status === "paid"
+      )
+      .reduce((total, record) => total + record.amount, 0),
+  getTeacherStudentPlanRecords: (teacherId) =>
+    get().paymentRecords.filter(
+      (record) => record.teacherId === teacherId && record.kind === "studentPlan"
+    ),
   getTeacherPlansByTeacher: (teacherId) =>
     get().teacherPlans.filter((plan) => plan.teacherId === teacherId),
   reset: () =>

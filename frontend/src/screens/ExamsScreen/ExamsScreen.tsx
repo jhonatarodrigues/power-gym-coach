@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Controller, useForm } from "react-hook-form";
-import { ClipboardList, FileBadge2, FlaskConical, House, Menu, TestTubeDiagonal, Users } from "lucide-react-native";
+import { CreditCard, FileBadge2, FlaskConical, House, Menu, TestTubeDiagonal, Users } from "lucide-react-native";
 
 import {
   AppBottomNav,
@@ -65,10 +65,10 @@ export function ExamsScreen() {
               onPress: () => navigation.navigate("TeacherStudent"),
             },
             {
-              key: "plans",
-              label: "Planos",
-              icon: <ClipboardList color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
-              onPress: () => navigation.navigate("CoachPlanHub"),
+              key: "payments",
+              label: "Pagamentos",
+              icon: <CreditCard color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("TeacherPayments"),
             },
             {
               key: "exams",

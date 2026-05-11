@@ -1,4 +1,4 @@
-import { act, screen } from "@testing-library/react-native";
+import { act, fireEvent, screen } from "@testing-library/react-native";
 
 import { currentPlanMock } from "@/repository/mock";
 import { useCoachContextStore } from "@/store/useCoachContextStore";
@@ -22,6 +22,10 @@ describe("CoachPlanHubScreen", () => {
 
     expect(screen.getByText("Detalhe do plano")).toBeTruthy();
     expect(screen.getByText("Plano atual")).toBeTruthy();
+    expect(screen.getByText("Módulos do plano")).toBeTruthy();
+    expect(screen.getByText("Abrir avaliação")).toBeTruthy();
+    expect(screen.getByText("Editar treino")).toBeTruthy();
+    expect(screen.getByText("Editar dieta")).toBeTruthy();
     expect(screen.getByText("Progresso do plano")).toBeTruthy();
     expect(screen.getByText("Treino do plano")).toBeTruthy();
     expect(screen.getByText("Dieta do plano")).toBeTruthy();
@@ -30,6 +34,42 @@ describe("CoachPlanHubScreen", () => {
     expect(screen.getByText("Peito + triceps")).toBeTruthy();
     expect(screen.getByText("Cafe da manha")).toBeTruthy();
     expect(screen.getByText("Creatina")).toBeTruthy();
+  });
+
+  it("allows opening the assessment shortcut for the active plan", () => {
+    renderWithProviders(<CoachPlanHubScreen />);
+
+    fireEvent.press(screen.getByText("Abrir avaliação"));
+  });
+
+  it("allows opening the exam shortcut for the active plan", () => {
+    renderWithProviders(<CoachPlanHubScreen />);
+
+    fireEvent.press(screen.getByText("Abrir exames"));
+  });
+
+  it("allows opening the training editor shortcut for the active plan", () => {
+    renderWithProviders(<CoachPlanHubScreen />);
+
+    fireEvent.press(screen.getByText("Editar treino"));
+  });
+
+  it("allows opening the diet editor shortcut for the active plan", () => {
+    renderWithProviders(<CoachPlanHubScreen />);
+
+    fireEvent.press(screen.getByText("Editar dieta"));
+  });
+
+  it("keeps historical plans read only", () => {
+    act(() => {
+      useCoachContextStore.getState().selectPlan("plan-archived-1");
+    });
+
+    renderWithProviders(<CoachPlanHubScreen />);
+
+    expect(screen.getByText("Plano histórico")).toBeTruthy();
+    expect(screen.queryByText("Editar treino")).toBeNull();
+    expect(screen.queryByText("Editar dieta")).toBeNull();
   });
 
   it("renders nothing when the selected plan is missing", () => {

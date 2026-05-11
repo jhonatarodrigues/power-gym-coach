@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
-import { Filter, House, Menu, MessageSquare, Search, Users, ClipboardList } from "lucide-react-native";
+import { Filter, House, Menu, MessageSquare, Search, Users, CreditCard } from "lucide-react-native";
 
 import {
   AppBottomNav,
@@ -9,6 +9,7 @@ import {
   CompactMetricCard,
   StudentListRow,
 } from "@/components";
+import { useCurrentPlan } from "@/hooks/useCurrentPlan";
 import { useCoachContextStore } from "@/store/useCoachContextStore";
 import { useMockAuth } from "@/hooks/useMockAuth";
 import { useAppTheme } from "@/theme";
@@ -41,11 +42,29 @@ export function CoachStudentsScreen() {
   const students = useCoachContextStore((state) => state.students);
   const plans = useCoachContextStore((state) => state.plans);
   const selectStudent = useCoachContextStore((state) => state.selectStudent);
+  const selectPlan = useCoachContextStore((state) => state.selectPlan);
+  const { loadCurrentPlan } = useCurrentPlan();
   const drawerParent = navigation.getParent();
 
   const openStudentPlans = (studentId: string) => {
     selectStudent(studentId);
     navigation.navigate("CoachStudentPlans" as never);
+  };
+
+  const openCurrentPlan = (studentId: string) => {
+    const activePlan = plans.find(
+      (plan) => plan.studentId === studentId && plan.status === "active"
+    );
+
+    if (!activePlan) {
+      openStudentPlans(studentId);
+      return;
+    }
+
+    selectStudent(studentId);
+    selectPlan(activePlan.id);
+    loadCurrentPlan(activePlan);
+    navigation.navigate("CoachPlanHub" as never);
   };
 
   return (
@@ -66,10 +85,10 @@ export function CoachStudentsScreen() {
               icon: <Users color={theme.colors.primary} size={21} strokeWidth={2.1} />,
             },
             {
-              key: "plans",
-              label: "Planos",
-              icon: <ClipboardList color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
-              onPress: () => navigation.navigate("CoachStudentPlans" as never),
+              key: "payments",
+              label: "Pagamentos",
+              icon: <CreditCard color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("TeacherPayments" as never),
             },
             {
               key: "messages",
@@ -169,11 +188,14 @@ export function CoachStudentsScreen() {
               accessibilityLabel={`Abrir planos de ${student.user.name}`}
               key={student.user.id}
               name={student.user.name}
+              actionLabel={activePlan ? "Abrir atual" : "Ver planos"}
+              onActionPress={() => openCurrentPlan(student.user.id)}
               objective={getGoalLabel(student.profile.goal)}
               onPress={() => openStudentPlans(student.user.id)}
               photoUrl={student.user.avatarUrl ?? ""}
               planDate={activePlan ? formatDateBR(activePlan.startDate) : undefined}
-              planLabel={activePlan ? "Plano atual" : "Sem plano"}
+              planLabel={activePlan ? "Plano atual" : "Sem plano ativo"}
+              planTitle={activePlan?.title}
             />
           );
         })}

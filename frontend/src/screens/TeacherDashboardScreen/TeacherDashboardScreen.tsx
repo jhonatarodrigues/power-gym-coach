@@ -87,10 +87,10 @@ export function TeacherDashboardScreen() {
               onPress: () => navigation.navigate("TeacherStudent" as never),
             },
             {
-              key: "plans",
-              label: "Planos",
-              icon: <ClipboardList color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
-              onPress: () => navigation.navigate("CoachStudentPlans" as never),
+              key: "payments",
+              label: "Pagamentos",
+              icon: <CreditCard color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("TeacherPayments" as never),
             },
             {
               key: "messages",

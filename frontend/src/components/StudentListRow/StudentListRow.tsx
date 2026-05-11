@@ -12,6 +12,7 @@ interface StudentListRowProps {
   onPress?: () => void;
   planDate?: string;
   planLabel?: string;
+  planTitle?: string;
   photoUrl: string;
 }
 
@@ -24,6 +25,7 @@ export function StudentListRow({
   onPress,
   planDate,
   planLabel = "Plano atual",
+  planTitle,
   photoUrl,
 }: StudentListRowProps) {
   const { theme } = useAppTheme();
@@ -64,14 +66,31 @@ export function StudentListRow({
           Objetivo: <Text style={{ color: theme.colors.primary }}>{objective}</Text>
         </Text>
       </View>
-      {planDate ? (
-        <View style={{ minWidth: 78 }}>
-          <Text style={{ color: theme.colors.textMuted, fontSize: 11.5 }}>{planLabel}</Text>
-          <Text style={{ color: theme.colors.text, fontSize: 12 }}>{planDate}</Text>
+      {planDate || planTitle ? (
+        <View style={{ gap: 2, minWidth: 98 }}>
+          <Text
+            numberOfLines={1}
+            style={{ color: theme.colors.textMuted, fontSize: 11.5 }}
+          >
+            {planLabel}
+          </Text>
+          {planTitle ? (
+            <Text
+              numberOfLines={1}
+              style={{ color: theme.colors.text, fontSize: 12, fontWeight: "600" }}
+            >
+              {planTitle}
+            </Text>
+          ) : null}
+          {planDate ? (
+            <Text style={{ color: theme.colors.textMuted, fontSize: 11.5 }}>{planDate}</Text>
+          ) : null}
         </View>
       ) : null}
       {actionLabel ? (
-        <Button fullWidth={false} label={actionLabel} onPress={onActionPress} size="sm" />
+        <View style={{ minWidth: 92 }}>
+          <Button fullWidth={false} label={actionLabel} onPress={onActionPress} size="sm" />
+        </View>
       ) : null}
     </View>
   );

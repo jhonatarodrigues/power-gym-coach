@@ -1,11 +1,23 @@
 import { Text, View } from "react-native";
-import { ClipboardList, House, Menu, MessageSquare, Plus, Users } from "lucide-react-native";
+import {
+  ClipboardList,
+  CreditCard,
+  Dumbbell,
+  FileText,
+  House,
+  Menu,
+  Plus,
+  Stethoscope,
+  TestTubeDiagonal,
+  Users,
+} from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import {
   AppBottomNav,
   AppChrome,
   AppTopBar,
+  Button,
   CompactMetricCard,
   PlanListCard,
   PlanSummaryCard,
@@ -86,15 +98,10 @@ export function CoachStudentPlansScreen() {
               onPress: () => navigation.navigate("TeacherStudent" as never),
             },
             {
-              key: "plans",
-              label: "Planos",
-              icon: <ClipboardList color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
-            },
-            {
-              key: "messages",
-              label: "Mensagens",
-              icon: <MessageSquare color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
-              onPress: () => navigation.navigate("Messages" as never),
+              key: "payments",
+              label: "Pagamentos",
+              icon: <CreditCard color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("TeacherPayments" as never),
             },
             {
               key: "more",
@@ -121,7 +128,7 @@ export function CoachStudentPlansScreen() {
           {selectedStudent.user.name}
         </Text>
         <Text style={{ color: theme.colors.textMuted, fontSize: 12.5 }}>
-          O plano reúne treino, dieta, observações e suplementação do mesmo ciclo.
+          O plano atual fica em destaque e os ciclos antigos abrem a mesma estrutura somente em leitura.
         </Text>
       </View>
 
@@ -144,36 +151,77 @@ export function CoachStudentPlansScreen() {
         remainingDays={getRemainingDays(activePlan.endDate)}
         startDate={formatDateBR(activePlan.startDate)}
         statusLabel={getPlanStatusLabel(activePlan.status)}
-        title={activePlan.title}
+        title="Plano atual"
       />
 
-      <View style={{ alignSelf: "flex-start" }}>
-        <Text
+      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+        <Button
+          fullWidth={false}
+          label="Abrir plano atual"
+          onPress={() => {
+            selectPlan(activePlan.id);
+            loadCurrentPlan(activePlan);
+            navigation.navigate("CoachPlanHub" as never);
+          }}
+          size="sm"
+        />
+        <Button
+          fullWidth={false}
+          label="Cadastrar novo plano"
           onPress={() => navigation.navigate("CoachPlanCreate" as never)}
-          style={{ color: theme.colors.primary, fontSize: 13, fontWeight: "700" }}
-        >
-          Cadastrar novo plano
+          size="sm"
+          variant="ghost"
+        />
+      </View>
+
+      <View style={{ gap: 12 }}>
+        <Text style={{ color: theme.colors.text, fontSize: 16, fontWeight: "700" }}>
+          Fluxo do plano atual
         </Text>
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+          <Button
+            fullWidth={false}
+            label="Avaliação"
+            onPress={() => navigation.navigate("Assessment" as never)}
+            rightIcon={<Stethoscope color="#0B0B0B" size={14} strokeWidth={2.1} />}
+            size="sm"
+          />
+          <Button
+            fullWidth={false}
+            label="Dieta"
+            onPress={() => {
+              selectPlan(activePlan.id);
+              loadCurrentPlan(activePlan);
+              navigation.navigate("DietEditor" as never);
+            }}
+            rightIcon={<FileText color="#0B0B0B" size={14} strokeWidth={2.1} />}
+            size="sm"
+          />
+          <Button
+            fullWidth={false}
+            label="Treino"
+            onPress={() => {
+              selectPlan(activePlan.id);
+              loadCurrentPlan(activePlan);
+              navigation.navigate("TrainingEditor" as never);
+            }}
+            rightIcon={<Dumbbell color="#0B0B0B" size={14} strokeWidth={2.1} />}
+            size="sm"
+          />
+          <Button
+            fullWidth={false}
+            label="Exames"
+            onPress={() => navigation.navigate("Exams" as never)}
+            rightIcon={<TestTubeDiagonal color="#0B0B0B" size={14} strokeWidth={2.1} />}
+            size="sm"
+          />
+        </View>
       </View>
 
       <View style={{ gap: 12 }}>
         <Text style={{ color: theme.colors.text, fontSize: 16, fontWeight: "700" }}>
           Histórico de planos
         </Text>
-        <PlanListCard
-          dateLabel={`${formatDateBR(activePlan.startDate)} até ${formatDateBR(
-            activePlan.endDate ?? activePlan.startDate
-          )}`}
-          onPress={() => {
-            selectPlan(activePlan.id);
-            loadCurrentPlan(activePlan);
-            navigation.navigate("CoachPlanHub" as never);
-          }}
-          statusLabel={getPlanStatusLabel(activePlan.status)}
-          statusTone={getPlanStatusTone(activePlan.status)}
-          subtitle="Plano atual em destaque para abrir o ciclo completo."
-          title={activePlan.title}
-        />
         {archivedPlans.map((plan) => (
           <PlanListCard
             dateLabel={`${formatDateBR(plan.startDate)} até ${formatDateBR(
@@ -187,7 +235,7 @@ export function CoachStudentPlansScreen() {
             }}
             statusLabel={getPlanStatusLabel(plan.status)}
             statusTone={getPlanStatusTone(plan.status)}
-            subtitle="Abra para revisar treino, dieta, observações e suplementação do ciclo."
+            subtitle="Abra o mesmo layout do plano, mas em modo histórico sem edição."
             title={plan.title}
           />
         ))}

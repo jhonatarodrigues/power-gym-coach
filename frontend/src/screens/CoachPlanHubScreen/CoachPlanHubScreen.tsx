@@ -1,12 +1,25 @@
 import { Text, View } from "react-native";
-import { ClipboardList, House, Menu, MessageSquare, Sparkles, Users } from "lucide-react-native";
+import {
+  CreditCard,
+  FileText,
+  House,
+  Menu,
+  MessageSquare,
+  Sparkles,
+  Stethoscope,
+  TestTubeDiagonal,
+  Users,
+  Dumbbell,
+} from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import {
   AppBottomNav,
   AppChrome,
   AppTopBar,
+  Button,
   MealPlanSection,
+  PlanModuleCard,
   PlanNotesCard,
   PlanSummaryCard,
   SupplementPlanCard,
@@ -48,6 +61,8 @@ export function CoachPlanHubScreen() {
     return null;
   }
 
+  const isEditable = selectedPlan.status !== "archived";
+
   const orderedDays = [...selectedPlan.trainingPlan.days].sort(
     (left, right) =>
       weekdayOrder.indexOf(left.weekday) - weekdayOrder.indexOf(right.weekday)
@@ -79,10 +94,10 @@ export function CoachPlanHubScreen() {
               onPress: () => navigation.navigate("TeacherStudent" as never),
             },
             {
-              key: "plans",
-              label: "Planos",
-              active: true,
-              icon: <ClipboardList color={theme.colors.primary} size={21} strokeWidth={2.1} />,
+              key: "payments",
+              label: "Pagamentos",
+              icon: <CreditCard color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("TeacherPayments" as never),
             },
             {
               key: "messages",
@@ -115,7 +130,9 @@ export function CoachPlanHubScreen() {
           {selectedStudent.user.name}
         </Text>
         <Text style={{ color: theme.colors.textMuted, fontSize: 12.5 }}>
-          Tudo do ciclo atual está concentrado aqui: treino, dieta, observações e suplementação.
+          {isEditable
+            ? "Plano atual com treino, dieta, observações, suplementação, avaliação e exames."
+            : "Plano histórico em modo leitura, sem edição de treino ou dieta."}
         </Text>
       </View>
 
@@ -125,22 +142,90 @@ export function CoachPlanHubScreen() {
         remainingDays={getRemainingDays(selectedPlan.endDate)}
         startDate={formatDateBR(selectedPlan.startDate)}
         statusLabel={selectedPlan.status === "archived" ? "Concluído" : "Ativo"}
-        title="Plano atual"
+        title={selectedPlan.status === "archived" ? "Plano histórico" : "Plano atual"}
       />
 
       <View style={{ gap: 12 }}>
         <Text style={{ color: theme.colors.text, fontSize: 16, fontWeight: "700" }}>
-          Treino do plano
+          Módulos do plano
         </Text>
+        <View style={{ gap: 10 }}>
+          <View style={{ opacity: isEditable ? 1 : 0.8 }}>
+            <PlanModuleCard
+              icon={<Stethoscope color={theme.colors.primary} size={18} strokeWidth={2.1} />}
+              subtitle={
+                isEditable
+                  ? "Acompanhe feedbacks e revise a leitura corporal do ciclo."
+                  : "Histórico da avaliação do ciclo concluído."
+              }
+              title="Avaliação"
+            />
+          </View>
+          <View style={{ opacity: isEditable ? 1 : 0.8 }}>
+            <PlanModuleCard
+              icon={<TestTubeDiagonal color={theme.colors.primary} size={18} strokeWidth={2.1} />}
+              subtitle={
+                isEditable
+                  ? "Solicitações e anexos de exames ligados a este aluno."
+                  : "Linha de exames já encerrada para consulta."
+              }
+              title="Exames"
+            />
+          </View>
+        </View>
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+          <Button
+            fullWidth={false}
+            label="Abrir avaliação"
+            onPress={isEditable ? () => navigation.navigate("Assessment" as never) : undefined}
+            size="sm"
+            variant={isEditable ? "primary" : "ghost"}
+          />
+          <Button
+            fullWidth={false}
+            label="Abrir exames"
+            onPress={isEditable ? () => navigation.navigate("Exams" as never) : undefined}
+            size="sm"
+            variant={isEditable ? "primary" : "ghost"}
+          />
+        </View>
+      </View>
+
+      <View style={{ gap: 12 }}>
+        <View style={{ alignItems: "center", flexDirection: "row", justifyContent: "space-between" }}>
+          <Text style={{ color: theme.colors.text, fontSize: 16, fontWeight: "700" }}>
+            Treino do plano
+          </Text>
+          {isEditable ? (
+            <Button
+              fullWidth={false}
+              label="Editar treino"
+              onPress={() => navigation.navigate("TrainingEditor" as never)}
+              rightIcon={<Dumbbell color="#0B0B0B" size={14} strokeWidth={2.1} />}
+              size="sm"
+            />
+          ) : null}
+        </View>
         {orderedDays.map((day) => (
           <TrainingDaySection day={day} key={day.id} />
         ))}
       </View>
 
       <View style={{ gap: 12 }}>
-        <Text style={{ color: theme.colors.text, fontSize: 16, fontWeight: "700" }}>
-          Dieta do plano
-        </Text>
+        <View style={{ alignItems: "center", flexDirection: "row", justifyContent: "space-between" }}>
+          <Text style={{ color: theme.colors.text, fontSize: 16, fontWeight: "700" }}>
+            Dieta do plano
+          </Text>
+          {isEditable ? (
+            <Button
+              fullWidth={false}
+              label="Editar dieta"
+              onPress={() => navigation.navigate("DietEditor" as never)}
+              rightIcon={<FileText color="#0B0B0B" size={14} strokeWidth={2.1} />}
+              size="sm"
+            />
+          ) : null}
+        </View>
         {selectedPlan.dietPlan.meals.map((meal) => (
           <MealPlanSection key={meal.id} meal={meal} />
         ))}
@@ -163,8 +248,9 @@ export function CoachPlanHubScreen() {
       >
         <Sparkles color={theme.colors.primary} size={18} strokeWidth={2.1} />
         <Text style={{ color: theme.colors.textMuted, flex: 1, fontSize: 12.5 }}>
-          Sempre que este ciclo for concluído, um novo plano deve ser criado para virar o plano atual
-          do aluno.
+          {isEditable
+            ? "Quando este ciclo for concluído, crie um novo plano para assumir como plano atual do aluno."
+            : "Este ciclo já foi concluído e permanece apenas para consulta histórica."}
         </Text>
       </View>
     </AppChrome>

@@ -22,29 +22,23 @@ describe("PaymentsScreen", () => {
     renderWithProviders(<PaymentsScreen />);
 
     expect(screen.getAllByText("Pagamentos").length).toBeGreaterThan(0);
-    expect(screen.getByText("Cobranças em aberto")).toBeTruthy();
-    expect(screen.getByText("Planos oferecidos")).toBeTruthy();
-    expect(screen.getByText("Plano mensal")).toBeTruthy();
-    expect(screen.getByText("Mensal • Dieta • Treino • Avaliacao")).toBeTruthy();
-    expect(screen.getByText("Cadastrar novo plano")).toBeTruthy();
+    expect(screen.getByText("Receita do ciclo")).toBeTruthy();
+    expect(screen.getByText("Status por aluno")).toBeTruthy();
+    expect(screen.getByText(/Plano Evolução/)).toBeTruthy();
+    expect(screen.getByText(/Plano Start/)).toBeTruthy();
+    expect(screen.getByText("Pago")).toBeTruthy();
+    expect(screen.getByText("Carência")).toBeTruthy();
   });
 
-  it("shows the teacher plan creation form", () => {
+  it("lets the coach use payment navigation shortcuts", () => {
     act(() => {
       useMockSessionStore.getState().signInAs("teacher");
     });
 
     renderWithProviders(<PaymentsScreen />);
 
-    act(() => {
-      fireEvent.press(screen.getByText("Cadastrar novo plano"));
-    });
-
-    expect(screen.getByLabelText("Nome do plano")).toBeTruthy();
-    expect(screen.getByLabelText("Valor mensal")).toBeTruthy();
-    expect(screen.getByLabelText("Descricao")).toBeTruthy();
-    expect(screen.getByText("O aluno recebe neste plano")).toBeTruthy();
-    expect(screen.getByText("Salvar plano comercial")).toBeTruthy();
+    fireEvent.press(screen.getByLabelText("Abrir menu"));
+    fireEvent.press(screen.getByText("Mais"));
   });
 
   it("allows the student to pay an open record", () => {
@@ -58,7 +52,7 @@ describe("PaymentsScreen", () => {
     expect(screen.getByText("Pagar com Pix")).toBeTruthy();
     expect(screen.getByText("Cartão")).toBeTruthy();
     expect(screen.getByText("Seu plano com o coach")).toBeTruthy();
-    expect(screen.getByText("Entregas inclusas: Dieta, Treino, Avaliacao")).toBeTruthy();
+    expect(screen.getByText("Entregas inclusas: Dieta, Treino, Avaliação, Exames")).toBeTruthy();
 
     fireEvent.press(screen.getAllByText("Pagar com Pix")[0]);
 
