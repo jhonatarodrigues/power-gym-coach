@@ -12,71 +12,41 @@ import {
 import { useCoachContextStore } from "@/store/useCoachContextStore";
 import { useMockAuth } from "@/hooks/useMockAuth";
 import { useAppTheme } from "@/theme";
+import { formatDateBR } from "@/utils/dates";
 
-const rosterPreview = [
-  {
-    id: "user-student-1",
-    name: "Juliana Mendes",
-    goal: "Definição",
-    planDate: "23/04/2026",
-    avatarUrl:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80",
-  },
-  {
-    id: "user-student-2",
-    name: "Rafael Souza",
-    goal: "Hipertrofia",
-    planDate: "18/04/2026",
-    avatarUrl:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80",
-  },
-  {
-    id: "user-student-1",
-    name: "Carla Oliveira",
-    goal: "Emagrecimento",
-    planDate: "10/04/2026",
-    avatarUrl:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80",
-  },
-  {
-    id: "user-student-2",
-    name: "Bruno Lima",
-    goal: "Força",
-    planDate: "08/04/2026",
-    avatarUrl:
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80",
-  },
-  {
-    id: "user-student-1",
-    name: "Fernanda Alves",
-    goal: "Condicionamento",
-    planDate: "05/04/2026",
-    avatarUrl:
-      "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=300&q=80",
-  },
-  {
-    id: "user-student-2",
-    name: "Lucas Pereira",
-    goal: "Hipertrofia",
-    planDate: "02/04/2026",
-    avatarUrl:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80",
-  },
-  {
-    id: "user-student-1",
-    name: "Marina Costa",
-    goal: "Definição",
-    planDate: "01/04/2026",
-    avatarUrl:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80",
-  },
-];
+function getGoalLabel(goal: string) {
+  if (goal.toLowerCase().includes("hipertrof")) {
+    return "Hipertrofia";
+  }
+
+  if (goal.toLowerCase().includes("emagrec")) {
+    return "Emagrecimento";
+  }
+
+  if (goal.toLowerCase().includes("condicion")) {
+    return "Condicionamento";
+  }
+
+  if (goal.toLowerCase().includes("defini")) {
+    return "Definição";
+  }
+
+  return goal.split(" ").slice(0, 3).join(" ");
+}
 
 export function CoachStudentsScreen() {
   const { theme } = useAppTheme();
   const navigation = useNavigation();
   const { session } = useMockAuth();
+  const students = useCoachContextStore((state) => state.students);
+  const plans = useCoachContextStore((state) => state.plans);
   const selectStudent = useCoachContextStore((state) => state.selectStudent);
+  const drawerParent = navigation.getParent();
+
+  const openStudentPlans = (studentId: string) => {
+    selectStudent(studentId);
+    navigation.navigate("CoachStudentPlans" as never);
+  };
 
   return (
     <AppChrome
@@ -111,7 +81,7 @@ export function CoachStudentsScreen() {
               key: "more",
               label: "Mais",
               icon: <Menu color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
-              onPress: () => navigation.dispatch(DrawerActions.toggleDrawer()),
+              onPress: () => drawerParent?.dispatch(DrawerActions.toggleDrawer()),
             },
           ]}
         />
@@ -120,7 +90,7 @@ export function CoachStudentsScreen() {
       <AppTopBar
         avatarUrl={session.currentUser?.avatarUrl}
         onAvatarPress={() => navigation.navigate("TeacherProfile" as never)}
-        onMenuPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+        onMenuPress={() => drawerParent?.dispatch(DrawerActions.toggleDrawer())}
         showMenu
         title="Alunos"
       />
@@ -189,18 +159,24 @@ export function CoachStudentsScreen() {
           paddingHorizontal: 16,
         }}
       >
-        {rosterPreview.map((student) => (
-          <StudentListRow
-            actionLabel={undefined}
-            key={`${student.id}-${student.name}`}
-            name={student.name}
-            objective={student.goal}
-            onActionPress={undefined}
-            photoUrl={student.avatarUrl}
-            planDate={student.planDate}
-            planLabel="Plano atual"
-          />
-        ))}
+        {students.map((student) => {
+          const activePlan = plans.find(
+            (plan) => plan.studentId === student.user.id && plan.status === "active"
+          );
+
+          return (
+            <StudentListRow
+              accessibilityLabel={`Abrir planos de ${student.user.name}`}
+              key={student.user.id}
+              name={student.user.name}
+              objective={getGoalLabel(student.profile.goal)}
+              onPress={() => openStudentPlans(student.user.id)}
+              photoUrl={student.user.avatarUrl ?? ""}
+              planDate={activePlan ? formatDateBR(activePlan.startDate) : undefined}
+              planLabel={activePlan ? "Plano atual" : "Sem plano"}
+            />
+          );
+        })}
       </View>
     </AppChrome>
   );

@@ -20,12 +20,16 @@ describe("CoachPlanHubScreen", () => {
   it("renders the selected plan structure and coach actions", () => {
     renderWithProviders(<CoachPlanHubScreen />);
 
+    expect(screen.getByText("Detalhe do plano")).toBeTruthy();
     expect(screen.getByText("Plano atual")).toBeTruthy();
     expect(screen.getByText("Progresso do plano")).toBeTruthy();
-    expect(screen.getByText("Dias restantes")).toBeTruthy();
-    expect(screen.getByText("Dieta")).toBeTruthy();
-    expect(screen.getByText("Treino")).toBeTruthy();
-    expect(screen.getByText("Feedback")).toBeTruthy();
+    expect(screen.getByText("Treino do plano")).toBeTruthy();
+    expect(screen.getByText("Dieta do plano")).toBeTruthy();
+    expect(screen.getByText("Observações do plano")).toBeTruthy();
+    expect(screen.getByText("Suplementação")).toBeTruthy();
+    expect(screen.getByText("Peito + triceps")).toBeTruthy();
+    expect(screen.getByText("Cafe da manha")).toBeTruthy();
+    expect(screen.getByText("Creatina")).toBeTruthy();
   });
 
   it("renders nothing when the selected plan is missing", () => {

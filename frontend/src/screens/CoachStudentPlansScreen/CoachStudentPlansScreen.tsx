@@ -1,20 +1,16 @@
-import { useMemo } from "react";
 import { Text, View } from "react-native";
+import { ClipboardList, House, Menu, MessageSquare, Plus, Users } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ArrowUpRight, CalendarRange } from "lucide-react-native";
 
 import {
-  Button,
-  Card,
-  DashboardHero,
-  Header,
-  Screen,
-  SectionTitle,
-  StatusBadge,
+  AppBottomNav,
+  AppChrome,
+  AppTopBar,
+  CompactMetricCard,
+  PlanListCard,
+  PlanSummaryCard,
 } from "@/components";
 import { useCurrentPlan } from "@/hooks/useCurrentPlan";
-import type { RootStackParamList } from "@/navigation/types";
 import { useCoachContextStore } from "@/store/useCoachContextStore";
 import { useAppTheme } from "@/theme";
 import { formatDateBR } from "@/utils/dates";
@@ -28,7 +24,7 @@ function getPlanStatusLabel(status: "draft" | "active" | "archived") {
     return "Ativo";
   }
 
-  return "Concluido";
+  return "Concluído";
 }
 
 function getPlanStatusTone(status: "draft" | "active" | "archived") {
@@ -43,124 +39,159 @@ function getPlanStatusTone(status: "draft" | "active" | "archived") {
   return "default";
 }
 
+function getRemainingDays(endDate?: string) {
+  if (!endDate) {
+    return 0;
+  }
+
+  const current = new Date("2026-05-11T00:00:00.000Z");
+  const end = new Date(`${endDate}T00:00:00.000Z`);
+  const diff = end.getTime() - current.getTime();
+
+  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+}
+
 export function CoachStudentPlansScreen() {
   const { theme } = useAppTheme();
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation();
   const selectedStudent = useCoachContextStore((state) => state.getSelectedStudent());
   const selectedStudentId = useCoachContextStore((state) => state.selectedStudentId);
-  const allPlans = useCoachContextStore((state) => state.plans);
+  const getPlansByStudent = useCoachContextStore((state) => state.getPlansByStudent);
   const selectPlan = useCoachContextStore((state) => state.selectPlan);
   const { loadCurrentPlan } = useCurrentPlan();
-  const plans = useMemo(
-    () =>
-      [...allPlans]
-        .filter((plan) => plan.studentId === selectedStudentId)
-        .sort((left, right) => right.startDate.localeCompare(left.startDate)),
-    [allPlans, selectedStudentId]
-  );
-  const activeCount = plans.filter((plan) => plan.status === "active").length;
-  const draftCount = plans.filter((plan) => plan.status === "draft").length;
-  const historyCount = plans.filter((plan) => plan.status === "archived").length;
+  const plans = selectedStudentId ? getPlansByStudent(selectedStudentId) : [];
+  const activePlan = plans.find((plan) => plan.status === "active") ?? plans[0];
+  const archivedPlans = plans.filter((plan) => plan.id !== activePlan?.id);
 
-  if (!selectedStudent) {
+  if (!selectedStudent || !activePlan) {
     return null;
   }
 
   return (
-    <Screen>
-      <Header
-        title={`Planos de ${selectedStudent.user.name}`}
-        subtitle="Fluxo do coach: aluno > plano > dieta, treino e feedback."
-      />
-
-      <DashboardHero
-        accentLabel={activeCount > 0 ? "Plano ativo em acompanhamento" : "Organize o proximo ciclo"}
-        eyebrow="Planos"
-        stats={[
-          { label: "Ativos", value: String(activeCount) },
-          { label: "Rascunhos", value: String(draftCount) },
-          { label: "Histórico", value: String(historyCount) },
-        ]}
-        subtitle="Cada plano vira uma unidade de trabalho do coach, com dieta, treino e feedbacks dentro do mesmo ciclo."
-        title="Ciclos do aluno organizados"
-      />
-
-      <SectionTitle
+    <AppChrome
+      footer={
+        <AppBottomNav
+          items={[
+            {
+              key: "dashboard",
+              label: "Dashboard",
+              icon: <House color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("TeacherHome" as never),
+            },
+            {
+              key: "students",
+              label: "Alunos",
+              active: true,
+              icon: <Users color={theme.colors.primary} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("TeacherStudent" as never),
+            },
+            {
+              key: "plans",
+              label: "Planos",
+              icon: <ClipboardList color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+            },
+            {
+              key: "messages",
+              label: "Mensagens",
+              icon: <MessageSquare color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.navigate("Messages" as never),
+            },
+            {
+              key: "more",
+              label: "Mais",
+              icon: <Menu color={theme.colors.textMuted} size={21} strokeWidth={2.1} />,
+              onPress: () => navigation.goBack(),
+            },
+          ]}
+        />
+      }
+    >
+      <AppTopBar
+        avatarUrl={selectedStudent.user.avatarUrl}
+        onAvatarPress={() => navigation.navigate("TeacherProfile" as never)}
+        onBackPress={() => navigation.goBack()}
+        showBack
+        showBell={false}
+        subtitle={selectedStudent.profile.goal}
         title="Planos do aluno"
-        description="Um aluno pode ter varios planos. Ao concluir um, o historico permanece acessivel."
       />
 
-      <View style={{ alignSelf: "flex-start" }}>
-        <Button
-          fullWidth={false}
-          label="Cadastrar novo plano"
-          onPress={() => navigation.navigate("CoachPlanCreate")}
-          rightIcon={<ArrowUpRight color="#0B0B0B" size={14} />}
-          size="sm"
+      <View style={{ gap: 4 }}>
+        <Text style={{ color: theme.colors.text, fontSize: 24, fontWeight: "800" }}>
+          {selectedStudent.user.name}
+        </Text>
+        <Text style={{ color: theme.colors.textMuted, fontSize: 12.5 }}>
+          O plano reúne treino, dieta, observações e suplementação do mesmo ciclo.
+        </Text>
+      </View>
+
+      <View style={{ flexDirection: "row", gap: 10 }}>
+        <CompactMetricCard
+          icon={<ClipboardList color={theme.colors.primary} size={17} strokeWidth={2.2} />}
+          label="Planos totais"
+          value={String(plans.length)}
+        />
+        <CompactMetricCard
+          icon={<Plus color={theme.colors.primary} size={17} strokeWidth={2.2} />}
+          label="Histórico"
+          value={String(archivedPlans.length)}
         />
       </View>
 
-      <View style={{ gap: theme.spacing.md }}>
-        {plans.map((plan) => (
-          <Card key={plan.id}>
-            <View style={{ gap: theme.spacing.lg }}>
-              <View
-                style={{
-                  alignItems: "center",
-                  gap: theme.spacing.sm,
-                }}
-              >
-                <StatusBadge
-                  label={getPlanStatusLabel(plan.status)}
-                  tone={getPlanStatusTone(plan.status)}
-                />
-                <Text
-                  style={{
-                    color: theme.colors.text,
-                    fontSize: theme.typography.body,
-                    fontWeight: "700",
-                    textAlign: "center",
-                  }}
-                >
-                  {plan.title}
-                </Text>
-                <View
-                  style={{
-                    alignItems: "center",
-                    flexDirection: "row",
-                    gap: theme.spacing.sm,
-                  }}
-                >
-                  <CalendarRange color={theme.colors.textMuted} size={15} />
-                  <Text
-                    style={{
-                      color: theme.colors.textMuted,
-                      fontSize: theme.typography.caption,
-                      textAlign: "center",
-                    }}
-                  >
-                    {formatDateBR(plan.startDate)} até {formatDateBR(plan.endDate)}
-                  </Text>
-                </View>
-              </View>
-              <View style={{ alignItems: "center" }}>
-                <Button
-                  fullWidth={false}
-                  label="Abrir plano"
-                  onPress={() => {
-                    selectPlan(plan.id);
-                    loadCurrentPlan(plan);
-                    navigation.navigate("CoachPlanHub");
-                  }}
-                  rightIcon={<ArrowUpRight color={theme.colors.primary} size={14} />}
-                  size="sm"
-                  variant="soft"
-                />
-              </View>
-            </View>
-          </Card>
+      <PlanSummaryCard
+        endDate={formatDateBR(activePlan.endDate ?? activePlan.startDate)}
+        progress={activePlan.status === "active" ? 64 : 100}
+        remainingDays={getRemainingDays(activePlan.endDate)}
+        startDate={formatDateBR(activePlan.startDate)}
+        statusLabel={getPlanStatusLabel(activePlan.status)}
+        title={activePlan.title}
+      />
+
+      <View style={{ alignSelf: "flex-start" }}>
+        <Text
+          onPress={() => navigation.navigate("CoachPlanCreate" as never)}
+          style={{ color: theme.colors.primary, fontSize: 13, fontWeight: "700" }}
+        >
+          Cadastrar novo plano
+        </Text>
+      </View>
+
+      <View style={{ gap: 12 }}>
+        <Text style={{ color: theme.colors.text, fontSize: 16, fontWeight: "700" }}>
+          Histórico de planos
+        </Text>
+        <PlanListCard
+          dateLabel={`${formatDateBR(activePlan.startDate)} até ${formatDateBR(
+            activePlan.endDate ?? activePlan.startDate
+          )}`}
+          onPress={() => {
+            selectPlan(activePlan.id);
+            loadCurrentPlan(activePlan);
+            navigation.navigate("CoachPlanHub" as never);
+          }}
+          statusLabel={getPlanStatusLabel(activePlan.status)}
+          statusTone={getPlanStatusTone(activePlan.status)}
+          subtitle="Plano atual em destaque para abrir o ciclo completo."
+          title={activePlan.title}
+        />
+        {archivedPlans.map((plan) => (
+          <PlanListCard
+            dateLabel={`${formatDateBR(plan.startDate)} até ${formatDateBR(
+              plan.endDate ?? plan.startDate
+            )}`}
+            key={plan.id}
+            onPress={() => {
+              selectPlan(plan.id);
+              loadCurrentPlan(plan);
+              navigation.navigate("CoachPlanHub" as never);
+            }}
+            statusLabel={getPlanStatusLabel(plan.status)}
+            statusTone={getPlanStatusTone(plan.status)}
+            subtitle="Abra para revisar treino, dieta, observações e suplementação do ciclo."
+            title={plan.title}
+          />
         ))}
       </View>
-    </Screen>
+    </AppChrome>
   );
 }

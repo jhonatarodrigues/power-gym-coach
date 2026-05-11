@@ -1,4 +1,4 @@
-import { act, screen } from "@testing-library/react-native";
+import { act, fireEvent, screen } from "@testing-library/react-native";
 
 import { useCoachContextStore } from "@/store/useCoachContextStore";
 import { renderWithProviders } from "@/test-utils/renderWithProviders";
@@ -12,17 +12,15 @@ describe("CoachStudentsScreen", () => {
     expect(screen.getAllByText("Alunos").length).toBeGreaterThan(0);
     expect(screen.getByText("Buscar aluno...")).toBeTruthy();
     expect(screen.getByText("Ações pendentes")).toBeTruthy();
-    expect(screen.getByText("Marina Costa")).toBeTruthy();
+    expect(screen.getByText("Lucas Andrade")).toBeTruthy();
     expect(screen.getAllByText("Plano atual").length).toBeGreaterThan(0);
   });
 
-  it("shows fallback status when a student has no plan", () => {
-    act(() => {
-      useCoachContextStore.setState({ plans: [] });
-    });
-
+  it("selects the tapped student before opening the plans flow", () => {
     renderWithProviders(<CoachStudentsScreen />);
 
-    expect(screen.getAllByText("Plano atual").length).toBeGreaterThan(0);
+    fireEvent.press(screen.getByLabelText("Abrir planos de Lucas Andrade"));
+
+    expect(useCoachContextStore.getState().selectedStudentId).toBe("user-student-2");
   });
 });

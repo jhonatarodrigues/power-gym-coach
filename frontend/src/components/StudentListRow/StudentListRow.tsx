@@ -1,13 +1,15 @@
-import { Image, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 
 import { Button } from "@/components";
 import { useAppTheme } from "@/theme";
 
 interface StudentListRowProps {
   actionLabel?: string;
+  accessibilityLabel?: string;
   name: string;
   objective: string;
   onActionPress?: () => void;
+  onPress?: () => void;
   planDate?: string;
   planLabel?: string;
   photoUrl: string;
@@ -15,16 +17,18 @@ interface StudentListRowProps {
 
 export function StudentListRow({
   actionLabel,
+  accessibilityLabel,
   name,
   objective,
   onActionPress,
+  onPress,
   planDate,
   planLabel = "Plano atual",
   photoUrl,
 }: StudentListRowProps) {
   const { theme } = useAppTheme();
 
-  return (
+  const content = (
     <View
       style={{
         alignItems: "center",
@@ -71,4 +75,17 @@ export function StudentListRow({
       ) : null}
     </View>
   );
+
+  if (onPress) {
+    return (
+      <Pressable
+        accessibilityLabel={accessibilityLabel ?? `Abrir planos de ${name}`}
+        onPress={onPress}
+      >
+        {content}
+      </Pressable>
+    );
+  }
+
+  return content;
 }

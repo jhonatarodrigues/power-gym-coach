@@ -18,19 +18,24 @@ import { Header } from "@/components/Header";
 import { InlineAlertBanner } from "@/components/InlineAlertBanner";
 import { JourneyTimelineCard } from "@/components/JourneyTimelineCard";
 import { MealProgressRow } from "@/components/MealProgressRow";
+import { MealPlanSection } from "@/components/MealPlanSection";
 import { MetricCard } from "@/components/MetricCard";
 import { MiniBarChart } from "@/components/MiniBarChart";
 import { PasswordField } from "@/components/PasswordField";
 import { PendingAlertCard } from "@/components/PendingAlertCard";
+import { PlanListCard } from "@/components/PlanListCard";
 import { PlanModuleCard } from "@/components/PlanModuleCard";
+import { PlanNotesCard } from "@/components/PlanNotesCard";
 import { PlanSummaryCard } from "@/components/PlanSummaryCard";
 import { ProgressLineCard } from "@/components/ProgressLineCard";
 import { Screen } from "@/components/Screen";
 import { Showcase } from "@/components/Showcase";
 import { StatusBadge } from "@/components/StatusBadge";
 import { TextField } from "@/components/TextField";
+import { SupplementPlanCard } from "@/components/SupplementPlanCard";
 import { WaterDropProgress } from "@/components/WaterDropProgress";
 import { BrandLogo } from "@/components/BrandLogo";
+import { TrainingDaySection } from "@/components/TrainingDaySection";
 import { WorkoutExerciseCheckItem } from "@/components/WorkoutExerciseCheckItem";
 import { WorkoutProgressCard } from "@/components/WorkoutProgressCard";
 import { AppBottomNav } from "@/components/AppBottomNav";
@@ -323,6 +328,66 @@ describe("misc components", () => {
     expect(onWorkoutPress).toHaveBeenCalled();
     expect(onFoodPress).toHaveBeenCalled();
     expect(onNavPress).toHaveBeenCalled();
+  });
+
+  it("renders empty and alternate branches of new plan flow components", () => {
+    const onPlanPress = jest.fn();
+
+    renderWithProviders(
+      <>
+        <PlanListCard
+          dateLabel="01/04/2026 até 14/04/2026"
+          onPress={onPlanPress}
+          statusLabel="Concluído"
+          statusTone="default"
+          subtitle="Ciclo encerrado."
+          title="Plano anterior"
+        />
+        <TrainingDaySection
+          day={{
+            id: "day-1",
+            weekday: "friday",
+            title: "Full body",
+            exercises: [],
+          }}
+        />
+        <MealPlanSection
+          meal={{
+            id: "meal-1",
+            type: "dinner",
+            title: "Jantar",
+            calories: 0,
+            carbs: 0,
+            protein: 0,
+            fat: 0,
+            items: [
+              {
+                id: "food-1",
+                foodId: "food",
+                foodName: "Salada verde",
+                amount: 1,
+                unit: "unit",
+                calories: 50,
+                carbs: 5,
+                protein: 2,
+                fat: 1,
+              },
+            ],
+          }}
+        />
+        <PlanNotesCard items={[]} />
+        <SupplementPlanCard supplements={[]} />
+      </>
+    );
+
+    expect(screen.getByText("Plano anterior")).toBeTruthy();
+    expect(screen.getByText("Nenhum exercício cadastrado para este dia.")).toBeTruthy();
+    expect(screen.getByText("Salada verde")).toBeTruthy();
+    expect(screen.getByText("Nenhuma observação cadastrada para este ciclo.")).toBeTruthy();
+    expect(screen.getByText("Nenhum suplemento definido para este plano.")).toBeTruthy();
+
+    fireEvent.press(screen.getByLabelText("Abrir plano Plano anterior"));
+    expect(onPlanPress).toHaveBeenCalled();
   });
 
   it("renders dashboard visualization components without optional props", () => {
